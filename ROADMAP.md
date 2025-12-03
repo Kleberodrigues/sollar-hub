@@ -8,18 +8,19 @@
 
 ## 📊 Progresso Geral
 
-**Última Atualização**: 2025-12-03 (Fase 5 Completa)
+**Última Atualização**: 2025-12-03 (Fase 6 Completa)
 
 ```
-[█████████████████████] 95% Concluído
+[██████████████████████] 97% Concluído
 
 ✅ Setup Inicial (100%)
 ✅ Segurança RLS (100%) - PERFEITO!
 ✅ Schema Database (100%) - MIGRATIONS FORMAIS CRIADAS!
-✅ Componentes Base (100%) - 21 COMPONENTES UI INSTALADOS!
+✅ Componentes Base (100%) - 22 COMPONENTES UI INSTALADOS!
 ✅ Autenticação (100%) - FASE 3 COMPLETA! 🎉
 ✅ Dashboard Layout (100%) - FASE 4 COMPLETA! 🎯
 ✅ CRUD Assessments (100%) - FASE 5 COMPLETA! 📋
+✅ Public Response Form (100%) - FASE 6 COMPLETA! 📝
 ⏳ Features Avançadas (0%)
 ⬜ Integrações (0%)
 ```
@@ -365,11 +366,51 @@
 
 ---
 
-## 🧙 FASE 6: WIZARD DE CRIAÇÃO DE DIAGNÓSTICO
+## 📝 FASE 6: FORMULÁRIO PÚBLICO DE RESPOSTAS - MELHORIAS UX
 
 **Prioridade**: ALTA
-**Tempo estimado**: 6-8 horas
+**Tempo estimado**: 2-3 horas
 **Dependências**: Fase 1, 2, 5
+**Status**: ✅ **100% Concluído**
+
+### 6.1 Progress Bar e Navegação ✅
+- [x] ✅ Componente Progress (shadcn/ui)
+- [x] ✅ Barra de progresso visual (0-100%)
+- [x] ✅ Contador de perguntas (X de Y)
+- [x] ✅ Contador de respostas (X de Y respondidas)
+- [x] ✅ Navegação por etapas (Anterior/Próximo)
+- [x] ✅ Foco em uma pergunta por vez
+
+### 6.2 UX Improvements ✅
+- [x] ✅ Scroll to top on step change
+- [x] ✅ Disabled state para botão "Anterior" na primeira questão
+- [x] ✅ Botão "Enviar" apenas na última questão
+- [x] ✅ Visual feedback de progresso em tempo real
+- [x] ✅ Transições suaves entre perguntas
+
+### 6.3 Estado e Validação ✅
+- [x] ✅ Estado de respostas persistido durante navegação
+- [x] ✅ Validação de campos obrigatórios mantida
+- [x] ✅ Tela de sucesso após envio
+- [x] ✅ Anonymous ID (UUID) gerado por respondente
+
+**Componentes Modificados**:
+- ✅ `components/assessments/assessment-response-form.tsx` (navegação step-by-step)
+- ✅ `components/ui/progress.tsx` (novo - shadcn/ui)
+
+**Melhorias Aplicadas**:
+- ✅ Experiência de resposta mais fluida e intuitiva
+- ✅ Feedback visual claro de progresso
+- ✅ Redução de sobrecarga cognitiva (uma pergunta por vez)
+- ✅ Navegação flexível entre perguntas
+
+---
+
+## 🧙 FASE 7: WIZARD DE CRIAÇÃO DE DIAGNÓSTICO (Futuro)
+
+**Prioridade**: MÉDIA
+**Tempo estimado**: 6-8 horas
+**Dependências**: Fase 1, 2, 5, 6
 
 ### 6.1 Wizard Component
 - [ ] /dashboard/diagnosticos/novo
