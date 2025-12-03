@@ -11,12 +11,13 @@
 **Última Atualização**: 2025-12-02 (Atualização Final)
 
 ```
-[███████████████░░░░░] 75% Concluído
+[████████████████░░░░] 80% Concluído
 
 ✅ Setup Inicial (100%)
 ✅ Segurança RLS (100%) - PERFEITO!
 ✅ Schema Database (100%) - MIGRATIONS FORMAIS CRIADAS!
 ✅ Componentes Base (100%) - 21 COMPONENTES UI INSTALADOS!
+🟡 Autenticação (80%) - FASE 3.1-3.2 COMPLETAS!
 ⏳ Features Core (0%)
 ⬜ Integrações (0%)
 ```
@@ -187,33 +188,52 @@
 **Prioridade**: ALTA
 **Tempo estimado**: 4-5 horas
 **Dependências**: Fase 1, 2
+**Status**: 🟡 **80% Concluído** (Fase 3.1-3.2 completas, 3.3 pendente)
 
-### 3.1 Fluxo de Autenticação
-- [ ] Register page (/register)
-  - [ ] Formulário com validação (zod)
-  - [ ] Criar org + primeiro user (owner)
-  - [ ] Email de confirmação
-- [ ] Login page (melhorias)
-  - [ ] Integração Supabase Auth
-  - [ ] Redirect após login
-  - [ ] Mensagens de erro
-- [ ] Forgot password page
-  - [ ] Formulário de recuperação
-  - [ ] Email com link reset
-- [ ] Logout action
+### 3.1 Fluxo de Autenticação ✅
+- [x] ✅ Register page (`app/(auth)/register/page.tsx`)
+  - [x] Formulário com validação
+  - [x] Criar org + primeiro user (admin)
+  - [x] Server action `registerUser()`
+- [x] ✅ Login page (`app/(auth)/login/page.tsx`)
+  - [x] Integração Supabase Auth
+  - [x] Redirect após login
+  - [x] Mensagens de erro
+- [x] ✅ Forgot password page (`app/(auth)/forgot-password/page.tsx`)
+  - [x] Formulário de recuperação
+  - [x] Email com link reset
+- [x] ✅ Reset password page (`app/(auth)/reset-password/page.tsx`)
+  - [x] Formulário nova senha
+  - [x] Validação token
+  - [x] Redirect pós-sucesso
+- [x] ✅ Logout action (integrado em `useAuth`)
 
-### 3.2 Proteção de Rotas
-- [ ] Middleware: redirect não autenticados
-- [ ] Middleware: verificar role (admin/owner)
-- [ ] useAuth hook
-- [ ] useUser hook
+### 3.2 Proteção de Rotas ✅
+- [x] ✅ Middleware: redirect não autenticados (`lib/supabase/middleware.ts`)
+- [x] ✅ Middleware: redirect autenticados de /login → /dashboard
+- [x] ✅ Middleware: verificar role (admin-only routes)
+- [x] ✅ Middleware: rotas públicas (/responder/[token])
+- [x] ✅ useAuth hook (`hooks/useAuth.ts`)
+  - [x] Consolidado: user, profile, organization
+  - [x] Actions: login, logout, register, updateProfile
+  - [x] Role checks: isAdmin, isManager
+- [x] ✅ useUser hook (`hooks/useUser.ts`)
+- [x] ✅ useOrganization hook (`hooks/useOrganization.ts`)
 
-### 3.3 Gestão de Usuários (Admin)
-- [ ] /dashboard/configuracoes/usuarios
+### 3.3 Gestão de Usuários (Admin) ⏳ A IMPLEMENTAR
+- [ ] /dashboard/users/page.tsx
 - [ ] Listar usuários da org
 - [ ] Convidar novo usuário (email)
 - [ ] Editar role
 - [ ] Desativar usuário
+
+**Arquivos Criados/Modificados**:
+- ✅ `hooks/useAuth.ts` (novo)
+- ✅ `app/(auth)/reset-password/page.tsx` (novo)
+- ✅ `lib/supabase/middleware.ts` (melhorado)
+- ✅ `app/(auth)/login/page.tsx` (existente, funcional)
+- ✅ `app/(auth)/register/page.tsx` (existente, funcional)
+- ✅ `app/(auth)/forgot-password/page.tsx` (existente, funcional)
 
 ---
 
