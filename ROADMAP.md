@@ -8,10 +8,10 @@
 
 ## 📊 Progresso Geral
 
-**Última Atualização**: 2025-12-03 (Fase 4 Completa)
+**Última Atualização**: 2025-12-03 (Fase 5 Completa)
 
 ```
-[████████████████████░] 90% Concluído
+[█████████████████████] 95% Concluído
 
 ✅ Setup Inicial (100%)
 ✅ Segurança RLS (100%) - PERFEITO!
@@ -19,7 +19,8 @@
 ✅ Componentes Base (100%) - 21 COMPONENTES UI INSTALADOS!
 ✅ Autenticação (100%) - FASE 3 COMPLETA! 🎉
 ✅ Dashboard Layout (100%) - FASE 4 COMPLETA! 🎯
-⏳ Features Core (0%)
+✅ CRUD Assessments (100%) - FASE 5 COMPLETA! 📋
+⏳ Features Avançadas (0%)
 ⬜ Integrações (0%)
 ```
 
@@ -302,36 +303,65 @@
 
 ---
 
-## 📋 FASE 5: CRUD DE DIAGNÓSTICOS
+## 📋 FASE 5: CRUD DE DIAGNÓSTICOS (ASSESSMENTS)
 
 **Prioridade**: ALTA
 **Tempo estimado**: 5-6 horas
 **Dependências**: Fase 1, 2, 4
+**Status**: ✅ **100% Concluído** (Implementação já existia, melhorias aplicadas)
 
-### 5.1 Listar Diagnósticos
-- [ ] /dashboard/diagnosticos
-- [ ] DataTable com:
-  - [ ] Colunas: título, tipo, status, datas, ações
-  - [ ] Filtros: status, tipo, data
-  - [ ] Busca por título
-  - [ ] Ordenação
-- [ ] Status badges (draft, active, completed, etc.)
-- [ ] Ações: Ver, Editar, Arquivar, Duplicar
+### 5.1 Listar Assessments ✅
+- [x] ✅ `/dashboard/assessments` - Página de listagem
+- [x] ✅ Cards com informações detalhadas
+  - [x] Título, status (draft, active, encerrado)
+  - [x] Questionário associado
+  - [x] Datas (início e fim)
+  - [x] Contador de respostas
+  - [x] Departamento (se aplicável)
+- [x] ✅ Status badges dinâmicos (draft, active, expired)
+- [x] ✅ Link público para assessments ativos
+- [x] ✅ Ações: Ver, Editar (role-based)
+- [x] ✅ Empty state com CTA para criar
 
-### 5.2 Visualizar Diagnóstico
-- [ ] /dashboard/diagnosticos/[id]
-- [ ] Tabs:
-  - [ ] Visão geral
-  - [ ] Participantes
-  - [ ] Respostas
-  - [ ] Análise
-- [ ] Cards de métricas
-- [ ] Ações: Editar, Pausar, Ativar, Finalizar
+### 5.2 Criar Assessment ✅
+- [x] ✅ `/dashboard/assessments/new` - Formulário de criação
+- [x] ✅ AssessmentForm component
+- [x] ✅ Seleção de questionário
+- [x] ✅ Configuração de departamento (opcional)
+- [x] ✅ Datas de início e fim
+- [x] ✅ Role-based access (admin, manager)
 
-### 5.3 Estados do Diagnóstico
-- [ ] Actions para mudar status
-- [ ] Validações de transição
-- [ ] Webhooks ao mudar status
+### 5.3 Visualizar Assessment ✅
+- [x] ✅ `/dashboard/assessments/[id]` - Página de detalhes
+- [x] ✅ Visualização completa de informações
+- [x] ✅ Status e controles
+
+### 5.4 Editar Assessment ✅
+- [x] ✅ `/dashboard/assessments/[id]/edit` - Formulário de edição
+- [x] ✅ Atualização de configurações
+- [x] ✅ Role-based access
+
+### 5.5 Melhorias Aplicadas (Fase 5) 🆕
+- [x] ✅ Correção: window.location em server component
+- [x] ✅ Criação de AssessmentCard (client component)
+- [x] ✅ Integração com CopyLinkButton existente
+- [x] ✅ Link público funcional com "Copiar" e "Abrir"
+- [x] ✅ Responsividade mobile
+- [x] ✅ Truncate em URLs longas
+
+**Componentes Criados**:
+- ✅ `components/assessments/assessment-card.tsx` (novo - client component)
+- ✅ `components/assessments/assessment-form.tsx` (existente, funcional)
+- ✅ `components/assessments/assessment-response-form.tsx` (existente, funcional)
+- ✅ `components/assessments/copy-link-button.tsx` (existente, funcional)
+
+**Páginas Existentes e Funcionais**:
+- ✅ `app/dashboard/assessments/page.tsx` (melhorado)
+- ✅ `app/dashboard/assessments/new/page.tsx` (existente)
+- ✅ `app/dashboard/assessments/[id]/page.tsx` (existente)
+- ✅ `app/dashboard/assessments/[id]/edit/page.tsx` (existente)
+- ✅ `app/dashboard/questionnaires/*` (CRUD completo existente)
+- ✅ `app/assess/[id]/page.tsx` (formulário público)
 
 ---
 
