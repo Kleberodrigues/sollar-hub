@@ -1,14 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Progress } from "@/components/ui/progress";
 import { createClient } from "@/lib/supabase/client";
-import { Send, CheckCircle } from "lucide-react";
+import { Send, CheckCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 
 interface Question {
@@ -33,9 +34,22 @@ export function AssessmentResponseForm({
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [currentStep, setCurrentStep] = useState(0);
 
   // Estado para armazenar respostas
   const [responses, setResponses] = useState<Record<string, any>>({});
+
+  // Calcular progresso
+  const answeredCount = Object.keys(responses).filter(
+    (key) => responses[key] !== undefined && responses[key] !== "" &&
+    (Array.isArray(responses[key]) ? responses[key].length > 0 : true)
+  ).length;
+  const progressPercentage = (answeredCount / questions.length) * 100;
+
+  // Scroll to top on step change
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [currentStep]);
 
   function handleResponseChange(questionId: string, value: any) {
     setResponses((prev) => ({
@@ -55,6 +69,22 @@ export function AssessmentResponseForm({
       [questionId]: newValue,
     }));
   }
+
+  function handleNext() {
+    if (currentStep < questions.length - 1) {
+      setCurrentStep(currentStep + 1);
+    }
+  }
+
+  function handlePrevious() {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
+  }
+
+  const currentQuestion = questions[currentStep];
+  const isLastQuestion = currentStep === questions.length - 1;
+  const isFirstQuestion = currentStep === 0;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -135,66 +165,84 @@ export function AssessmentResponseForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      {questions.map((question, index) => (
-        <Card key={question.id}>
+    <div className="space-y-6">
+      {/* Progress Bar */}
+      <Card>
+        <CardContent className="pt-6">
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm">
+              <span className="font-medium text-text-heading">
+                Pergunta {currentStep + 1} de {questions.length}
+              </span>
+              <span className="text-text-muted">
+                {answeredCount} de {questions.length} respondidas
+              </span>
+            </div>
+            <Progress value={progressPercentage} className="h-2" />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Current Question */}
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <Card key={currentQuestion.id}>
           <CardContent className="pt-6">
             <div className="mb-4">
               <Label className="text-base font-semibold">
-                {index + 1}. {question.question_text}
-                {question.is_required && (
+                {currentStep + 1}. {currentQuestion.question_text}
+                {currentQuestion.is_required && (
                   <span className="text-red-500 ml-1">*</span>
                 )}
               </Label>
             </div>
 
             {/* Text */}
-            {question.question_type === "text" && (
+            {currentQuestion.question_type === "text" && (
               <Input
-                value={responses[question.id] || ""}
+                value={responses[currentQuestion.id] || ""}
                 onChange={(e) =>
-                  handleResponseChange(question.id, e.target.value)
+                  handleResponseChange(currentQuestion.id, e.target.value)
                 }
                 placeholder="Digite sua resposta..."
-                required={question.is_required}
+                required={currentQuestion.is_required}
                 disabled={loading}
               />
             )}
 
             {/* Textarea */}
-            {question.question_type === "textarea" && (
+            {currentQuestion.question_type === "textarea" && (
               <Textarea
-                value={responses[question.id] || ""}
+                value={responses[currentQuestion.id] || ""}
                 onChange={(e) =>
-                  handleResponseChange(question.id, e.target.value)
+                  handleResponseChange(currentQuestion.id, e.target.value)
                 }
                 placeholder="Digite sua resposta..."
                 rows={4}
-                required={question.is_required}
+                required={currentQuestion.is_required}
                 disabled={loading}
               />
             )}
 
             {/* Single Choice */}
-            {question.question_type === "single_choice" && (
+            {currentQuestion.question_type === "single_choice" && (
               <div className="space-y-2">
-                {question.options?.map((option, idx) => (
+                {currentQuestion.options?.map((option, idx) => (
                   <div key={idx} className="flex items-center">
                     <input
                       type="radio"
-                      id={`${question.id}-${idx}`}
-                      name={question.id}
+                      id={`${currentQuestion.id}-${idx}`}
+                      name={currentQuestion.id}
                       value={option}
-                      checked={responses[question.id] === option}
+                      checked={responses[currentQuestion.id] === option}
                       onChange={(e) =>
-                        handleResponseChange(question.id, e.target.value)
+                        handleResponseChange(currentQuestion.id, e.target.value)
                       }
-                      required={question.is_required}
+                      required={currentQuestion.is_required}
                       disabled={loading}
                       className="w-4 h-4 text-sollar-green-dark"
                     />
                     <Label
-                      htmlFor={`${question.id}-${idx}`}
+                      htmlFor={`${currentQuestion.id}-${idx}`}
                       className="ml-2 font-normal cursor-pointer"
                     >
                       {option}
@@ -205,22 +253,22 @@ export function AssessmentResponseForm({
             )}
 
             {/* Multiple Choice */}
-            {question.question_type === "multiple_choice" && (
+            {currentQuestion.question_type === "multiple_choice" && (
               <div className="space-y-2">
-                {question.options?.map((option, idx) => (
+                {currentQuestion.options?.map((option, idx) => (
                   <div key={idx} className="flex items-center">
                     <input
                       type="checkbox"
-                      id={`${question.id}-${idx}`}
-                      checked={(responses[question.id] || []).includes(option)}
+                      id={`${currentQuestion.id}-${idx}`}
+                      checked={(responses[currentQuestion.id] || []).includes(option)}
                       onChange={() =>
-                        handleMultipleChoiceChange(question.id, option)
+                        handleMultipleChoiceChange(currentQuestion.id, option)
                       }
                       disabled={loading}
                       className="w-4 h-4 text-sollar-green-dark rounded"
                     />
                     <Label
-                      htmlFor={`${question.id}-${idx}`}
+                      htmlFor={`${currentQuestion.id}-${idx}`}
                       className="ml-2 font-normal cursor-pointer"
                     >
                       {option}
@@ -231,26 +279,26 @@ export function AssessmentResponseForm({
             )}
 
             {/* Likert Scale */}
-            {(question.question_type === "likert_5" ||
-              question.question_type === "likert_7") && (
+            {(currentQuestion.question_type === "likert_5" ||
+              currentQuestion.question_type === "likert_7") && (
               <div className="space-y-2">
-                {question.options?.map((option, idx) => (
+                {currentQuestion.options?.map((option, idx) => (
                   <div key={idx} className="flex items-center">
                     <input
                       type="radio"
-                      id={`${question.id}-${idx}`}
-                      name={question.id}
+                      id={`${currentQuestion.id}-${idx}`}
+                      name={currentQuestion.id}
                       value={option}
-                      checked={responses[question.id] === option}
+                      checked={responses[currentQuestion.id] === option}
                       onChange={(e) =>
-                        handleResponseChange(question.id, e.target.value)
+                        handleResponseChange(currentQuestion.id, e.target.value)
                       }
-                      required={question.is_required}
+                      required={currentQuestion.is_required}
                       disabled={loading}
                       className="w-4 h-4 text-sollar-green-dark"
                     />
                     <Label
-                      htmlFor={`${question.id}-${idx}`}
+                      htmlFor={`${currentQuestion.id}-${idx}`}
                       className="ml-2 font-normal cursor-pointer"
                     >
                       {option}
@@ -261,63 +309,94 @@ export function AssessmentResponseForm({
             )}
 
             {/* Number */}
-            {question.question_type === "number" && (
+            {currentQuestion.question_type === "number" && (
               <Input
                 type="number"
-                value={responses[question.id] || ""}
+                value={responses[currentQuestion.id] || ""}
                 onChange={(e) =>
-                  handleResponseChange(question.id, e.target.value)
+                  handleResponseChange(currentQuestion.id, e.target.value)
                 }
                 placeholder="Digite um número..."
-                required={question.is_required}
+                required={currentQuestion.is_required}
                 disabled={loading}
               />
             )}
 
             {/* Date */}
-            {question.question_type === "date" && (
+            {currentQuestion.question_type === "date" && (
               <Input
                 type="date"
-                value={responses[question.id] || ""}
+                value={responses[currentQuestion.id] || ""}
                 onChange={(e) =>
-                  handleResponseChange(question.id, e.target.value)
+                  handleResponseChange(currentQuestion.id, e.target.value)
                 }
-                required={question.is_required}
+                required={currentQuestion.is_required}
                 disabled={loading}
               />
             )}
           </CardContent>
         </Card>
-      ))}
 
-      {/* Erro */}
-      {error && (
-        <Card className="border-red-200 bg-red-50">
-          <CardContent className="py-4">
-            <p className="text-sm text-red-800">{error}</p>
+        {/* Erro */}
+        {error && (
+          <Card className="border-red-200 bg-red-50">
+            <CardContent className="py-4">
+              <p className="text-sm text-red-800">{error}</p>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Botões de Navegação */}
+        <Card>
+          <CardContent className="py-6">
+            <div className="flex gap-4">
+              {/* Botão Anterior */}
+              <Button
+                type="button"
+                onClick={handlePrevious}
+                disabled={isFirstQuestion || loading}
+                variant="outline"
+                size="lg"
+                className="flex-1"
+              >
+                <ChevronLeft className="w-5 h-5 mr-2" />
+                Anterior
+              </Button>
+
+              {/* Botão Próximo ou Enviar */}
+              {isLastQuestion ? (
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="flex-1 gap-2"
+                  size="lg"
+                >
+                  <Send className="w-5 h-5" />
+                  {loading ? "Enviando..." : "Enviar Respostas"}
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  onClick={handleNext}
+                  disabled={loading}
+                  size="lg"
+                  className="flex-1"
+                >
+                  Próxima
+                  <ChevronRight className="w-5 h-5 ml-2" />
+                </Button>
+              )}
+            </div>
+
+            {isLastQuestion && (
+              <p className="text-xs text-text-muted text-center mt-4">
+                Ao enviar, você confirma que suas respostas são anônimas e serão
+                usadas apenas para fins de análise organizacional.
+              </p>
+            )}
           </CardContent>
         </Card>
-      )}
-
-      {/* Botão de envio */}
-      <Card>
-        <CardContent className="py-6">
-          <Button
-            type="submit"
-            disabled={loading}
-            className="w-full gap-2"
-            size="lg"
-          >
-            <Send className="w-5 h-5" />
-            {loading ? "Enviando..." : "Enviar Respostas"}
-          </Button>
-
-          <p className="text-xs text-text-muted text-center mt-4">
-            Ao enviar, você confirma que suas respostas são anônimas e serão
-            usadas apenas para fins de análise organizacional.
-          </p>
-        </CardContent>
-      </Card>
-    </form>
+      </form>
+    </div>
   );
 }
