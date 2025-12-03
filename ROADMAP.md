@@ -8,16 +8,17 @@
 
 ## 📊 Progresso Geral
 
-**Última Atualização**: 2025-12-02 (Atualização Final)
+**Última Atualização**: 2025-12-03 (Fase 4 Completa)
 
 ```
-[█████████████████░░░] 85% Concluído
+[████████████████████░] 90% Concluído
 
 ✅ Setup Inicial (100%)
 ✅ Segurança RLS (100%) - PERFEITO!
 ✅ Schema Database (100%) - MIGRATIONS FORMAIS CRIADAS!
 ✅ Componentes Base (100%) - 21 COMPONENTES UI INSTALADOS!
 ✅ Autenticação (100%) - FASE 3 COMPLETA! 🎉
+✅ Dashboard Layout (100%) - FASE 4 COMPLETA! 🎯
 ⏳ Features Core (0%)
 ⬜ Integrações (0%)
 ```
@@ -248,36 +249,56 @@
 **Prioridade**: ALTA
 **Tempo estimado**: 3-4 horas
 **Dependências**: Fase 1, 3
+**Status**: ✅ **100% Concluído**
 
-### 4.1 Layout Dashboard
-- [ ] Sidebar component
-  - [ ] Logo Sollar
-  - [ ] Menu items
-  - [ ] User dropdown (avatar + nome)
-  - [ ] Logout button
-- [ ] Header component
-  - [ ] Breadcrumbs
-  - [ ] Search (futuro)
-  - [ ] Notifications (futuro)
-- [ ] Layout (dashboard)/layout.tsx
+### 4.1 Layout Dashboard ✅
+- [x] ✅ Sidebar component (`components/layout/sidebar.tsx`)
+  - [x] Logo Sollar
+  - [x] Menu items com role-based visibility
+  - [x] Active state highlighting
+  - [x] Badge de role do usuário
+- [x] ✅ Header component (`components/layout/dashboard-header.tsx`)
+  - [x] Breadcrumbs dinâmicos baseados em rota
+  - [x] User info (nome + organização)
+  - [x] Logout button integrado com useAuth
+  - [x] Notifications button (estrutura)
+- [x] ✅ Layout (`app/dashboard/layout.tsx`)
+  - [x] Server component com autenticação
+  - [x] Client wrapper para interatividade
+- [x] ✅ Mobile responsiveness
+  - [x] Mobile sidebar com overlay
+  - [x] Menu hamburguer
+  - [x] Responsive header
+  - [x] Breakpoints lg: desktop, md: tablet
 
-### 4.2 Dashboard Home (/dashboard)
-- [ ] Cards de métricas
-  - [ ] Total diagnósticos
-  - [ ] Diagnósticos ativos
-  - [ ] Taxa de resposta média
-  - [ ] Alertas de risco alto
-- [ ] Gráfico: diagnósticos por mês
-- [ ] Lista: diagnósticos recentes
-- [ ] Lista: alertas recentes
+### 4.2 Dashboard Home (/dashboard) ✅
+- [x] ✅ Cards de métricas (`app/dashboard/page.tsx`)
+  - [x] Questionários (total)
+  - [x] Assessments ativos
+  - [x] Respostas coletadas
+  - [x] Membros da equipe
+- [x] ✅ Cards informativos
+  - [x] Primeiros Passos (onboarding)
+  - [x] Próximas Ações
+  - [x] Informações do Perfil
 
-### 4.3 Navegação
-- [ ] Menu items:
-  - [ ] Home
-  - [ ] Diagnósticos
-  - [ ] Pulse Surveys
-  - [ ] Relatórios
-  - [ ] Configurações
+### 4.3 Navegação ✅
+- [x] ✅ Menu items com role-based access:
+  - [x] Dashboard (todos)
+  - [x] Questionários (admin, manager)
+  - [x] Assessments (todos)
+  - [x] Análise de Riscos (admin, manager, viewer)
+  - [x] Departamentos (admin, manager)
+  - [x] Usuários (admin only) 🆕
+  - [x] Configurações (admin only)
+
+**Arquivos Criados/Modificados**:
+- ✅ `components/layout/sidebar.tsx` (melhorado - link Usuários)
+- ✅ `components/layout/dashboard-header.tsx` (melhorado - breadcrumbs + useAuth)
+- ✅ `components/layout/dashboard-layout-client.tsx` (novo - wrapper client)
+- ✅ `components/layout/mobile-sidebar.tsx` (novo - responsividade)
+- ✅ `app/dashboard/layout.tsx` (melhorado - integração mobile)
+- ✅ `app/dashboard/page.tsx` (existente, funcional)
 
 ---
 
