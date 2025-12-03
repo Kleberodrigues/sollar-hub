@@ -9,6 +9,7 @@ import {
 } from "@/app/dashboard/analytics/actions";
 import { CategoryScoresChart } from "./category-scores-chart";
 import { QuestionDistributionCharts } from "./question-distribution-charts";
+import { ExportButtons } from "./export-buttons";
 import { Users, FileText, TrendingUp, Calendar } from "lucide-react";
 
 interface AnalyticsDashboardProps {
@@ -38,6 +39,13 @@ export async function AnalyticsDashboard({
 
   return (
     <div className="space-y-6">
+      {/* Export Buttons */}
+      {hasResponses && (
+        <div className="flex justify-end">
+          <ExportButtons assessmentId={assessmentId} />
+        </div>
+      )}
+
       {/* Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Total Participants */}
