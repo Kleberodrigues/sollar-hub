@@ -46,8 +46,8 @@ export default async function AssessmentPage({
         description,
         questions (
           id,
-          question_text,
-          question_type
+          text,
+          type
         )
       ),
       departments (

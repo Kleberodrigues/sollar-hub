@@ -99,7 +99,7 @@ export async function getAssessmentAnalytics(
       responses?.map((r) => r.anonymous_id) || []
     ).size;
     const totalQuestions =
-      assessment.questionnaires?.questions?.length || 0;
+      assessment.questionnaires?.[0]?.questions?.length || 0;
     const totalResponses = responses?.length || 0;
     const completionRate =
       totalQuestions > 0
@@ -289,7 +289,7 @@ export async function getAllQuestionsDistribution(
       return [];
     }
 
-    const questions = assessment.questionnaires?.questions || [];
+    const questions = assessment.questionnaires?.[0]?.questions || [];
     const distributions: QuestionDistribution[] = [];
 
     // Get distribution for each question

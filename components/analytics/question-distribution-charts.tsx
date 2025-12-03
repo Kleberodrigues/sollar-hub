@@ -57,7 +57,7 @@ export function QuestionDistributionCharts({
         <div className="flex-1 min-w-[200px]">
           <select
             value={selectedQuestionIndex}
-            onChange={(e) => setSelectedQuestionIndex(Number(e.target_value))}
+            onChange={(e) => setSelectedQuestionIndex(Number(e.target.value))}
             className="w-full px-4 py-2 bg-background border border-border rounded-lg text-text-heading focus:outline-none focus:ring-2 focus:ring-primary"
           >
             {distributions.map((dist, index) => (
@@ -72,7 +72,7 @@ export function QuestionDistributionCharts({
         {/* Chart Type Toggle */}
         <div className="flex gap-2">
           <Button
-            variant={chartType === "bar" ? "default" : "outline"}
+            variant={chartType === "bar" ? "primary" : "outline"}
             size="sm"
             onClick={() => setChartType("bar")}
             className="gap-2"
@@ -81,7 +81,7 @@ export function QuestionDistributionCharts({
             Barras
           </Button>
           <Button
-            variant={chartType === "pie" ? "default" : "outline"}
+            variant={chartType === "pie" ? "primary" : "outline"}
             size="sm"
             onClick={() => setChartType("pie")}
             className="gap-2"

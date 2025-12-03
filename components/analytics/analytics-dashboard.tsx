@@ -149,7 +149,7 @@ export async function AnalyticsDashboard({
                       </h3>
                       <Badge
                         className={getRiskLevelColor(category.riskLevel)}
-                        variant="secondary"
+                        variant="outline"
                       >
                         {getRiskLevelLabel(category.riskLevel)}
                       </Badge>

@@ -87,7 +87,7 @@ export default async function AnalyticsPage({
           Análise de Dados
         </h1>
         <p className="text-text-secondary">
-          {assessment.title} - {assessment.questionnaires?.title}
+          {assessment.title} - {assessment.questionnaires?.[0]?.title}
         </p>
       </div>
 
