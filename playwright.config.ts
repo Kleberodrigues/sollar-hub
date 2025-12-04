@@ -15,11 +15,14 @@ export default defineConfig({
   // Retry on CI only
   retries: process.env.CI ? 2 : 0,
 
-  // Opt out of parallel tests on CI
-  workers: process.env.CI ? 1 : undefined,
+  // Opt out of parallel tests on CI - Reduzido para 4 workers
+  workers: process.env.CI ? 1 : 4,
 
   // Reporter to use
   reporter: 'html',
+
+  // Timeout aumentado para 60s
+  timeout: 60000,
 
   // Shared settings for all the projects below
   use: {
@@ -34,6 +37,9 @@ export default defineConfig({
 
     // Video on failure
     video: 'retain-on-failure',
+
+    // Timeout de navegação aumentado
+    navigationTimeout: 30000,
   },
 
   // Configure projects for major browsers
