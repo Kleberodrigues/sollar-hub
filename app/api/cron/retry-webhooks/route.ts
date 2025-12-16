@@ -1,6 +1,6 @@
 /**
  * Cron Job: Retry Failed Webhooks
- * Runs every 15 minutes via Vercel Cron
+ * Runs daily at 6:00 AM UTC via Vercel Cron (free tier limit)
  *
  * Vercel Cron requires the endpoint to be protected.
  * The CRON_SECRET environment variable should be set in Vercel.
