@@ -1,0 +1,294 @@
+{
+  "name": "Sollar Hub Central",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sollar-events",
+        "options": {}
+      },
+      "id": "cf167fe7-ea70-41ac-8133-a8d1ce733ead",
+      "name": "Webhook Sollar",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-576, 352],
+      "webhookId": "sollar-events"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "condition-activated",
+              "leftValue": "={{ $json.event_type }}",
+              "rightValue": "diagnostic.activated",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "d5f3238a-b0db-4627-bdfc-7f595a7cc87c",
+      "name": "É Ativação?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [-304, 16]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "condition-response",
+              "leftValue": "={{ $json.event_type }}",
+              "rightValue": "diagnostic.response_received",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "9f6da5f7-2b2f-4854-948c-31132f85bc1f",
+      "name": "É Resposta?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [-304, 352]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "condition-risk",
+              "leftValue": "={{ $json.event_type }}",
+              "rightValue": "risk.threshold.exceeded",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "f32a9d9b-ab6f-43ad-9249-a5e1bc161e44",
+      "name": "É Risco?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [-320, 656]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "assign-status", "name": "status", "value": "activated", "type": "string" },
+            { "id": "assign-title", "name": "title", "value": "={{ $json.data.title }}", "type": "string" },
+            { "id": "assign-url", "name": "public_url", "value": "={{ $json.data.public_url }}", "type": "string" },
+            { "id": "assign-start", "name": "start_date", "value": "={{ $json.data.start_date }}", "type": "string" },
+            { "id": "assign-end", "name": "end_date", "value": "={{ $json.data.end_date || 'Sem data limite' }}", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "bd172c00-18ef-47e4-80f8-779eb545c25e",
+      "name": "Processar Ativação",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "assign-status", "name": "status", "value": "response_received", "type": "string" },
+            { "id": "assign-title", "name": "diagnostic_title", "value": "={{ $json.data.diagnostic_title }}", "type": "string" },
+            { "id": "assign-count", "name": "response_count", "value": "={{ $json.data.response_count }}", "type": "number" },
+            { "id": "assign-is-milestone", "name": "is_milestone", "value": "={{ [10, 25, 50, 100, 250, 500].includes($json.data.response_count) }}", "type": "boolean" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "51fcd1fb-aecf-497b-af1f-72cb667f51e3",
+      "name": "Processar Resposta",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [-32, 336]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "assign-status", "name": "status", "value": "risk_alert", "type": "string" },
+            { "id": "assign-title", "name": "diagnostic_title", "value": "={{ $json.data.diagnostic_title }}", "type": "string" },
+            { "id": "assign-category", "name": "category_name", "value": "={{ $json.data.category_name }}", "type": "string" },
+            { "id": "assign-score", "name": "current_score", "value": "={{ $json.data.current_score }}", "type": "number" },
+            { "id": "assign-level", "name": "risk_level", "value": "={{ $json.data.risk_level }}", "type": "string" },
+            { "id": "assign-color", "name": "color", "value": "={{ $json.data.risk_level === 'critical' ? '#DC2626' : '#F59E0B' }}", "type": "string" },
+            { "id": "assign-emoji", "name": "emoji", "value": "={{ $json.data.risk_level === 'critical' ? '🚨' : '⚠️' }}", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2a33c8ad-b97a-452c-9198-688ec3089f6c",
+      "name": "Processar Risco",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [-48, 640]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "condition-milestone",
+              "leftValue": "={{ $json.is_milestone }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "74e08aa4-3e56-4dc7-86ee-07348d785a13",
+      "name": "É Marco?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [208, 336]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Webhook Sollar').item.json.data.admin_email || 'admin@sollar.com.br' }}",
+        "subject": "=🎯 Diagnóstico Ativado: {{ $json.title }}",
+        "message": "=<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><style>body{font-family:'Segoe UI',Arial,sans-serif;background:#f5f5f5;margin:0;padding:20px}.container{max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1)}.header{background:linear-gradient(135deg,#F97316,#EA580C);padding:32px;text-align:center}.header h1{color:#fff;margin:0;font-size:24px}.content{padding:32px}.card{background:#FFF7ED;border-left:4px solid #F97316;padding:20px;border-radius:8px;margin:20px 0}.info-row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #eee}.info-label{color:#666;font-weight:500}.info-value{color:#333;font-weight:600}.btn{display:inline-block;background:#F97316;color:#fff;padding:14px 28px;text-decoration:none;border-radius:8px;font-weight:600;margin-top:20px}.footer{background:#f9f9f9;padding:20px;text-align:center;color:#666;font-size:12px}</style></head><body><div class=\"container\"><div class=\"header\"><h1>🎯 Diagnóstico Ativado!</h1></div><div class=\"content\"><p>Olá,</p><p>Um novo diagnóstico de riscos psicossociais foi <strong>ativado</strong> e está pronto para receber respostas.</p><div class=\"card\"><div class=\"info-row\"><span class=\"info-label\">Título:</span><span class=\"info-value\">{{ $json.title }}</span></div><div class=\"info-row\"><span class=\"info-label\">Início:</span><span class=\"info-value\">{{ $json.start_date }}</span></div><div class=\"info-row\"><span class=\"info-label\">Término:</span><span class=\"info-value\">{{ $json.end_date }}</span></div></div><p>Compartilhe o link abaixo com os colaboradores:</p><a href=\"{{ $json.public_url }}\" class=\"btn\">Acessar Diagnóstico</a><p style=\"margin-top:20px;color:#666;font-size:14px\">Link: {{ $json.public_url }}</p></div><div class=\"footer\"><p>Sollar Insight Hub - Avaliação de Riscos Psicossociais NR-1</p></div></div></body></html>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [448, 0],
+      "id": "2f817505-1287-4a32-81a3-912918a59b51",
+      "name": "Email Ativação",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "qUO4rhqI3RcVhau8",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Webhook Sollar').item.json.data.admin_email || 'admin@sollar.com.br' }}",
+        "subject": "=🎉 Marco Atingido: {{ $json.response_count }} respostas em {{ $json.diagnostic_title }}",
+        "message": "=<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><style>body{font-family:'Segoe UI',Arial,sans-serif;background:#f5f5f5;margin:0;padding:20px}.container{max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1)}.header{background:linear-gradient(135deg,#22C55E,#16A34A);padding:32px;text-align:center}.header h1{color:#fff;margin:0;font-size:24px}.content{padding:32px}.milestone{text-align:center;padding:40px}.milestone-number{font-size:72px;font-weight:700;color:#22C55E;line-height:1}.milestone-label{font-size:18px;color:#666;margin-top:8px}.card{background:#F0FDF4;border-left:4px solid #22C55E;padding:20px;border-radius:8px;margin:20px 0}.footer{background:#f9f9f9;padding:20px;text-align:center;color:#666;font-size:12px}</style></head><body><div class=\"container\"><div class=\"header\"><h1>🎉 Parabéns! Marco Atingido!</h1></div><div class=\"content\"><div class=\"milestone\"><div class=\"milestone-number\">{{ $json.response_count }}</div><div class=\"milestone-label\">respostas coletadas</div></div><div class=\"card\"><p><strong>Diagnóstico:</strong> {{ $json.diagnostic_title }}</p><p>Seu diagnóstico está tendo uma excelente adesão!</p></div></div><div class=\"footer\"><p>Sollar Insight Hub - Avaliação de Riscos Psicossociais NR-1</p></div></div></body></html>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [464, 320],
+      "id": "3f6ac754-f4a8-4a56-9db4-be83cf0c4a9d",
+      "name": "Email Marco",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "qUO4rhqI3RcVhau8",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Webhook Sollar').item.json.data.admin_email || 'admin@sollar.com.br' }}",
+        "subject": "={{ $json.emoji }} ALERTA DE RISCO {{ $json.risk_level.toUpperCase() }}: {{ $json.category_name }}",
+        "message": "=<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><style>body{font-family:'Segoe UI',Arial,sans-serif;background:#f5f5f5;margin:0;padding:20px}.container{max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1)}.header{background:{{ $json.color }};padding:32px;text-align:center}.header h1{color:#fff;margin:0;font-size:24px}.content{padding:32px}.alert-box{background:{{ $json.risk_level === 'critical' ? '#FEF2F2' : '#FFFBEB' }};border:2px solid {{ $json.color }};padding:24px;border-radius:12px;text-align:center;margin:20px 0}.alert-level{font-size:14px;font-weight:600;color:{{ $json.color }};text-transform:uppercase}.alert-category{font-size:28px;font-weight:700;color:#1a1a1a;margin:12px 0}.alert-score{font-size:48px;font-weight:700;color:{{ $json.color }}}.info-card{background:#f9f9f9;padding:20px;border-radius:8px;margin:20px 0}.footer{background:#f9f9f9;padding:20px;text-align:center;color:#666;font-size:12px}</style></head><body><div class=\"container\"><div class=\"header\"><h1>{{ $json.emoji }} Alerta de Risco</h1></div><div class=\"content\"><div class=\"alert-box\"><div class=\"alert-level\">Nível {{ $json.risk_level === 'critical' ? 'Crítico' : 'Alto' }}</div><div class=\"alert-category\">{{ $json.category_name }}</div><div class=\"alert-score\">{{ $json.current_score.toFixed(1) }}</div></div><div class=\"info-card\"><p><strong>Diagnóstico:</strong> {{ $json.diagnostic_title }}</p></div></div><div class=\"footer\"><p>Sollar Insight Hub - NR-1</p></div></div></body></html>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [464, 640],
+      "id": "98ebf760-f59c-4021-a57f-4f2c63554efc",
+      "name": "Email Risco",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "qUO4rhqI3RcVhau8",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook Sollar": {
+      "main": [[
+        { "node": "É Ativação?", "type": "main", "index": 0 },
+        { "node": "É Resposta?", "type": "main", "index": 0 },
+        { "node": "É Risco?", "type": "main", "index": 0 }
+      ]]
+    },
+    "É Ativação?": {
+      "main": [
+        [{ "node": "Processar Ativação", "type": "main", "index": 0 }],
+        []
+      ]
+    },
+    "É Resposta?": {
+      "main": [
+        [{ "node": "Processar Resposta", "type": "main", "index": 0 }],
+        []
+      ]
+    },
+    "É Risco?": {
+      "main": [
+        [{ "node": "Processar Risco", "type": "main", "index": 0 }],
+        []
+      ]
+    },
+    "Processar Ativação": {
+      "main": [[{ "node": "Email Ativação", "type": "main", "index": 0 }]]
+    },
+    "Processar Resposta": {
+      "main": [[{ "node": "É Marco?", "type": "main", "index": 0 }]]
+    },
+    "Processar Risco": {
+      "main": [[{ "node": "Email Risco", "type": "main", "index": 0 }]]
+    },
+    "É Marco?": {
+      "main": [
+        [{ "node": "Email Marco", "type": "main", "index": 0 }],
+        []
+      ]
+    }
+  },
+  "meta": {
+    "instanceId": "632424cba7a667ad4601310f9152dfa37ddffdc69219851258d4e0904fa17d9a"
+  }
+}

@@ -1,0 +1,191 @@
+{
+  "name": "Sollar - Assessment Ativado",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sollar-activated",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook Sollar",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 300],
+      "webhookId": "sollar-activated"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "condition-activated",
+              "leftValue": "={{ $json.event_type }}",
+              "rightValue": "diagnostic.activated",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "filter-activated",
+      "name": "É Ativação?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "assign-title",
+              "name": "title",
+              "value": "={{ $json.data.title }}",
+              "type": "string"
+            },
+            {
+              "id": "assign-url",
+              "name": "public_url",
+              "value": "={{ $json.data.public_url }}",
+              "type": "string"
+            },
+            {
+              "id": "assign-start",
+              "name": "start_date",
+              "value": "={{ $json.data.start_date }}",
+              "type": "string"
+            },
+            {
+              "id": "assign-end",
+              "name": "end_date",
+              "value": "={{ $json.data.end_date || 'Sem data limite' }}",
+              "type": "string"
+            },
+            {
+              "id": "assign-org",
+              "name": "organization_id",
+              "value": "={{ $json.organization_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "set-variables",
+      "name": "Extrair Dados",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [690, 200]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $env.NOTIFICATION_EMAIL || 'gestores@empresa.com' }}",
+        "subject": "=🎯 Novo Assessment Ativado: {{ $json.title }}",
+        "emailType": "html",
+        "message": "=<html>\n<body style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;\">\n  <div style=\"background: linear-gradient(135deg, #F97316 0%, #EA580C 100%); padding: 30px; text-align: center;\">\n    <h1 style=\"color: white; margin: 0;\">Sollar Insight Hub</h1>\n  </div>\n  \n  <div style=\"padding: 30px; background: #f9fafb;\">\n    <h2 style=\"color: #1f2937;\">📋 Novo Assessment Ativado</h2>\n    \n    <div style=\"background: white; border-radius: 8px; padding: 20px; margin: 20px 0; border-left: 4px solid #F97316;\">\n      <h3 style=\"margin-top: 0; color: #374151;\">{{ $json.title }}</h3>\n      <p><strong>Período:</strong> {{ $json.start_date }} até {{ $json.end_date }}</p>\n    </div>\n    \n    <div style=\"text-align: center; margin: 30px 0;\">\n      <a href=\"{{ $json.public_url }}\" style=\"background: #F97316; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold;\">\n        Acessar Assessment\n      </a>\n    </div>\n    \n    <p style=\"color: #6b7280; font-size: 14px;\">\n      Compartilhe o link acima com os participantes do assessment.\n    </p>\n  </div>\n  \n  <div style=\"padding: 20px; text-align: center; background: #1f2937; color: #9ca3af; font-size: 12px;\">\n    <p>Este é um email automático do Sollar Insight Hub</p>\n  </div>\n</body>\n</html>",
+        "options": {}
+      },
+      "id": "send-email",
+      "name": "Enviar Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [910, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: true, message: 'Notification sent', event_type: $('Webhook Sollar').item.json.event_type }) }}",
+        "options": {}
+      },
+      "id": "respond-webhook",
+      "name": "Responder Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1130, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: true, message: 'Event ignored - not diagnostic.activated', event_type: $('Webhook Sollar').item.json.event_type }) }}",
+        "options": {}
+      },
+      "id": "respond-ignored",
+      "name": "Ignorar Evento",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [690, 400]
+    }
+  ],
+  "connections": {
+    "Webhook Sollar": {
+      "main": [
+        [
+          {
+            "node": "É Ativação?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "É Ativação?": {
+      "main": [
+        [
+          {
+            "node": "Extrair Dados",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Ignorar Evento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extrair Dados": {
+      "main": [
+        [
+          {
+            "node": "Enviar Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Email": {
+      "main": [
+        [
+          {
+            "node": "Responder Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "Sollar"
+    }
+  ]
+}

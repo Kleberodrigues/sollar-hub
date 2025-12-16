@@ -1,0 +1,305 @@
+{
+  "name": "Sollar - Alerta Risco Crítico",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sollar-risk-alert",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook Sollar",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 300],
+      "webhookId": "sollar-risk-alert"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "condition-risk",
+              "leftValue": "={{ $json.event_type }}",
+              "rightValue": "risk.threshold.exceeded",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "filter-risk",
+      "name": "É Alerta de Risco?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "condition-critical",
+              "leftValue": "={{ $json.data.risk_level }}",
+              "rightValue": "critical",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-critical",
+      "name": "É Crítico?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [690, 300]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "assign-title",
+              "name": "diagnostic_title",
+              "value": "={{ $json.data.diagnostic_title }}",
+              "type": "string"
+            },
+            {
+              "id": "assign-category",
+              "name": "category_name",
+              "value": "={{ $json.data.category_name }}",
+              "type": "string"
+            },
+            {
+              "id": "assign-score",
+              "name": "current_score",
+              "value": "={{ $json.data.current_score }}",
+              "type": "number"
+            },
+            {
+              "id": "assign-level",
+              "name": "risk_level",
+              "value": "={{ $json.data.risk_level }}",
+              "type": "string"
+            },
+            {
+              "id": "assign-emoji",
+              "name": "emoji",
+              "value": "={{ $json.data.risk_level === 'critical' ? '🚨' : '⚠️' }}",
+              "type": "string"
+            },
+            {
+              "id": "assign-color",
+              "name": "color",
+              "value": "={{ $json.data.risk_level === 'critical' ? '#DC2626' : '#F59E0B' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "set-critical-vars",
+      "name": "Dados Crítico",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [910, 200]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "assign-title",
+              "name": "diagnostic_title",
+              "value": "={{ $json.data.diagnostic_title }}",
+              "type": "string"
+            },
+            {
+              "id": "assign-category",
+              "name": "category_name",
+              "value": "={{ $json.data.category_name }}",
+              "type": "string"
+            },
+            {
+              "id": "assign-score",
+              "name": "current_score",
+              "value": "={{ $json.data.current_score }}",
+              "type": "number"
+            },
+            {
+              "id": "assign-level",
+              "name": "risk_level",
+              "value": "={{ $json.data.risk_level }}",
+              "type": "string"
+            },
+            {
+              "id": "assign-emoji",
+              "name": "emoji",
+              "value": "=⚠️",
+              "type": "string"
+            },
+            {
+              "id": "assign-color",
+              "name": "color",
+              "value": "=#F59E0B",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "set-high-vars",
+      "name": "Dados Alto",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [910, 400]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $env.ALERT_EMAIL || 'diretoria@empresa.com' }}",
+        "subject": "={{ $json.emoji }} ALERTA {{ $json.risk_level.toUpperCase() }}: {{ $json.category_name }}",
+        "emailType": "html",
+        "message": "=<html>\n<body style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;\">\n  <div style=\"background: {{ $json.color }}; padding: 30px; text-align: center;\">\n    <h1 style=\"color: white; margin: 0;\">{{ $json.emoji }} ALERTA DE RISCO {{ $json.risk_level.toUpperCase() }}</h1>\n  </div>\n  \n  <div style=\"padding: 30px; background: #f9fafb;\">\n    <h2 style=\"color: #1f2937;\">Categoria com Risco Elevado Detectada</h2>\n    \n    <div style=\"background: white; border-radius: 8px; padding: 20px; margin: 20px 0; border-left: 4px solid {{ $json.color }};\">\n      <h3 style=\"margin-top: 0; color: #374151;\">{{ $json.diagnostic_title }}</h3>\n      <table style=\"width: 100%; border-collapse: collapse;\">\n        <tr>\n          <td style=\"padding: 10px 0; border-bottom: 1px solid #e5e7eb;\"><strong>Categoria:</strong></td>\n          <td style=\"padding: 10px 0; border-bottom: 1px solid #e5e7eb;\">{{ $json.category_name }}</td>\n        </tr>\n        <tr>\n          <td style=\"padding: 10px 0; border-bottom: 1px solid #e5e7eb;\"><strong>Score Atual:</strong></td>\n          <td style=\"padding: 10px 0; border-bottom: 1px solid #e5e7eb;\"><span style=\"font-size: 24px; font-weight: bold; color: {{ $json.color }};\">{{ $json.current_score.toFixed(2) }}</span> / 5.0</td>\n        </tr>\n        <tr>\n          <td style=\"padding: 10px 0;\"><strong>Nível de Risco:</strong></td>\n          <td style=\"padding: 10px 0;\"><span style=\"background: {{ $json.color }}; color: white; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; font-size: 12px; font-weight: bold;\">{{ $json.risk_level }}</span></td>\n        </tr>\n      </table>\n    </div>\n    \n    <div style=\"background: #FEF3C7; border-radius: 8px; padding: 15px; margin: 20px 0;\">\n      <p style=\"margin: 0; color: #92400E;\"><strong>⚡ Ação Recomendada:</strong></p>\n      <p style=\"margin: 10px 0 0; color: #92400E;\">Este score indica necessidade de intervenção. Recomenda-se análise detalhada dos dados e ação preventiva junto às equipes afetadas.</p>\n    </div>\n  </div>\n  \n  <div style=\"padding: 20px; text-align: center; background: #1f2937; color: #9ca3af; font-size: 12px;\">\n    <p>Alerta automático do Sollar Insight Hub - NR-1 Compliance</p>\n  </div>\n</body>\n</html>",
+        "options": {}
+      },
+      "id": "send-alert-email",
+      "name": "Enviar Alerta Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [1130, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: true, message: 'Risk alert sent', risk_level: $json.risk_level, category: $json.category_name }) }}",
+        "options": {}
+      },
+      "id": "respond-webhook",
+      "name": "Responder Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1350, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: true, message: 'Event ignored - not risk alert', event_type: $('Webhook Sollar').item.json.event_type }) }}",
+        "options": {}
+      },
+      "id": "respond-ignored",
+      "name": "Ignorar Evento",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [690, 500]
+    }
+  ],
+  "connections": {
+    "Webhook Sollar": {
+      "main": [
+        [
+          {
+            "node": "É Alerta de Risco?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "É Alerta de Risco?": {
+      "main": [
+        [
+          {
+            "node": "É Crítico?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Ignorar Evento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "É Crítico?": {
+      "main": [
+        [
+          {
+            "node": "Dados Crítico",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Dados Alto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dados Crítico": {
+      "main": [
+        [
+          {
+            "node": "Enviar Alerta Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dados Alto": {
+      "main": [
+        [
+          {
+            "node": "Enviar Alerta Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Alerta Email": {
+      "main": [
+        [
+          {
+            "node": "Responder Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "Sollar"
+    }
+  ]
+}

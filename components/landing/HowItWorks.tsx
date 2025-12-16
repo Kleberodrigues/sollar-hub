@@ -1,0 +1,101 @@
+'use client';
+
+import { motion, useInView } from "framer-motion";
+import { useRef } from "react";
+import { PenTool, Send, TrendingUp, ArrowRight } from "lucide-react";
+
+const steps = [
+  {
+    number: "01",
+    icon: PenTool,
+    title: "Crie seu Diagnóstico",
+    description:
+      "Escolha entre modelos NR-1 pré-configurados ou crie questionários personalizados para sua organização.",
+  },
+  {
+    number: "02",
+    icon: Send,
+    title: "Aplique aos Colaboradores",
+    description:
+      "Compartilhe o link anônimo por email, WhatsApp ou intranet. Acompanhe a participação em tempo real.",
+  },
+  {
+    number: "03",
+    icon: TrendingUp,
+    title: "Analise e Aja",
+    description:
+      "Visualize dashboards interativos, identifique áreas de risco e gere relatórios executivos automaticamente.",
+  },
+];
+
+export function HowItWorks() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+  return (
+    <section className="py-24 bg-white" ref={ref}>
+      <div className="container mx-auto px-6">
+        {/* Section Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.5 }}
+          className="text-center max-w-3xl mx-auto mb-16"
+        >
+          <h2 className="font-display text-3xl md:text-4xl font-bold text-text-heading mb-4">
+            Como funciona
+          </h2>
+          <p className="text-lg text-text-secondary">
+            Em três passos simples, você terá um diagnóstico completo da saúde
+            organizacional da sua empresa.
+          </p>
+        </motion.div>
+
+        {/* Steps */}
+        <div className="grid md:grid-cols-3 gap-8 relative">
+          {/* Connection Line (desktop) */}
+          <div className="hidden md:block absolute top-24 left-1/6 right-1/6 h-0.5 bg-gradient-to-r from-pm-olive via-pm-terracotta to-pm-green-dark" />
+
+          {steps.map((step, index) => {
+            const Icon = step.icon;
+
+            return (
+              <motion.div
+                key={step.number}
+                initial={{ opacity: 0, y: 30 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.5, delay: index * 0.2 }}
+                className="relative text-center"
+              >
+                {/* Step Number Circle */}
+                <div className="relative inline-flex items-center justify-center mb-6">
+                  <div className="w-20 h-20 bg-white border-4 border-pm-olive rounded-full flex items-center justify-center shadow-lg relative z-10">
+                    <Icon className="w-8 h-8 text-pm-olive" />
+                  </div>
+                  <span className="absolute -top-2 -right-2 w-8 h-8 bg-pm-terracotta text-white rounded-full flex items-center justify-center text-sm font-bold">
+                    {step.number}
+                  </span>
+                </div>
+
+                {/* Content */}
+                <h3 className="font-display text-xl font-bold text-text-heading mb-3">
+                  {step.title}
+                </h3>
+                <p className="text-text-secondary max-w-xs mx-auto">
+                  {step.description}
+                </p>
+
+                {/* Arrow (mobile) */}
+                {index < steps.length - 1 && (
+                  <div className="md:hidden flex justify-center my-6">
+                    <ArrowRight className="w-6 h-6 text-pm-olive rotate-90" />
+                  </div>
+                )}
+              </motion.div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}

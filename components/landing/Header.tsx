@@ -1,0 +1,106 @@
+'use client';
+
+import Link from "next/link";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Menu, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Logo } from "@/components/Logo";
+
+const navLinks = [
+  { href: "/precos", label: "Preços" },
+  { href: "/sobre", label: "Sobre" },
+  { href: "/privacidade", label: "Privacidade" },
+];
+
+export function Header() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  return (
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-border-light">
+      <div className="container mx-auto px-6">
+        <div className="flex items-center justify-between h-16 md:h-20">
+          {/* Logo */}
+          <Link href="/" className="flex items-center">
+            <Logo variant="default" size="md" />
+          </Link>
+
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-8">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-text-primary hover:text-pm-terracotta transition-colors font-medium"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+
+          {/* Desktop CTA */}
+          <div className="hidden md:flex items-center gap-4">
+            <Button variant="ghost" asChild>
+              <Link href="/login">Entrar</Link>
+            </Button>
+            <Button
+              className="bg-pm-terracotta hover:bg-pm-terracotta-hover"
+              asChild
+            >
+              <Link href="/register">Começar Grátis</Link>
+            </Button>
+          </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            className="md:hidden p-2"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label={isMenuOpen ? "Fechar menu" : "Abrir menu"}
+          >
+            {isMenuOpen ? (
+              <X className="w-6 h-6 text-text-primary" />
+            ) : (
+              <Menu className="w-6 h-6 text-text-primary" />
+            )}
+          </button>
+        </div>
+
+        {/* Mobile Menu */}
+        <AnimatePresence>
+          {isMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="md:hidden overflow-hidden"
+            >
+              <nav className="py-4 space-y-4">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="block text-text-primary hover:text-pm-terracotta transition-colors font-medium"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+                <div className="pt-4 space-y-2 border-t border-border-light">
+                  <Button variant="outline" className="w-full" asChild>
+                    <Link href="/login">Entrar</Link>
+                  </Button>
+                  <Button
+                    className="w-full bg-pm-terracotta hover:bg-pm-terracotta-hover"
+                    asChild
+                  >
+                    <Link href="/register">Começar Grátis</Link>
+                  </Button>
+                </div>
+              </nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </header>
+  );
+}

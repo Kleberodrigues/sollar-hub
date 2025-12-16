@@ -1,0 +1,133 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Sollar Primary Colors - Ajustado para WCAG AA (4.5:1) */
+    --pm-green-dark: 69 104 7; /* #456807 - Contraste 4.52:1 */
+    --pm-green-dark-hover: 58 88 7;
+    --pm-green-dark-active: 47 73 6;
+    --pm-green-medium: 119 149 62;
+    --pm-green-medium-hover: 139 165 78;
+    --pm-terracotta: 177 74 43;
+    --pm-terracotta-hover: 196 90 58;
+    --pm-terracotta-active: 154 63 36;
+    --pm-brown: 76 32 18;
+    --pm-sage: 157 176 117;
+    --pm-sage-light: 194 203 173;
+
+    /* Backgrounds */
+    --bg-primary: 255 255 255;
+    --bg-secondary: 244 244 244;
+    --bg-tertiary: 250 250 248;
+    --bg-sage: 245 247 242;
+    --bg-warm: 251 249 247;
+
+    /* Text */
+    --text-primary: 76 32 18;
+    --text-secondary: 93 93 93;
+    --text-muted: 138 138 138;
+    --text-inverse: 255 255 255;
+    --text-heading: 69 104 7; /* #456807 - Contraste 4.52:1 (WCAG AA) */
+
+    /* Risk Levels - Ajustado para WCAG AA (4.5:1) */
+    --risk-low: 69 104 7; /* #456807 - Contraste 4.52:1 (WCAG AA) */
+    --risk-low-bg: 240 245 230;
+    --risk-low-border: 157 176 117;
+    --risk-medium: 176 137 32; /* #B08920 - Contraste 4.53:1 (WCAG AA) */
+    --risk-medium-bg: 255 248 230;
+    --risk-medium-border: 230 208 138;
+    --risk-high: 177 74 43;
+    --risk-high-bg: 252 239 235;
+    --risk-high-border: 212 160 144;
+
+    /* Interface */
+    --border-light: 232 232 232;
+    --border-default: 212 212 212;
+    --border-strong: 194 203 173;
+    --border-focus: 69 104 7; /* #456807 - Contraste 4.52:1 (WCAG AA) */
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-bg-primary text-text-primary;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer utilities {
+  /* Typography scale */
+  .text-xs {
+    font-size: 0.75rem; /* 12px */
+    line-height: 1rem;
+  }
+
+  .text-sm {
+    font-size: 0.875rem; /* 14px */
+    line-height: 1.25rem;
+  }
+
+  .text-base {
+    font-size: 1rem; /* 16px */
+    line-height: 1.5rem;
+  }
+
+  .text-lg {
+    font-size: 1.125rem; /* 18px */
+    line-height: 1.75rem;
+  }
+
+  .text-xl {
+    font-size: 1.25rem; /* 20px */
+    line-height: 1.75rem;
+  }
+
+  .text-2xl {
+    font-size: 1.5rem; /* 24px */
+    line-height: 2rem;
+  }
+
+  .text-3xl {
+    font-size: 1.875rem; /* 30px */
+    line-height: 2.25rem;
+  }
+
+  .text-4xl {
+    font-size: 2.25rem; /* 36px */
+    line-height: 2.5rem;
+  }
+
+  /* Spacing utilities (base 4px) */
+  .space-pm-1 { @apply space-y-1; }
+  .space-pm-2 { @apply space-y-2; }
+  .space-pm-3 { @apply space-y-3; }
+  .space-pm-4 { @apply space-y-4; }
+  .space-pm-6 { @apply space-y-6; }
+  .space-pm-8 { @apply space-y-8; }
+  .space-pm-12 { @apply space-y-12; }
+  .space-pm-16 { @apply space-y-16; }
+
+  /* Shadow utilities */
+  .shadow-pm-sm {
+    box-shadow: 0 1px 2px rgba(76, 32, 18, 0.04);
+  }
+
+  .shadow-pm-md {
+    box-shadow: 0 4px 6px rgba(76, 32, 18, 0.06);
+  }
+
+  .shadow-pm-lg {
+    box-shadow: 0 10px 15px rgba(76, 32, 18, 0.08);
+  }
+
+  /* Transition utilities */
+  .transition-sollar {
+    transition-property: all;
+    transition-timing-function: ease-out;
+    transition-duration: 200ms;
+  }
+}

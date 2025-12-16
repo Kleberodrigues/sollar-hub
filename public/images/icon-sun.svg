@@ -1,0 +1,22 @@
+<svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Sollar Sun Icon - 10 petals -->
+  <circle cx="50" cy="50" r="18" fill="currentColor"/>
+  <g fill="currentColor">
+    <!-- Top petal -->
+    <path d="M50 5 L58 20 L50 28 L42 20 Z"/>
+    <!-- Top-right petal -->
+    <path d="M82 18 L78 36 L68 36 L72 22 Z"/>
+    <!-- Right petal -->
+    <path d="M95 50 L80 58 L72 50 L80 42 Z"/>
+    <!-- Bottom-right petal -->
+    <path d="M82 82 L72 78 L68 68 L78 64 Z"/>
+    <!-- Bottom petal -->
+    <path d="M50 95 L42 80 L50 72 L58 80 Z"/>
+    <!-- Bottom-left petal -->
+    <path d="M18 82 L22 72 L32 68 L28 78 Z"/>
+    <!-- Left petal -->
+    <path d="M5 50 L20 42 L28 50 L20 58 Z"/>
+    <!-- Top-left petal -->
+    <path d="M18 18 L28 22 L32 32 L22 36 Z"/>
+  </g>
+</svg>
