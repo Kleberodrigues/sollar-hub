@@ -53,7 +53,7 @@ export function CTA() {
             <Button
               size="lg"
               variant="outline"
-              className="border-white text-white hover:bg-white/10 text-lg px-8 py-6"
+              className="border-2 border-white bg-transparent text-white hover:bg-white hover:text-pm-terracotta text-lg px-8 py-6"
               asChild
             >
               <Link href="/precos">Ver Planos e Preços</Link>
