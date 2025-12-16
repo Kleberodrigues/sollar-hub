@@ -42,6 +42,11 @@ export async function registerUser(formData: FormData) {
   const supabaseAdmin = createAdminClient();
 
   try {
+    // Determinar URL base para redirecionamento
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ||
+                    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` :
+                    "http://localhost:3000";
+
     // 1. Criar usuário no Supabase Auth
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
@@ -50,6 +55,7 @@ export async function registerUser(formData: FormData) {
         data: {
           full_name: fullName,
         },
+        emailRedirectTo: `${siteUrl}/auth/callback`,
       },
     });
 
