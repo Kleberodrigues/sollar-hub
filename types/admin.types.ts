@@ -1,0 +1,238 @@
+/**
+ * Admin Dashboard Types
+ *
+ * TypeScript types for the Super Admin platform-wide dashboard
+ */
+
+import type { PlanType, SubscriptionStatus } from './index';
+
+// ============================================
+// Dashboard Metrics Types
+// ============================================
+
+/**
+ * Main dashboard metrics returned from get_admin_platform_metrics()
+ */
+export interface AdminDashboardMetrics {
+  totalOrganizations: number;
+  newOrganizations30d: number;
+  totalUsers: number;
+  newUsers30d: number;
+  activeSubscriptions: number;
+  planDistribution: PlanDistribution;
+  canceledSubscriptions: number;
+  trialingSubscriptions: number;
+  revenueCurrentMonthCents: number;
+  revenueLastMonthCents: number;
+  totalAssessments: number;
+  assessments30d: number;
+}
+
+/**
+ * Plan distribution counts
+ */
+export interface PlanDistribution {
+  base: number;
+  intermediario: number;
+  avancado: number;
+}
+
+/**
+ * Calculated MRR metrics
+ */
+export interface MRRMetrics {
+  currentMRR: number;
+  previousMRR: number;
+  mrrChange: number;
+  mrrChangePercent: number;
+}
+
+/**
+ * Churn metrics returned from get_admin_churn_metrics()
+ */
+export interface ChurnMetrics {
+  totalAtMonthStart: number;
+  canceledThisMonth: number;
+  churnRate: number;
+  churnedMRRCents: number;
+}
+
+// ============================================
+// Time Series Types
+// ============================================
+
+/**
+ * MRR time series data point
+ */
+export interface MRRTimeSeriesPoint {
+  month: string; // ISO date string
+  mrrCents: number;
+  subscriptionCount: number;
+}
+
+/**
+ * MRR time series response
+ */
+export type MRRTimeSeries = MRRTimeSeriesPoint[];
+
+// ============================================
+// Organization List Types
+// ============================================
+
+/**
+ * Organization list item for the admin table
+ */
+export interface OrganizationListItem {
+  id: string;
+  name: string;
+  createdAt: string;
+  plan: PlanType | null;
+  subscriptionStatus: SubscriptionStatus | null;
+  userCount: number;
+  assessmentCount: number;
+}
+
+/**
+ * Organization list response
+ */
+export interface OrganizationListResponse {
+  organizations: OrganizationListItem[];
+  total: number;
+  hasMore: boolean;
+}
+
+/**
+ * Organization list filters
+ */
+export interface OrganizationListFilters {
+  search?: string;
+  plan?: PlanType;
+  status?: SubscriptionStatus;
+  page?: number;
+  pageSize?: number;
+}
+
+// ============================================
+// KPI Card Types
+// ============================================
+
+/**
+ * KPI card configuration
+ */
+export interface KPICardData {
+  title: string;
+  value: string | number;
+  change?: number;
+  changeLabel?: string;
+  icon?: 'currency' | 'building' | 'users' | 'percent' | 'chart' | 'assessment';
+  trend?: 'up' | 'down' | 'neutral';
+  format?: 'currency' | 'number' | 'percent';
+}
+
+// ============================================
+// Chart Data Types
+// ============================================
+
+/**
+ * Line chart data point for MRR chart
+ */
+export interface MRRChartDataPoint {
+  month: string;
+  mrr: number;
+  subscriptions: number;
+}
+
+/**
+ * Pie chart data point for plan distribution
+ */
+export interface PlanDistributionChartData {
+  name: string;
+  value: number;
+  fill: string;
+}
+
+// ============================================
+// Constants
+// ============================================
+
+/**
+ * Plan prices in cents (annual prices)
+ */
+export const PLAN_PRICES_ANNUAL_CENTS = {
+  base: 39700, // R$ 397,00/ano
+  intermediario: 49700, // R$ 497,00/ano
+  avancado: 59700, // R$ 597,00/ano
+} as const;
+
+/**
+ * Plan prices monthly (annual / 12)
+ */
+export const PLAN_PRICES_MONTHLY_CENTS = {
+  base: Math.round(PLAN_PRICES_ANNUAL_CENTS.base / 12), // ~R$ 33,08/mes
+  intermediario: Math.round(PLAN_PRICES_ANNUAL_CENTS.intermediario / 12), // ~R$ 41,42/mes
+  avancado: Math.round(PLAN_PRICES_ANNUAL_CENTS.avancado / 12), // ~R$ 49,75/mes
+} as const;
+
+/**
+ * Plan labels in Portuguese
+ */
+export const PLAN_LABELS: Record<PlanType, string> = {
+  base: 'Base',
+  intermediario: 'Intermediário',
+  avancado: 'Avançado',
+};
+
+/**
+ * Plan colors for charts
+ */
+export const PLAN_COLORS: Record<PlanType, string> = {
+  base: '#77953E', // pm-green-medium
+  intermediario: '#789750', // pm-olive
+  avancado: '#456807', // pm-green-dark
+};
+
+/**
+ * Subscription status labels in Portuguese
+ */
+export const SUBSCRIPTION_STATUS_LABELS: Record<SubscriptionStatus, string> = {
+  active: 'Ativo',
+  canceled: 'Cancelado',
+  past_due: 'Atrasado',
+  trialing: 'Trial',
+  unpaid: 'Não Pago',
+  incomplete: 'Incompleto',
+  incomplete_expired: 'Expirado',
+};
+
+// ============================================
+// Utility Functions
+// ============================================
+
+/**
+ * Format cents to BRL currency string
+ */
+export function formatCurrency(cents: number): string {
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+  }).format(cents / 100);
+}
+
+/**
+ * Format percentage with sign
+ */
+export function formatPercentChange(value: number): string {
+  const sign = value >= 0 ? '+' : '';
+  return `${sign}${value.toFixed(1)}%`;
+}
+
+/**
+ * Calculate MRR from plan distribution
+ */
+export function calculateMRR(distribution: PlanDistribution): number {
+  return (
+    distribution.base * PLAN_PRICES_MONTHLY_CENTS.base +
+    distribution.intermediario * PLAN_PRICES_MONTHLY_CENTS.intermediario +
+    distribution.avancado * PLAN_PRICES_MONTHLY_CENTS.avancado
+  );
+}

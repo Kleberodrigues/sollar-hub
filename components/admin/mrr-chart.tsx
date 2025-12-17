@@ -1,0 +1,152 @@
+"use client";
+
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
+import { formatCurrency } from "@/types/admin.types";
+
+interface MRRChartDataPoint {
+  month: string;
+  mrr: number;
+  subscriptions: number;
+}
+
+interface MRRChartProps {
+  data: MRRChartDataPoint[];
+  className?: string;
+}
+
+// Custom tooltip component
+function CustomTooltip({
+  active,
+  payload,
+  label,
+}: {
+  active?: boolean;
+  payload?: Array<{ value: number; dataKey: string; color: string }>;
+  label?: string;
+}) {
+  if (!active || !payload) return null;
+
+  const formattedDate = label
+    ? new Date(label).toLocaleDateString("pt-BR", {
+        month: "long",
+        year: "numeric",
+      })
+    : "";
+
+  return (
+    <div className="bg-white border border-border-light rounded-lg shadow-lg p-3">
+      <p className="text-sm font-medium text-pm-brown mb-2 capitalize">
+        {formattedDate}
+      </p>
+      {payload.map((entry, index) => (
+        <div key={index} className="flex items-center gap-2 text-sm">
+          <div
+            className="w-3 h-3 rounded-full"
+            style={{ backgroundColor: entry.color }}
+          />
+          <span className="text-text-muted">
+            {entry.dataKey === "mrr" ? "MRR:" : "Assinaturas:"}
+          </span>
+          <span className="font-medium text-pm-brown">
+            {entry.dataKey === "mrr"
+              ? formatCurrency(entry.value)
+              : entry.value}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export function MRRChart({ data, className }: MRRChartProps) {
+  // Format data for chart
+  const chartData = data.map((item) => ({
+    ...item,
+    formattedMonth: new Date(item.month).toLocaleDateString("pt-BR", {
+      month: "short",
+      year: "2-digit",
+    }),
+  }));
+
+  return (
+    <div className={className}>
+      <div className="bg-white rounded-lg border border-border-light p-6 shadow-sm h-full">
+        <h3 className="text-lg font-semibold text-pm-brown mb-4">
+          Evolução do MRR
+        </h3>
+        <div className="h-[300px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={chartData}>
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke="#E8E8E8"
+                vertical={false}
+              />
+              <XAxis
+                dataKey="formattedMonth"
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: "#8A8A8A", fontSize: 12 }}
+              />
+              <YAxis
+                yAxisId="mrr"
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: "#8A8A8A", fontSize: 12 }}
+                tickFormatter={(value) =>
+                  `R$ ${(value / 100).toLocaleString("pt-BR", {
+                    maximumFractionDigits: 0,
+                  })}`
+                }
+              />
+              <YAxis
+                yAxisId="subs"
+                orientation="right"
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: "#8A8A8A", fontSize: 12 }}
+              />
+              <Tooltip content={<CustomTooltip />} />
+              <Legend
+                verticalAlign="top"
+                align="right"
+                iconType="circle"
+                formatter={(value) =>
+                  value === "mrr" ? "MRR" : "Assinaturas"
+                }
+              />
+              <Line
+                yAxisId="mrr"
+                type="monotone"
+                dataKey="mrr"
+                stroke="#456807"
+                strokeWidth={2}
+                dot={{ fill: "#456807", strokeWidth: 0, r: 4 }}
+                activeDot={{ r: 6, fill: "#456807" }}
+              />
+              <Line
+                yAxisId="subs"
+                type="monotone"
+                dataKey="subscriptions"
+                stroke="#789750"
+                strokeWidth={2}
+                strokeDasharray="5 5"
+                dot={{ fill: "#789750", strokeWidth: 0, r: 4 }}
+                activeDot={{ r: 6, fill: "#789750" }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </div>
+  );
+}

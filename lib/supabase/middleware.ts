@@ -91,5 +91,30 @@ export async function updateSession(request: NextRequest) {
     }
   }
 
+  // Rotas do Super Admin (/admin/*) - apenas super_admin pode acessar
+  if (user && pathname.startsWith("/admin")) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: profile } = await (supabase as any)
+      .from("user_profiles")
+      .select("is_super_admin")
+      .eq("id", user.id)
+      .single();
+
+    // Se não é super_admin, redirecionar para dashboard home
+    if (!profile?.is_super_admin) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/dashboard";
+      return NextResponse.redirect(url);
+    }
+  }
+
+  // Se usuário NÃO está autenticado E tentando acessar rota /admin
+  // → Redirecionar para login
+  if (!user && pathname.startsWith("/admin")) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    return NextResponse.redirect(url);
+  }
+
   return supabaseResponse;
 }
