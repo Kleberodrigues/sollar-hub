@@ -62,7 +62,7 @@ const COMPANY_SIZES = [
 export function SettingsPageContent({
   organization,
   profile,
-  email: _email,
+  email,
 }: SettingsPageContentProps) {
   return (
     <div className="p-6 pb-12 space-y-6 flex-1 bg-white/50">
@@ -95,7 +95,7 @@ export function SettingsPageContent({
         </TabsList>
 
         <TabsContent value="profile">
-          <ProfileSettings profile={profile} />
+          <ProfileSettings profile={profile} email={email} />
         </TabsContent>
 
         <TabsContent value="organization">
@@ -110,7 +110,7 @@ export function SettingsPageContent({
   );
 }
 
-function ProfileSettings({ profile }: { profile: Profile | null }) {
+function ProfileSettings({ profile, email }: { profile: Profile | null; email: string | null }) {
   const [fullName, setFullName] = useState(profile?.full_name || "");
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -149,7 +149,7 @@ function ProfileSettings({ profile }: { profile: Profile | null }) {
             <Input
               id="email"
               type="email"
-              value={profile?.id || ""}
+              value={email || ""}
               disabled
               className="bg-gray-50"
             />
