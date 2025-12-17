@@ -81,7 +81,7 @@ export function Hero() {
   const currentData = riskData[hoveredRisk];
 
   return (
-    <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
+    <section className="relative min-h-[600px] lg:min-h-[700px] flex items-center pt-20 pb-16 overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-gradient-to-br from-bg-sage via-white to-[#fff5e9]">
         {/* Decorative sun pattern */}
