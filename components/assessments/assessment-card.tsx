@@ -40,11 +40,26 @@ export function AssessmentCard({ assessment, canManage }: AssessmentCardProps) {
   const today = new Date().toISOString().split("T")[0];
   const isExpired = assessment.end_date && assessment.end_date < today;
 
-  // Get base URL client-side
-  const publicUrl =
-    typeof window !== "undefined"
-      ? `${window.location.origin}/assess/${assessment.id}`
-      : `/assess/${assessment.id}`;
+  // Get base URL from environment variable (falls back to window.location.origin for dev)
+  const getBaseUrl = () => {
+    // Use environment variable if available
+    if (process.env.NEXT_PUBLIC_APP_URL) {
+      return process.env.NEXT_PUBLIC_APP_URL;
+    }
+    // Fallback to window.location.origin for local development
+    if (typeof window !== "undefined") {
+      return window.location.origin;
+    }
+    return "";
+  };
+
+  const baseUrl = getBaseUrl();
+  const publicUrl = `${baseUrl}/assess/${assessment.id}`;
+
+  // Truncate URL for display (show domain + /assess/... + last 8 chars of ID)
+  const truncatedUrl = publicUrl.length > 60
+    ? `${baseUrl}/assess/...${assessment.id.slice(-8)}`
+    : publicUrl;
 
   const statusConfig = {
     expired: {
@@ -137,8 +152,11 @@ export function AssessmentCard({ assessment, canManage }: AssessmentCardProps) {
               <div className="p-4 bg-gradient-to-r from-pm-green-light/30 to-bg-sage rounded-xl border border-pm-green-dark/10">
                 <p className="text-xs font-medium text-text-muted mb-2">Link Público para Coleta:</p>
                 <div className="flex items-center gap-2">
-                  <code className="flex-1 text-sm text-text-primary bg-white px-3 py-2 rounded-lg border border-border-light truncate font-mono">
-                    {publicUrl}
+                  <code
+                    className="flex-1 min-w-0 text-sm text-text-primary bg-white px-3 py-2 rounded-lg border border-border-light font-mono overflow-hidden text-ellipsis whitespace-nowrap"
+                    title={publicUrl}
+                  >
+                    {truncatedUrl}
                   </code>
                   <CopyLinkButton url={publicUrl} />
                   <Link
@@ -146,7 +164,7 @@ export function AssessmentCard({ assessment, canManage }: AssessmentCardProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <Button variant="outline" size="sm" className="gap-1.5 hover:bg-pm-terracotta hover:text-white hover:border-pm-terracotta">
+                    <Button variant="outline" size="sm" className="gap-1.5 hover:bg-pm-terracotta hover:text-white hover:border-pm-terracotta shrink-0">
                       <ExternalLink className="w-3.5 h-3.5" />
                       Abrir
                     </Button>
