@@ -6,6 +6,9 @@
 
 import type { PlanType, SubscriptionStatus } from './index';
 
+// Re-export types for convenience
+export type { PlanType, SubscriptionStatus };
+
 // ============================================
 // Dashboard Metrics Types
 // ============================================
@@ -235,4 +238,38 @@ export function calculateMRR(distribution: PlanDistribution): number {
     distribution.intermediario * PLAN_PRICES_MONTHLY_CENTS.intermediario +
     distribution.avancado * PLAN_PRICES_MONTHLY_CENTS.avancado
   );
+}
+
+/**
+ * Format ISO date string to localized date
+ */
+export function formatDate(isoDate: string | null | undefined): string {
+  if (!isoDate) return '-';
+  try {
+    return new Intl.DateTimeFormat('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    }).format(new Date(isoDate));
+  } catch {
+    return '-';
+  }
+}
+
+/**
+ * Format ISO date string to localized date and time
+ */
+export function formatDateTime(isoDate: string | null | undefined): string {
+  if (!isoDate) return '-';
+  try {
+    return new Intl.DateTimeFormat('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(new Date(isoDate));
+  } catch {
+    return '-';
+  }
 }

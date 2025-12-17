@@ -463,6 +463,203 @@ export async function getOrganizationsList(
 }
 
 // ============================================
+// Get Organization Details
+// ============================================
+
+export interface OrganizationDetails {
+  id: string;
+  name: string;
+  createdAt: string;
+  subscription: {
+    plan: PlanType | null;
+    status: SubscriptionStatus | null;
+    currentPeriodStart: string | null;
+    currentPeriodEnd: string | null;
+    cancelAtPeriodEnd: boolean;
+    trialEnd: string | null;
+  } | null;
+  users: Array<{
+    id: string;
+    fullName: string;
+    email: string;
+    role: string;
+    createdAt: string;
+  }>;
+  departments: Array<{
+    id: string;
+    name: string;
+    memberCount: number;
+  }>;
+  assessments: Array<{
+    id: string;
+    title: string;
+    status: string;
+    responseCount: number;
+    createdAt: string;
+  }>;
+  stats: {
+    totalUsers: number;
+    totalDepartments: number;
+    totalAssessments: number;
+    totalResponses: number;
+  };
+  recentPayments: Array<{
+    id: string;
+    amountCents: number;
+    status: string;
+    createdAt: string;
+  }>;
+}
+
+export async function getOrganizationDetails(
+  organizationId: string
+): Promise<{ organization?: OrganizationDetails; error?: string }> {
+  const accessCheck = await verifySuperAdminAccess();
+  if (!accessCheck.success) {
+    return { error: accessCheck.error };
+  }
+
+  const supabase = await createClient();
+
+  try {
+    // Fetch organization with subscription
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: org, error: orgError } = (await (supabase as any)
+      .from("organizations")
+      .select(`
+        id,
+        name,
+        created_at,
+        subscriptions (
+          plan,
+          status,
+          current_period_start,
+          current_period_end,
+          cancel_at_period_end,
+          trial_end
+        )
+      `)
+      .eq("id", organizationId)
+      .single()) as any;
+
+    if (orgError || !org) {
+      return { error: "Organização não encontrada" };
+    }
+
+    // Fetch users with their auth emails
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: users } = (await (supabase as any)
+      .from("user_profiles")
+      .select("id, full_name, role, created_at")
+      .eq("organization_id", organizationId)
+      .order("created_at", { ascending: false })) as any;
+
+    // Get user emails from auth (using admin client would be better, but we use RPC or join)
+    const userIds = (users || []).map((u: { id: string }) => u.id);
+
+    // Fetch departments
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: departments } = (await (supabase as any)
+      .from("departments")
+      .select(`
+        id,
+        name,
+        department_members (id)
+      `)
+      .eq("organization_id", organizationId)
+      .order("name")) as any;
+
+    // Fetch assessments
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: assessments } = (await (supabase as any)
+      .from("assessments")
+      .select(`
+        id,
+        title,
+        status,
+        created_at,
+        responses (id)
+      `)
+      .eq("organization_id", organizationId)
+      .order("created_at", { ascending: false })
+      .limit(10)) as any;
+
+    // Fetch recent payments
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: payments } = (await (supabase as any)
+      .from("payment_history")
+      .select("id, amount_cents, status, created_at")
+      .eq("organization_id", organizationId)
+      .order("created_at", { ascending: false })
+      .limit(5)) as any;
+
+    // Count total responses
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { count: totalResponses } = (await (supabase as any)
+      .from("responses")
+      .select("id", { count: "exact", head: true })
+      .in(
+        "assessment_id",
+        (assessments || []).map((a: { id: string }) => a.id)
+      )) as any;
+
+    const subscription = org.subscriptions?.[0];
+
+    const organization: OrganizationDetails = {
+      id: org.id,
+      name: org.name,
+      createdAt: org.created_at,
+      subscription: subscription
+        ? {
+            plan: subscription.plan,
+            status: subscription.status,
+            currentPeriodStart: subscription.current_period_start,
+            currentPeriodEnd: subscription.current_period_end,
+            cancelAtPeriodEnd: subscription.cancel_at_period_end,
+            trialEnd: subscription.trial_end,
+          }
+        : null,
+      users: (users || []).map((u: any) => ({
+        id: u.id,
+        fullName: u.full_name,
+        email: "", // Email not available directly from user_profiles
+        role: u.role,
+        createdAt: u.created_at,
+      })),
+      departments: (departments || []).map((d: any) => ({
+        id: d.id,
+        name: d.name,
+        memberCount: d.department_members?.length || 0,
+      })),
+      assessments: (assessments || []).map((a: any) => ({
+        id: a.id,
+        title: a.title,
+        status: a.status,
+        responseCount: a.responses?.length || 0,
+        createdAt: a.created_at,
+      })),
+      stats: {
+        totalUsers: users?.length || 0,
+        totalDepartments: departments?.length || 0,
+        totalAssessments: assessments?.length || 0,
+        totalResponses: totalResponses || 0,
+      },
+      recentPayments: (payments || []).map((p: any) => ({
+        id: p.id,
+        amountCents: p.amount_cents,
+        status: p.status,
+        createdAt: p.created_at,
+      })),
+    };
+
+    return { organization };
+  } catch (error) {
+    console.error("[Admin] Error fetching organization details:", error);
+    return { error: "Erro ao buscar detalhes da organização" };
+  }
+}
+
+// ============================================
 // Check Super Admin Status
 // ============================================
 
