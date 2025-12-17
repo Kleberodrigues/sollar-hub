@@ -10,6 +10,30 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // shadcn/ui compatibility aliases
+        background: "#FFFFFF",
+        foreground: "#4C2012",
+        card: {
+          DEFAULT: "#FFFFFF",
+          foreground: "#4C2012",
+        },
+        popover: {
+          DEFAULT: "#FFFFFF",
+          foreground: "#4C2012",
+        },
+        muted: {
+          DEFAULT: "#F4F4F4",
+          foreground: "#8A8A8A",
+        },
+        accent: {
+          DEFAULT: "#F5F7F2",
+          foreground: "#456807",
+        },
+        destructive: {
+          DEFAULT: "#B14A2B",
+          foreground: "#FFFFFF",
+        },
+        ring: "#456807",
         // PsicoMapa Brand Colors
         pm: {
           green: {
