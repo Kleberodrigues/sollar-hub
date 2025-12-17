@@ -686,3 +686,411 @@ export async function checkSuperAdminStatus(): Promise<{
 
   return { isSuperAdmin: profile?.is_super_admin === true };
 }
+
+// ============================================
+// Get Users List (Platform-wide)
+// ============================================
+
+export interface UserListItem {
+  id: string;
+  fullName: string | null;
+  role: string;
+  organizationId: string | null;
+  organizationName: string | null;
+  createdAt: string;
+  isSuperAdmin: boolean;
+}
+
+export interface UserListFilters {
+  search?: string;
+  role?: string;
+  organizationId?: string;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface UserListResponse {
+  users: UserListItem[];
+  total: number;
+  hasMore: boolean;
+}
+
+export async function getUsersList(
+  filters: UserListFilters = {}
+): Promise<UserListResponse | { error: string }> {
+  const accessCheck = await verifySuperAdminAccess();
+  if (!accessCheck.success) {
+    return { error: accessCheck.error! };
+  }
+
+  const supabase = await createClient();
+  const { search, role, organizationId, page = 1, pageSize = 20 } = filters;
+  const offset = (page - 1) * pageSize;
+
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let query = (supabase as any)
+      .from("user_profiles")
+      .select(
+        `
+        id,
+        full_name,
+        role,
+        organization_id,
+        created_at,
+        is_super_admin,
+        organizations (
+          name
+        )
+      `,
+        { count: "exact" }
+      )
+      .order("created_at", { ascending: false })
+      .range(offset, offset + pageSize - 1);
+
+    // Apply search filter
+    if (search) {
+      query = query.ilike("full_name", `%${search}%`);
+    }
+
+    // Apply role filter
+    if (role) {
+      query = query.eq("role", role);
+    }
+
+    // Apply organization filter
+    if (organizationId) {
+      query = query.eq("organization_id", organizationId);
+    }
+
+    const { data: users, count, error } = await query;
+
+    if (error) throw error;
+
+    const mappedUsers: UserListItem[] = (users || []).map((u: any) => ({
+      id: u.id,
+      fullName: u.full_name,
+      role: u.role,
+      organizationId: u.organization_id,
+      organizationName: u.organizations?.name || null,
+      createdAt: u.created_at,
+      isSuperAdmin: u.is_super_admin || false,
+    }));
+
+    return {
+      users: mappedUsers,
+      total: count || 0,
+      hasMore: offset + pageSize < (count || 0),
+    };
+  } catch (error) {
+    console.error("[Admin] Error fetching users list:", error);
+    return { error: "Erro ao buscar lista de usuários" };
+  }
+}
+
+// ============================================
+// Get Billing History (Platform-wide)
+// ============================================
+
+export interface BillingItem {
+  id: string;
+  organizationId: string;
+  organizationName: string | null;
+  amountCents: number;
+  status: string;
+  stripeInvoiceId: string | null;
+  createdAt: string;
+}
+
+export interface BillingFilters {
+  organizationId?: string;
+  status?: string;
+  startDate?: string;
+  endDate?: string;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface BillingListResponse {
+  payments: BillingItem[];
+  total: number;
+  totalAmountCents: number;
+  hasMore: boolean;
+}
+
+export async function getBillingHistory(
+  filters: BillingFilters = {}
+): Promise<BillingListResponse | { error: string }> {
+  const accessCheck = await verifySuperAdminAccess();
+  if (!accessCheck.success) {
+    return { error: accessCheck.error! };
+  }
+
+  const supabase = await createClient();
+  const { organizationId, status, startDate, endDate, page = 1, pageSize = 20 } = filters;
+  const offset = (page - 1) * pageSize;
+
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let query = (supabase as any)
+      .from("payment_history")
+      .select(
+        `
+        id,
+        organization_id,
+        amount_cents,
+        status,
+        stripe_invoice_id,
+        created_at,
+        organizations (
+          name
+        )
+      `,
+        { count: "exact" }
+      )
+      .order("created_at", { ascending: false })
+      .range(offset, offset + pageSize - 1);
+
+    if (organizationId) {
+      query = query.eq("organization_id", organizationId);
+    }
+
+    if (status) {
+      query = query.eq("status", status);
+    }
+
+    if (startDate) {
+      query = query.gte("created_at", startDate);
+    }
+
+    if (endDate) {
+      query = query.lte("created_at", endDate);
+    }
+
+    const { data: payments, count, error } = await query;
+
+    if (error) throw error;
+
+    // Get total amount for filtered payments
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let totalQuery = (supabase as any)
+      .from("payment_history")
+      .select("amount_cents")
+      .eq("status", "paid");
+
+    if (organizationId) {
+      totalQuery = totalQuery.eq("organization_id", organizationId);
+    }
+    if (startDate) {
+      totalQuery = totalQuery.gte("created_at", startDate);
+    }
+    if (endDate) {
+      totalQuery = totalQuery.lte("created_at", endDate);
+    }
+
+    const { data: totalData } = await totalQuery;
+    const totalAmountCents = (totalData || []).reduce(
+      (sum: number, p: { amount_cents: number }) => sum + (p.amount_cents || 0),
+      0
+    );
+
+    const mappedPayments: BillingItem[] = (payments || []).map((p: any) => ({
+      id: p.id,
+      organizationId: p.organization_id,
+      organizationName: p.organizations?.name || null,
+      amountCents: p.amount_cents,
+      status: p.status,
+      stripeInvoiceId: p.stripe_invoice_id,
+      createdAt: p.created_at,
+    }));
+
+    return {
+      payments: mappedPayments,
+      total: count || 0,
+      totalAmountCents,
+      hasMore: offset + pageSize < (count || 0),
+    };
+  } catch (error) {
+    console.error("[Admin] Error fetching billing history:", error);
+    return { error: "Erro ao buscar histórico de faturamento" };
+  }
+}
+
+// ============================================
+// Get Detailed Metrics
+// ============================================
+
+export interface DetailedMetrics {
+  // User metrics
+  usersByRole: Record<string, number>;
+  userGrowth: Array<{ month: string; count: number }>;
+
+  // Organization metrics
+  orgsByPlan: Record<string, number>;
+  orgGrowth: Array<{ month: string; count: number }>;
+
+  // Assessment metrics
+  totalAssessments: number;
+  assessmentsByStatus: Record<string, number>;
+  totalResponses: number;
+  avgResponsesPerAssessment: number;
+
+  // Revenue metrics
+  revenueByMonth: Array<{ month: string; amountCents: number }>;
+  revenueByPlan: Record<string, number>;
+}
+
+export async function getDetailedMetrics(): Promise<{
+  metrics?: DetailedMetrics;
+  error?: string;
+}> {
+  const accessCheck = await verifySuperAdminAccess();
+  if (!accessCheck.success) {
+    return { error: accessCheck.error };
+  }
+
+  const supabase = await createClient();
+
+  try {
+    // Fetch all data in parallel
+    const [
+      usersResult,
+      orgsResult,
+      subsResult,
+      assessmentsResult,
+      responsesResult,
+      paymentsResult,
+    ] = await Promise.all([
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (supabase as any).from("user_profiles").select("role, created_at"),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (supabase as any).from("organizations").select("created_at"),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (supabase as any).from("subscriptions").select("plan, status"),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (supabase as any).from("assessments").select("id, status, created_at"),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (supabase as any).from("responses").select("id", { count: "exact", head: true }),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (supabase as any)
+        .from("payment_history")
+        .select("amount_cents, created_at")
+        .eq("status", "paid"),
+    ]);
+
+    // Calculate users by role
+    const usersByRole: Record<string, number> = {};
+    (usersResult.data || []).forEach((u: { role: string }) => {
+      usersByRole[u.role] = (usersByRole[u.role] || 0) + 1;
+    });
+
+    // Calculate user growth (last 12 months)
+    const userGrowth = calculateMonthlyGrowth(
+      (usersResult.data || []).map((u: { created_at: string }) => u.created_at)
+    );
+
+    // Calculate org growth
+    const orgGrowth = calculateMonthlyGrowth(
+      (orgsResult.data || []).map((o: { created_at: string }) => o.created_at)
+    );
+
+    // Calculate orgs by plan (active subscriptions only)
+    const orgsByPlan: Record<string, number> = {};
+    (subsResult.data || [])
+      .filter((s: { status: string }) => s.status === "active")
+      .forEach((s: { plan: string }) => {
+        orgsByPlan[s.plan] = (orgsByPlan[s.plan] || 0) + 1;
+      });
+
+    // Calculate assessments by status
+    const assessmentsByStatus: Record<string, number> = {};
+    (assessmentsResult.data || []).forEach((a: { status: string }) => {
+      assessmentsByStatus[a.status] = (assessmentsByStatus[a.status] || 0) + 1;
+    });
+
+    // Calculate revenue by month
+    const revenueByMonth = calculateRevenueByMonth(paymentsResult.data || []);
+
+    // Calculate revenue by plan (estimated from active subscriptions)
+    const planPrices: Record<string, number> = {
+      base: 39700,
+      intermediario: 49700,
+      avancado: 59700,
+    };
+    const revenueByPlan: Record<string, number> = {};
+    Object.entries(orgsByPlan).forEach(([plan, count]) => {
+      revenueByPlan[plan] = (count as number) * (planPrices[plan] || 0);
+    });
+
+    const totalAssessments = assessmentsResult.data?.length || 0;
+    const totalResponses = responsesResult.count || 0;
+
+    return {
+      metrics: {
+        usersByRole,
+        userGrowth,
+        orgsByPlan,
+        orgGrowth,
+        totalAssessments,
+        assessmentsByStatus,
+        totalResponses,
+        avgResponsesPerAssessment: totalAssessments > 0 ? Math.round(totalResponses / totalAssessments) : 0,
+        revenueByMonth,
+        revenueByPlan,
+      },
+    };
+  } catch (error) {
+    console.error("[Admin] Error fetching detailed metrics:", error);
+    return { error: "Erro ao buscar métricas detalhadas" };
+  }
+}
+
+// Helper function to calculate monthly growth
+function calculateMonthlyGrowth(dates: string[]): Array<{ month: string; count: number }> {
+  const now = new Date();
+  const result: Array<{ month: string; count: number }> = [];
+
+  for (let i = 11; i >= 0; i--) {
+    const monthDate = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const monthEnd = new Date(now.getFullYear(), now.getMonth() - i + 1, 0);
+
+    const count = dates.filter((d) => {
+      const date = new Date(d);
+      return date >= monthDate && date <= monthEnd;
+    }).length;
+
+    result.push({
+      month: monthDate.toISOString().slice(0, 7),
+      count,
+    });
+  }
+
+  return result;
+}
+
+// Helper function to calculate revenue by month
+function calculateRevenueByMonth(
+  payments: Array<{ amount_cents: number; created_at: string }>
+): Array<{ month: string; amountCents: number }> {
+  const now = new Date();
+  const result: Array<{ month: string; amountCents: number }> = [];
+
+  for (let i = 11; i >= 0; i--) {
+    const monthDate = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const monthEnd = new Date(now.getFullYear(), now.getMonth() - i + 1, 0);
+
+    const amountCents = payments
+      .filter((p) => {
+        const date = new Date(p.created_at);
+        return date >= monthDate && date <= monthEnd;
+      })
+      .reduce((sum, p) => sum + (p.amount_cents || 0), 0);
+
+    result.push({
+      month: monthDate.toISOString().slice(0, 7),
+      amountCents,
+    });
+  }
+
+  return result;
+}
