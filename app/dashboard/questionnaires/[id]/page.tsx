@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect, notFound } from "next/navigation";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Edit, Plus, Shield } from "lucide-react";
+import { ArrowLeft, Shield } from "lucide-react";
 import Link from "next/link";
 import { DeleteQuestionnaireButton } from "@/components/questionnaires/delete-questionnaire-button";
 import { TEMPLATE_IDS_ARRAY, isTemplateQuestionnaire, getLockedQuestionnaireInfo } from "@/lib/constants/questionnaire-templates";
@@ -149,35 +149,12 @@ export default async function QuestionnairePage({
             </span>
           </div>
         </div>
-
-        {canManage && !isLocked && (
-          <div className="flex items-center gap-2">
-            <Link href={`/dashboard/questionnaires/${questionnaire.id}/edit`}>
-              <Button variant="outline" className="gap-2">
-                <Edit className="w-4 h-4" />
-                Editar
-              </Button>
-            </Link>
-
-            <DeleteQuestionnaireButton questionnaireId={questionnaire.id} />
-          </div>
-        )}
       </div>
 
       {/* Perguntas */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Perguntas</CardTitle>
-          {canManage && !isLocked && (
-            <Link
-              href={`/dashboard/questionnaires/${questionnaire.id}/questions/new`}
-            >
-              <Button size="sm" className="gap-2">
-                <Plus className="w-4 h-4" />
-                Adicionar Pergunta
-              </Button>
-            </Link>
-          )}
         </CardHeader>
 
         <CardContent>
@@ -186,16 +163,6 @@ export default async function QuestionnairePage({
               <p className="text-text-muted mb-4">
                 Nenhuma pergunta adicionada ainda.
               </p>
-              {canManage && (
-                <Link
-                  href={`/dashboard/questionnaires/${questionnaire.id}/questions/new`}
-                >
-                  <Button size="sm">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Adicionar Primeira Pergunta
-                  </Button>
-                </Link>
-              )}
             </div>
           ) : (
             <div className="space-y-4">
@@ -238,18 +205,6 @@ export default async function QuestionnairePage({
                         </div>
                       )}
                     </div>
-
-                    {canManage && !isLocked && (
-                      <div className="flex items-center gap-2">
-                        <Link
-                          href={`/dashboard/questionnaires/${questionnaire.id}/questions/${question.id}/edit`}
-                        >
-                          <Button variant="ghost" size="sm">
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                        </Link>
-                      </div>
-                    )}
                   </div>
                 </div>
               ))}
