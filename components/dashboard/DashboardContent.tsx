@@ -1,5 +1,4 @@
 'use client';
-
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import Link from "next/link";
@@ -17,14 +16,12 @@ import {
   Lightbulb,
   Target
 } from "lucide-react";
-
 interface DashboardMetrics {
   questionnairesCount: number;
   assessmentsCount: number;
   responsesCount: number;
   teamCount: number;
 }
-
 interface UserProfile {
   full_name: string;
   role: string;
@@ -33,13 +30,11 @@ interface UserProfile {
     name: string;
   };
 }
-
 interface DashboardContentProps {
   metrics: DashboardMetrics;
   profile: UserProfile | null;
   userEmail: string;
 }
-
 const metricsConfig = [
   {
     key: "questionnairesCount",
@@ -74,20 +69,16 @@ const metricsConfig = [
     borderColor: "hover:border-pm-olive-light",
   },
 ];
-
 export function DashboardContent({ metrics, profile, userEmail }: DashboardContentProps) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
-
   const getGreeting = () => {
     const hour = new Date().getHours();
     if (hour < 12) return "Bom dia";
     if (hour < 18) return "Boa tarde";
     return "Boa noite";
   };
-
   const firstName = profile?.full_name?.split(" ")[0] || "Usuário";
-
   return (
     <div ref={ref} className="p-6 pb-12 space-y-8 flex-1 bg-white/50">
       {/* Welcome Section */}
@@ -111,9 +102,9 @@ export function DashboardContent({ metrics, profile, userEmail }: DashboardConte
               asChild
               className="bg-pm-terracotta hover:bg-pm-terracotta-hover text-white"
             >
-              <Link href="/dashboard/questionnaires/new">
+              <Link href="/dashboard/assessments/new">
                 <Plus className="w-4 h-4 mr-2" />
-                Novo Questionário
+                Novo Assessment
               </Link>
             </Button>
             <Button
@@ -121,21 +112,19 @@ export function DashboardContent({ metrics, profile, userEmail }: DashboardConte
               variant="outline"
               className="border-pm-olive text-pm-olive hover:bg-pm-olive/10"
             >
-              <Link href="/dashboard/assessments/new">
-                <ClipboardList className="w-4 h-4 mr-2" />
-                Novo Assessment
+              <Link href="/dashboard/analytics">
+                <BarChart3 className="w-4 h-4 mr-2" />
+                Ver Análises
               </Link>
             </Button>
           </div>
         </div>
       </motion.div>
-
       {/* Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {metricsConfig.map((metric, index) => {
           const Icon = metric.icon;
           const value = metrics[metric.key as keyof DashboardMetrics] || 0;
-
           return (
             <motion.div
               key={metric.key}
@@ -166,7 +155,6 @@ export function DashboardContent({ metrics, profile, userEmail }: DashboardConte
           );
         })}
       </div>
-
       {/* Info Cards */}
       <div className="grid md:grid-cols-2 gap-6">
         <motion.div
@@ -183,12 +171,11 @@ export function DashboardContent({ metrics, profile, userEmail }: DashboardConte
             </CardHeader>
             <CardContent>
               <p className="text-sm text-text-secondary mb-4">
-                Comece criando seu primeiro questionário de avaliação psicossocial:
+                Comece sua primeira avaliação psicossocial:
               </p>
               <ol className="space-y-3">
                 {[
-                  "Crie um questionário na seção \"Questionários\"",
-                  "Adicione perguntas sobre riscos psicossociais",
+                  "Selecione um questionário disponível",
                   "Crie um assessment e gere um link público",
                   "Compartilhe o link com sua equipe",
                   "Acompanhe as respostas e análises",
@@ -206,14 +193,13 @@ export function DashboardContent({ metrics, profile, userEmail }: DashboardConte
                 variant="link"
                 className="mt-4 p-0 text-pm-terracotta hover:text-pm-terracotta-hover"
               >
-                <Link href="/dashboard/questionnaires">
+                <Link href="/dashboard/assessments/new">
                   Começar agora <ArrowRight className="w-4 h-4 ml-1" />
                 </Link>
               </Button>
             </CardContent>
           </Card>
         </motion.div>
-
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={isInView ? { opacity: 1, x: 0 } : {}}
@@ -234,7 +220,7 @@ export function DashboardContent({ metrics, profile, userEmail }: DashboardConte
                 {[
                   { text: "Autenticação e segurança", done: true },
                   { text: "Dashboard com métricas", done: true },
-                  { text: "Gestão de questionários", done: true },
+                  { text: "Questionários disponíveis", done: true },
                   { text: "Assessments e links públicos", done: true },
                   { text: "Análise de riscos NR-1", done: true },
                 ].map((item, i) => (
@@ -254,7 +240,6 @@ export function DashboardContent({ metrics, profile, userEmail }: DashboardConte
           </Card>
         </motion.div>
       </div>
-
       {/* Profile Card */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
