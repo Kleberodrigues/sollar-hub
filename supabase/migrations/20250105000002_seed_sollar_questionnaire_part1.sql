@@ -1,4 +1,4 @@
--- ============================================================================
+﻿-- ============================================================================
 -- Migration: Seed Sollar Psychosocial Risk Questionnaire (Part 1: Blocks 1-4)
 -- Created: 2025-01-05
 -- Purpose: Insert complete Sollar questionnaire template
@@ -26,7 +26,7 @@ INSERT INTO questionnaires (
   'Questionário Sollar de Riscos Psicossociais',
   'Questionário completo para mapeamento de fatores de risco psicossocial relacionados ao trabalho, baseado em NR-1 e boas práticas internacionais.',
   'nr1_full',
-  E'# Bem-vindo e bem vinda!\n\nEste questionário tem como objetivo mapear os principais fatores de risco psicossocial relacionados ao trabalho na nossa empresa, como carga de trabalho, liderança, clima, saúde mental e segurança psicológica.\n\nAs respostas são **anônimas** e serão analisadas de forma **agrupada**, nunca individual.\n\nNão existem respostas certas ou erradas. O mais importante é que você responda com sinceridade, pensando na sua realidade *hoje*.\n\nO tempo médio de resposta é de *10 a 15 minutos*.\n\nObrigado(a) por contribuir para a construção de um ambiente de trabalho mais saudável e humano. 🌻',
+  E'# Bem-vindo e bem vinda!\n\nEste questionário tem como objetivo mapear os principais fatores de risco psicossocial relacionados ao trabalho na nossa empresa, como carga de trabalho, liderança, clima, saúde mental e segurança psicológica.\n\nAs respostas são **completamente anônimas** e serão analisadas de forma **agrupada**, nunca individual.\n\nNão existem respostas certas ou erradas. O mais importante é que você responda com sinceridade, pensando na sua realidade *hoje*.\n\nO tempo médio de resposta é de *10 a 15 minutos*.\n\nObrigado(a) por contribuir para a construção de um ambiente de trabalho mais saudável e humano.',
   E'## Termo de Consentimento (LGPD)\n\nAo prosseguir, você declara estar ciente de que:\n\n- Suas respostas são **completamente anônimas**\n- Os dados serão analisados de forma **agrupada e estatística**\n- As informações serão utilizadas **exclusivamente** para melhorias no ambiente de trabalho\n- Você pode **interromper** sua participação a qualquer momento\n- Os dados serão armazenados de forma **segura** conforme LGPD (Lei 13.709/2018)\n\nAo clicar em "Aceito", você consente com estes termos.',
   'published',
   NOW()

@@ -193,12 +193,17 @@ export function AssessmentResponseFormV2({
   // Tela de introdução/LGPD
   if (showIntroduction && (questionnaire.introduction_text || questionnaire.lgpd_consent_text)) {
     return (
-      <QuestionnaireIntroduction
-        title={questionnaire.title}
-        introductionText={questionnaire.introduction_text}
-        lgpdConsentText={questionnaire.lgpd_consent_text}
-        onAccept={() => setShowIntroduction(false)}
-      />
+      <div className="space-y-6">
+        <h1 className="font-display text-3xl font-bold text-text-heading">
+          Pesquisa
+        </h1>
+        <QuestionnaireIntroduction
+          title={questionnaire.title}
+          introductionText={questionnaire.introduction_text}
+          lgpdConsentText={questionnaire.lgpd_consent_text}
+          onAccept={() => setShowIntroduction(false)}
+        />
+      </div>
     );
   }
 
