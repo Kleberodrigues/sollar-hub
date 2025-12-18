@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Plus, FileText, Edit, Eye, MessageSquare, Calendar, Shield } from "lucide-react";
+import { FileText, Eye, MessageSquare, Calendar, Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { isTemplateQuestionnaire, getLockedQuestionnaireInfo } from "@/lib/constants/questionnaire-templates";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -119,19 +119,6 @@ function QuestionnaireCard({ questionnaire, canManage }: { questionnaire: Questi
                 Visualizar
               </Button>
             </Link>
-
-            {canManage && !isLocked && (
-              <Link href={`/dashboard/questionnaires/${questionnaire.id}/edit`}>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full gap-2 hover:bg-pm-terracotta hover:text-white hover:border-pm-terracotta"
-                >
-                  <Edit className="w-4 h-4" />
-                  Editar
-                </Button>
-              </Link>
-            )}
           </div>
         </div>
       </CardContent>
@@ -161,18 +148,6 @@ export function QuestionnairesListContent({ questionnaires, canManage }: Questio
             Gerencie questionários de avaliação psicossocial
           </p>
         </div>
-
-        {canManage && (
-          <Button
-            asChild
-            className="bg-pm-terracotta hover:bg-pm-terracotta-hover text-white gap-2"
-          >
-            <Link href="/dashboard/questionnaires/new">
-              <Plus className="w-4 h-4" />
-              Novo Questionário
-            </Link>
-          </Button>
-        )}
       </motion.div>
 
       {/* Stats Cards */}
@@ -245,19 +220,8 @@ export function QuestionnairesListContent({ questionnaires, canManage }: Questio
                   Nenhum questionário encontrado
                 </h3>
                 <p className="text-text-secondary mb-6 max-w-md mx-auto">
-                  Comece criando seu primeiro questionário de avaliação psicossocial para sua equipe.
+                  Os questionários disponíveis aparecerão aqui.
                 </p>
-                {canManage && (
-                  <Button
-                    asChild
-                    className="bg-pm-terracotta hover:bg-pm-terracotta-hover text-white"
-                  >
-                    <Link href="/dashboard/questionnaires/new">
-                      <Plus className="w-4 h-4 mr-2" />
-                      Criar Primeiro Questionário
-                    </Link>
-                  </Button>
-                )}
               </div>
             </CardContent>
           </Card>
