@@ -7,14 +7,14 @@ import { Building2, Users, Award, ShieldCheck } from "lucide-react";
 const stats = [
   {
     icon: Building2,
-    value: 500,
+    value: 50,
     suffix: "+",
-    label: "Organizações",
-    description: "confiam na Sollar",
+    label: "Empresas",
+    description: "confiam na PsicoMapa",
   },
   {
     icon: Users,
-    value: 50000,
+    value: 5000,
     suffix: "+",
     label: "Colaboradores",
     description: "avaliados",
