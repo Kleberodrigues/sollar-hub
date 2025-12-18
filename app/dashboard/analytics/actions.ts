@@ -262,6 +262,16 @@ interface AssessmentWithQuestions {
 
 /**
  * Calculate average scores by Sollar category with risk inversion logic
+ *
+ * IMPORTANTE: Cada questão tem um flag `risk_inverted`:
+ * - risk_inverted = true: Score alto = Risco alto (ex: "Sinto-me sobrecarregado")
+ * - risk_inverted = false: Score alto = Risco baixo (ex: "Sinto-me satisfeito")
+ *
+ * Para calcular corretamente, normalizamos CADA score individualmente:
+ * - Se risk_inverted = true: mantém o score (1-5)
+ * - Se risk_inverted = false: inverte o score (6 - score), então 5 vira 1 e 1 vira 5
+ *
+ * Depois da normalização, SEMPRE: score alto = risco alto
  */
 function calculateCategoryScores(responses: ResponseWithQuestion[]): CategoryScore[] {
   // Sollar 8-block structure
@@ -278,15 +288,15 @@ function calculateCategoryScores(responses: ResponseWithQuestion[]): CategorySco
 
   const categoryData: Record<
     string,
-    { scores: number[]; questionIds: Set<string>; riskInverted: boolean }
+    { normalizedScores: number[]; questionIds: Set<string> }
   > = {};
 
   // Initialize categories
   categories.forEach((cat) => {
-    categoryData[cat] = { scores: [], questionIds: new Set(), riskInverted: true };
+    categoryData[cat] = { normalizedScores: [], questionIds: new Set() };
   });
 
-  // Process responses
+  // Process responses - normalize each score based on its question's risk_inverted flag
   responses.forEach((response) => {
     // Handle both array and object formats from Supabase join
     const questionData = Array.isArray(response.questions)
@@ -298,13 +308,16 @@ function calculateCategoryScores(responses: ResponseWithQuestion[]): CategorySco
 
     if (category && categoryData[category]) {
       categoryData[category].questionIds.add(response.question_id);
-      categoryData[category].riskInverted = riskInverted;
 
-      // Convert likert scale responses to numbers
+      // Convert likert scale responses to normalized scores
       if (questionType === "likert_scale") {
         const numericValue = parseFloat(response.response_text);
-        if (!isNaN(numericValue)) {
-          categoryData[category].scores.push(numericValue);
+        if (!isNaN(numericValue) && numericValue >= 1 && numericValue <= 5) {
+          // Normalize score: after normalization, higher score = higher risk
+          // risk_inverted = true: keep as is (high score already means high risk)
+          // risk_inverted = false: invert (6 - score), so 5 becomes 1 and 1 becomes 5
+          const normalizedScore = riskInverted ? numericValue : (6 - numericValue);
+          categoryData[category].normalizedScores.push(normalizedScore);
         }
       }
     }
@@ -313,7 +326,7 @@ function calculateCategoryScores(responses: ResponseWithQuestion[]): CategorySco
   // Calculate averages and risk levels
   return categories.map((category) => {
     const data = categoryData[category];
-    const responseCount = data.scores.length;
+    const responseCount = data.normalizedScores.length;
 
     // Check category-level anonymity threshold
     const isCategorySuppressed = !meetsThreshold(responseCount, 'CATEGORY_MINIMUM');
@@ -321,30 +334,20 @@ function calculateCategoryScores(responses: ResponseWithQuestion[]): CategorySco
     const averageScore = isCategorySuppressed
       ? 0
       : responseCount > 0
-        ? data.scores.reduce((a, b) => a + b, 0) / responseCount
+        ? data.normalizedScores.reduce((a, b) => a + b, 0) / responseCount
         : 0;
 
-    // Determine risk level based on average score with inversion logic
-    // risk_inverted = true: Higher score = Higher risk (default for most questions)
-    // risk_inverted = false: Higher score = Lower risk (for satisfaction/anchor questions)
+    // Determine risk level based on normalized average score
+    // After normalization, ALL scores follow: higher = higher risk
     let riskLevel: "low" | "medium" | "high" = "low";
 
     // Only calculate risk level if not suppressed
     if (!isCategorySuppressed && responseCount > 0) {
-      if (data.riskInverted) {
-        // Higher score = higher risk (e.g., stress, demands)
-        if (averageScore >= 3.5) {
-          riskLevel = "high";
-        } else if (averageScore >= 2.5) {
-          riskLevel = "medium";
-        }
-      } else {
-        // Higher score = lower risk (e.g., satisfaction, health)
-        if (averageScore < 2.5) {
-          riskLevel = "high";
-        } else if (averageScore < 3.5) {
-          riskLevel = "medium";
-        }
+      // Unified thresholds after normalization
+      if (averageScore >= 3.5) {
+        riskLevel = "high";
+      } else if (averageScore >= 2.5) {
+        riskLevel = "medium";
       }
     }
 
