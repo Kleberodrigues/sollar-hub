@@ -21,7 +21,7 @@ interface SidebarProps {
 
 const navigationItems = [
   {
-    title: "Dashboard",
+    title: "Página Inicial",
     href: "/dashboard",
     icon: LayoutDashboard,
     roles: ["admin", "manager", "member", "viewer"],
