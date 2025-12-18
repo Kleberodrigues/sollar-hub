@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { FileText, Shield, ChevronRight } from 'lucide-react';
+import { Shield, ChevronRight } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 
 interface QuestionnaireIntroductionProps {
@@ -27,13 +27,7 @@ export function QuestionnaireIntroduction({
       {/* Introduction Card */}
       {introductionText && (
         <Card>
-          <CardHeader>
-            <div className="flex items-center gap-3">
-              <FileText className="w-6 h-6 text-pm-green-dark" />
-              <CardTitle className="text-xl">Bem-vindo(a)!</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
+          <CardContent className="pt-6">
             <div className="prose prose-sm max-w-none text-text-secondary">
               <ReactMarkdown>{introductionText}</ReactMarkdown>
             </div>
