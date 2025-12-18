@@ -172,7 +172,7 @@ export function DashboardHeader({
 
             {/* Dropdown de Notificações */}
             {showNotifications && (
-              <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-border-light z-50">
+              <div className="fixed sm:absolute left-4 right-4 sm:left-auto sm:right-0 top-16 sm:top-auto sm:mt-2 w-auto sm:w-80 bg-white rounded-lg shadow-lg border border-border-light z-50">
                 {/* Header */}
                 <div className="flex items-center justify-between px-4 py-3 border-b border-border-light">
                   <h3 className="font-semibold text-text-primary">Notificações</h3>
