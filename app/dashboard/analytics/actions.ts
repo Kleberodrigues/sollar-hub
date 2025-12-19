@@ -257,10 +257,14 @@ interface AssessmentWithQuestions {
   organization_id?: string;
   title?: string;
   questionnaire_id?: string;
+  // Can be array (old behavior) or single object (many-to-one relation)
   questionnaires?: {
     id: string;
     questions?: { id: string; category?: string; type?: string; risk_inverted?: boolean }[];
-  }[];
+  }[] | {
+    id: string;
+    questions?: { id: string; category?: string; type?: string; risk_inverted?: boolean }[];
+  };
 }
 
 /**
@@ -477,7 +481,11 @@ export async function getAllQuestionsDistribution(
     }
 
     const assessmentData = assessment as unknown as AssessmentWithQuestions;
-    const questions = assessmentData.questionnaires?.[0]?.questions || [];
+    // Handle both array (old behavior) and single object (correct for many-to-one relation)
+    const questionnaire = Array.isArray(assessmentData.questionnaires)
+      ? assessmentData.questionnaires[0]
+      : assessmentData.questionnaires;
+    const questions = questionnaire?.questions || [];
     const distributions: QuestionDistribution[] = [];
 
     // Get distribution for each question
