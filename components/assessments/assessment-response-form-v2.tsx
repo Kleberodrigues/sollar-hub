@@ -73,6 +73,10 @@ export function AssessmentResponseFormV2({
   const progressPercentage = (answeredCount / questions.length) * 100;
 
   function handleResponseChange(questionId: string, value: ResponseValue) {
+    // Clear any error when user provides a response
+    if (error) {
+      setError(null);
+    }
     setResponses((prev) => ({
       ...prev,
       [questionId]: value,
@@ -113,12 +117,13 @@ export function AssessmentResponseFormV2({
 
     try {
       // Validar perguntas obrigatórias (exceto as com allow_skip)
-      for (const question of questions) {
+      for (let i = 0; i < questions.length; i++) {
+        const question = questions[i];
         const hasResponse = responses[question.id] !== undefined && responses[question.id] !== "";
 
         if (question.is_required && !hasResponse && !question.allow_skip) {
           const questionText = question.text || question.question_text || '';
-          throw new Error(`Por favor, responda: "${questionText}"`);
+          throw new Error(`Por favor, responda a pergunta ${i + 1}: "${questionText}"`);
         }
       }
 
@@ -216,11 +221,10 @@ export function AssessmentResponseFormV2({
           <h2 className="text-2xl font-bold text-text-heading mb-2">
             Respostas Enviadas com Sucesso!
           </h2>
-          <p className="text-text-secondary mb-6">
+          <p className="text-text-secondary">
             Obrigado por participar desta avaliação. Suas respostas foram
             registradas de forma anônima.
           </p>
-          <Button onClick={() => router.push("/")}>Voltar para Home</Button>
         </CardContent>
       </Card>
     );
