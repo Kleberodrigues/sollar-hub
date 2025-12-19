@@ -69,6 +69,17 @@ export function QuestionRenderer({
       : [1, 2, 3, 4, 5] // Default 1-5 scale
     : [];
 
+  // Check if this is an NPS scale (0-10 horizontal)
+  const isNpsScale = questionType === 'nps_scale';
+  const npsOptions = isNpsScale
+    ? question.min_value != null && question.max_value != null
+      ? Array.from(
+          { length: question.max_value - question.min_value + 1 },
+          (_, i) => question.min_value! + i
+        )
+      : [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10] // Default 0-10 scale
+    : [];
+
   return (
     <div className="space-y-4">
       {/* Question Text */}
@@ -134,6 +145,49 @@ export function QuestionRenderer({
                 </div>
               );
             })}
+          </div>
+
+          {/* "Prefiro não responder" button */}
+          {question.allow_skip && onSkip && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onSkip}
+              disabled={disabled}
+              className="w-full mt-4 border-orange-300 text-orange-700 hover:bg-orange-50"
+            >
+              <AlertCircle className="w-4 h-4 mr-2" />
+              Prefiro não responder
+            </Button>
+          )}
+        </div>
+      )}
+
+      {/* NPS Scale (0-10 horizontal) */}
+      {isNpsScale && (
+        <div className="space-y-4">
+          <div className="flex justify-between items-center gap-1 sm:gap-2">
+            {npsOptions.map((optionValue) => (
+              <button
+                key={optionValue}
+                type="button"
+                onClick={() => !disabled && onChange(optionValue)}
+                disabled={disabled}
+                className={`flex-1 min-w-[28px] h-10 sm:h-12 rounded-lg border-2 font-semibold text-sm sm:text-base transition-all ${
+                  value === optionValue
+                    ? 'border-pm-green-dark bg-pm-green-dark text-white'
+                    : 'border-border-default bg-white hover:border-pm-green-dark/50 text-text-primary'
+                }`}
+              >
+                {optionValue}
+              </button>
+            ))}
+          </div>
+          {/* Scale labels */}
+          <div className="flex justify-between text-xs sm:text-sm text-text-muted px-1">
+            <span>Totalmente insatisfeito</span>
+            <span>Neutro</span>
+            <span>Totalmente satisfeito</span>
           </div>
 
           {/* "Prefiro não responder" button */}
