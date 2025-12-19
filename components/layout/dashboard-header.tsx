@@ -147,7 +147,9 @@ export function DashboardHeader({
     let currentPath = "";
     for (const path of paths) {
       currentPath += `/${path}`;
-      const label = routeLabels[currentPath] || path;
+      // Check if segment looks like a UUID - show "Detalhes" instead
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(path);
+      const label = routeLabels[currentPath] || (isUUID ? "Detalhes" : path);
       breadcrumbs.push({
         label,
         href: currentPath,

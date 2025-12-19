@@ -41,7 +41,7 @@ interface Question {
   max_value?: number;
 }
 
-// Questionário Sollar de Riscos Psicossociais - 30 perguntas
+// Diagnóstico de Riscos Psicossociais - 30 perguntas
 const sollarQuestions: Question[] = [
   // BLOCO 1: Demandas e Ritmo de Trabalho (4 perguntas)
   {
@@ -429,7 +429,7 @@ async function main() {
     .upsert({
       id: SOLLAR_QUESTIONNAIRE_ID,
       organization_id: null, // GLOBAL - visível para todas as organizações
-      title: 'Questionário Sollar de Riscos Psicossociais',
+      title: 'Diagnóstico de Riscos Psicossociais',
       description: 'Questionário completo para mapeamento de fatores de risco psicossocial relacionados ao trabalho, baseado em NR-1 e NR-17.',
       is_active: true,
       created_at: new Date().toISOString(),
