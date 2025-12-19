@@ -106,6 +106,7 @@ interface QuestionDistribution {
   questionId: string;
   questionText: string;
   questionType: string;
+  questionCategory: string;
   responses: { value: string; count: number; percentage: number }[];
 }
 
@@ -331,7 +332,7 @@ export function AnalyticsDashboardContent({
   const anchorsData = useMemo(() => {
     const anchorsCategory = analytics.responsesByCategory.find(c => c.category === "anchors");
     const anchorsQuestions = questionDistributions.filter(
-      q => q.questionText.toLowerCase().includes("âncora") || q.questionText.toLowerCase().includes("satisf")
+      q => q.questionCategory === "anchors"
     );
     return {
       anchors: anchorsQuestions.map(q => ({

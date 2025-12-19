@@ -38,6 +38,8 @@ export interface QuestionDistribution {
   questionId: string;
   questionText: string;
   questionType: string;
+  /** Categoria da pergunta (anchors, suggestions, etc.) */
+  questionCategory: string;
   responses: {
     value: string;
     count: number;
@@ -243,6 +245,7 @@ interface QuestionResult {
   id: string;
   text?: string;
   type?: string;
+  category?: string;
 }
 
 interface ResponseTextResult {
@@ -375,7 +378,7 @@ export async function getQuestionDistribution(
     // Get question details
     const { data: question, error: questionError } = await supabase
       .from("questions")
-      .select("id, text, type")
+      .select("id, text, type, category")
       .eq("id", questionId)
       .single() as unknown as { data: QuestionResult | null; error: unknown };
 
@@ -434,6 +437,7 @@ export async function getQuestionDistribution(
       questionId: question.id,
       questionText: question.text || '',
       questionType: question.type || 'text',
+      questionCategory: question.category || '',
       responses: distribution,
       isSuppressed: isQuestionSuppressed,
       totalResponses,
