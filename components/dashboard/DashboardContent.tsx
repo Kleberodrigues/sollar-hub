@@ -11,9 +11,6 @@ import {
   Users,
   Plus,
   ArrowRight,
-  CheckCircle,
-  Clock,
-  Lightbulb,
   Target
 } from "lucide-react";
 interface DashboardMetrics {
@@ -155,8 +152,8 @@ export function DashboardContent({ metrics, profile, userEmail }: DashboardConte
           );
         })}
       </div>
-      {/* Info Cards */}
-      <div className="grid md:grid-cols-2 gap-6">
+      {/* Info Card */}
+      <div className="max-w-2xl">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={isInView ? { opacity: 1, x: 0 } : {}}
@@ -170,15 +167,14 @@ export function DashboardContent({ metrics, profile, userEmail }: DashboardConte
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-text-secondary mb-4">
-                Comece sua primeira avaliação psicossocial:
-              </p>
               <ol className="space-y-3">
                 {[
-                  "Selecione um questionário disponível",
-                  "Crie um assessment e gere um link público",
-                  "Compartilhe o link com sua equipe",
-                  "Acompanhe as respostas e análises",
+                  "Escolha qual pesquisa você gostaria de ativar: Fatores de Riscos Psicossociais ou Clima Mensal",
+                  "Gere um link do questionário",
+                  "Selecione os participantes que irão receber o e-mail",
+                  "Envie o convite do questionário automaticamente",
+                  "Acompanhe as respostas e análises no relatório de riscos",
+                  "Crie e edite as ações do Plano de Ação",
                 ].map((step, i) => (
                   <li key={i} className="flex items-start gap-3 text-sm text-text-secondary">
                     <span className="flex-shrink-0 w-6 h-6 rounded-full bg-pm-olive/10 text-pm-olive flex items-center justify-center text-xs font-semibold">
@@ -197,45 +193,6 @@ export function DashboardContent({ metrics, profile, userEmail }: DashboardConte
                   Começar agora <ArrowRight className="w-4 h-4 ml-1" />
                 </Link>
               </Button>
-            </CardContent>
-          </Card>
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={isInView ? { opacity: 1, x: 0 } : {}}
-          transition={{ duration: 0.5, delay: 0.5 }}
-        >
-          <Card className="h-full border-l-4 border-l-pm-terracotta">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 font-display text-xl text-text-heading">
-                <Lightbulb className="w-5 h-5 text-pm-terracotta" />
-                Status do Sistema
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-text-secondary mb-4">
-                Funcionalidades disponíveis:
-              </p>
-              <ul className="space-y-3">
-                {[
-                  { text: "Autenticação e segurança", done: true },
-                  { text: "Dashboard com métricas", done: true },
-                  { text: "Questionários disponíveis", done: true },
-                  { text: "Assessments e links públicos", done: true },
-                  { text: "Análise de riscos NR-1", done: true },
-                ].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3 text-sm">
-                    {item.done ? (
-                      <CheckCircle className="w-5 h-5 text-pm-green-dark flex-shrink-0" />
-                    ) : (
-                      <Clock className="w-5 h-5 text-pm-olive-light flex-shrink-0" />
-                    )}
-                    <span className={item.done ? "text-text-primary" : "text-text-muted"}>
-                      {item.text}
-                    </span>
-                  </li>
-                ))}
-              </ul>
             </CardContent>
           </Card>
         </motion.div>
