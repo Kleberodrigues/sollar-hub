@@ -21,7 +21,7 @@ export const TEMPLATE_IDS_ARRAY = Object.values(QUESTIONNAIRE_TEMPLATE_IDS);
  */
 export const LOCKED_QUESTIONNAIRE_INFO = {
   [QUESTIONNAIRE_TEMPLATE_IDS.SOLLAR_PSICOSSOCIAL]: {
-    name: 'Questionário Sollar de Riscos Psicossociais',
+    name: 'Diagnóstico de Riscos Psicossociais',
     regulation: 'Portaria NR-1',
     description: 'Segue a metodologia da Norma Regulamentadora NR-1 para avaliação de riscos psicossociais no ambiente de trabalho.',
   },
