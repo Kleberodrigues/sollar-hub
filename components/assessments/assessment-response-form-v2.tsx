@@ -147,9 +147,9 @@ export function AssessmentResponseFormV2({
           responseValue = String(responseValue);
         }
 
-        // Extrair valor numérico para likert_scale e outros tipos numéricos
+        // Extrair valor numérico para likert_scale, nps_scale e outros tipos numéricos
         const questionType = question.type || question.question_type;
-        if (questionType === "likert_scale" || questionType === "rating" || questionType === "numeric") {
+        if (questionType === "likert_scale" || questionType === "nps_scale" || questionType === "rating" || questionType === "numeric") {
           const parsed = parseInt(responseValue, 10);
           if (!isNaN(parsed)) {
             numericValue = parsed;
