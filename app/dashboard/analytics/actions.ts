@@ -316,7 +316,7 @@ function calculateCategoryScores(responses: ResponseWithQuestion[]): CategorySco
     if (category && categoryData[category]) {
       categoryData[category].questionIds.add(response.question_id);
 
-      // Convert likert scale responses to normalized scores
+      // Convert likert scale responses to normalized scores (1-5)
       if (questionType === "likert_scale") {
         const numericValue = parseFloat(response.response_text);
         if (!isNaN(numericValue) && numericValue >= 1 && numericValue <= 5) {
@@ -324,6 +324,18 @@ function calculateCategoryScores(responses: ResponseWithQuestion[]): CategorySco
           // risk_inverted = true: keep as is (high score already means high risk)
           // risk_inverted = false: invert (6 - score), so 5 becomes 1 and 1 becomes 5
           const normalizedScore = riskInverted ? numericValue : (6 - numericValue);
+          categoryData[category].normalizedScores.push(normalizedScore);
+        }
+      }
+      // Convert NPS scale responses (0-10) to normalized scores (1-5)
+      // NPS measures satisfaction: high score = satisfied = low risk
+      // So we invert: NPS 10 → 1 (low risk), NPS 0 → 5 (high risk)
+      else if (questionType === "nps_scale") {
+        const numericValue = parseFloat(response.response_text);
+        if (!isNaN(numericValue) && numericValue >= 0 && numericValue <= 10) {
+          // Map 0-10 to 5-1 (inverted because high NPS = low risk)
+          // Formula: 5 - (nps_value * 0.4) gives us 5 for NPS=0 and 1 for NPS=10
+          const normalizedScore = 5 - (numericValue * 0.4);
           categoryData[category].normalizedScores.push(normalizedScore);
         }
       }
