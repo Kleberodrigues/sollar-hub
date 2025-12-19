@@ -165,15 +165,15 @@ export function QuestionRenderer({
 
       {/* NPS Scale (0-10 horizontal) */}
       {isNpsScale && (
-        <div className="space-y-4">
-          <div className="flex justify-between items-center gap-1 sm:gap-2">
+        <div className="space-y-3">
+          <div className="grid grid-cols-11 gap-1">
             {npsOptions.map((optionValue) => (
               <button
                 key={optionValue}
                 type="button"
                 onClick={() => !disabled && onChange(optionValue)}
                 disabled={disabled}
-                className={`flex-1 min-w-[28px] h-10 sm:h-12 rounded-lg border-2 font-semibold text-sm sm:text-base transition-all ${
+                className={`aspect-square min-h-[36px] rounded-md border-2 font-semibold text-xs sm:text-sm transition-all ${
                   value === optionValue
                     ? 'border-pm-green-dark bg-pm-green-dark text-white'
                     : 'border-border-default bg-white hover:border-pm-green-dark/50 text-text-primary'
@@ -184,10 +184,10 @@ export function QuestionRenderer({
             ))}
           </div>
           {/* Scale labels */}
-          <div className="flex justify-between text-xs sm:text-sm text-text-muted px-1">
-            <span>Totalmente insatisfeito</span>
+          <div className="flex justify-between text-[10px] sm:text-xs text-text-muted">
+            <span>Insatisfeito</span>
             <span>Neutro</span>
-            <span>Totalmente satisfeito</span>
+            <span>Satisfeito</span>
           </div>
 
           {/* "Prefiro não responder" button */}
