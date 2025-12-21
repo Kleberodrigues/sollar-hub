@@ -55,7 +55,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const assessmentId = searchParams.get("assessment_id");
     const organizationId = searchParams.get("organization_id");
-    const status = searchParams.get("status") || "pending";
+    const status = (searchParams.get("status") || "pending") as "pending" | "sent" | "responded" | "bounced" | "opted_out";
     const limit = parseInt(searchParams.get("limit") || "100", 10);
 
     const supabase = createAdminClient();
@@ -100,7 +100,7 @@ export async function GET(request: NextRequest) {
     }
 
     // If we have participants, also fetch assessment info
-    let assessmentInfo = null;
+    let assessmentInfo: { id: string; title: string; status: string; public_url: string } | null = null;
     if (participants && participants.length > 0 && assessmentId) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data: assessment } = await (supabase
@@ -189,7 +189,7 @@ export async function PATCH(request: NextRequest) {
 
     // Handle bulk updates
     if (body.bulk && Array.isArray(body.bulk)) {
-      const results = [];
+      const results: Array<{ participant_id: string; success: boolean; error?: string }> = [];
 
       for (const item of body.bulk) {
         const updateData: Record<string, unknown> = {
