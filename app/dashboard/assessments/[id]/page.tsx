@@ -2,10 +2,12 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect, notFound } from "next/navigation";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Edit, ExternalLink, CheckCircle, BarChart3 } from "lucide-react";
+import { ArrowLeft, Edit, ExternalLink, CheckCircle, BarChart3, Users } from "lucide-react";
 import Link from "next/link";
 import { CopyLinkButton } from "@/components/assessments/copy-link-button";
 import { AIInsightsCard } from "@/components/assessments/AIInsightsCard";
+import { ParticipantImportDialog } from "@/components/assessments/ParticipantImportDialog";
+import { getParticipants } from "../participant-import-actions";
 
 export default async function AssessmentPage({
   params,
@@ -82,6 +84,11 @@ export default async function AssessmentPage({
   // URL pública
   const publicUrl = `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3006"}/assess/${assessment.id}`;
 
+  // Buscar participantes importados
+  const participantsResult = await getParticipants(id);
+  const participants = participantsResult.participants || [];
+  const participantCount = participants.length;
+
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
@@ -128,12 +135,18 @@ export default async function AssessmentPage({
         </div>
 
         {canManage && (
-          <Link href={`/dashboard/assessments/${assessment.id}/edit`}>
-            <Button variant="outline" className="gap-2">
-              <Edit className="w-4 h-4" />
-              Editar
-            </Button>
-          </Link>
+          <div className="flex gap-2">
+            <ParticipantImportDialog
+              assessmentId={assessment.id}
+              assessmentTitle={assessment.title}
+            />
+            <Link href={`/dashboard/assessments/${assessment.id}/edit`}>
+              <Button variant="outline" className="gap-2">
+                <Edit className="w-4 h-4" />
+                Editar
+              </Button>
+            </Link>
+          </div>
         )}
       </div>
 
@@ -271,6 +284,56 @@ export default async function AssessmentPage({
           </CardContent>
         </Card>
       </div>
+
+      {/* Participantes Importados */}
+      {participantCount > 0 && (
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2">
+                <Users className="w-5 h-5" />
+                Participantes Importados
+              </CardTitle>
+              <span className="text-sm text-muted-foreground">
+                {participantCount} participante(s)
+              </span>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <div className="grid grid-cols-4 gap-4 text-xs font-medium text-muted-foreground uppercase border-b pb-2">
+                <span>Nome</span>
+                <span>Email</span>
+                <span>Departamento</span>
+                <span>Status</span>
+              </div>
+              {participants.slice(0, 10).map((p) => (
+                <div key={p.id} className="grid grid-cols-4 gap-4 text-sm py-2 border-b border-border/50">
+                  <span className="font-medium">{p.name}</span>
+                  <span className="text-muted-foreground">{p.email}</span>
+                  <span className="text-muted-foreground">{p.department || '-'}</span>
+                  <span className={`capitalize ${
+                    p.status === 'responded' ? 'text-green-600' :
+                    p.status === 'sent' ? 'text-blue-600' :
+                    p.status === 'bounced' ? 'text-red-600' :
+                    'text-yellow-600'
+                  }`}>
+                    {p.status === 'pending' ? 'Pendente' :
+                     p.status === 'sent' ? 'Enviado' :
+                     p.status === 'responded' ? 'Respondido' :
+                     p.status === 'bounced' ? 'Erro' : p.status}
+                  </span>
+                </div>
+              ))}
+              {participantCount > 10 && (
+                <p className="text-xs text-muted-foreground text-center py-2">
+                  E mais {participantCount - 10} participante(s)...
+                </p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* AI Insights Card */}
       <AIInsightsCard
