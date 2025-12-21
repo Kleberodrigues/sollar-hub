@@ -15,8 +15,6 @@ import type {
   OrganizationListItem,
   OrganizationListFilters,
   OrganizationListResponse,
-  PlanDistribution,
-  PLAN_PRICES_MONTHLY_CENTS,
 } from "@/types/admin.types";
 import type { PlanType, SubscriptionStatus } from "@/types";
 
@@ -555,7 +553,7 @@ export async function getOrganizationDetails(
       .order("created_at", { ascending: false })) as any;
 
     // Get user emails from auth (using admin client would be better, but we use RPC or join)
-    const userIds = (users || []).map((u: { id: string }) => u.id);
+    const _userIds = (users || []).map((u: { id: string }) => u.id);
 
     // Fetch departments
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

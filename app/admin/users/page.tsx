@@ -51,7 +51,7 @@ export default function UsersListPage() {
   // State
   const [users, setUsers] = useState<UserListItem[]>([]);
   const [total, setTotal] = useState(0);
-  const [hasMore, setHasMore] = useState(false);
+  const [_hasMore, setHasMore] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

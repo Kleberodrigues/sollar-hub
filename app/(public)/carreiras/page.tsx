@@ -1,5 +1,5 @@
 import { SlideUp } from '@/components/animated'
-import { Briefcase, MapPin, Clock, Heart, Rocket, Users } from 'lucide-react'
+import { Briefcase, MapPin, Heart, Rocket, Users } from 'lucide-react'
 
 export const metadata = {
   title: 'Carreiras | PsicoMapa',

@@ -1,6 +1,5 @@
 import { SlideUp } from '@/components/animated'
-import { BookOpen, Clock, ArrowRight } from 'lucide-react'
-import Link from 'next/link'
+import { Clock, ArrowRight } from 'lucide-react'
 
 export const metadata = {
   title: 'Blog | PsicoMapa',

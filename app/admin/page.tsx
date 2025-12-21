@@ -4,7 +4,7 @@ import { KPICard, KPIGrid } from "@/components/admin/kpi-card";
 import { MRRChart } from "@/components/admin/mrr-chart";
 import { PlanDistributionChart } from "@/components/admin/plan-distribution-chart";
 import { OrganizationsTable } from "@/components/admin/organizations-table";
-import { calculateMRR, formatCurrency } from "@/types/admin.types";
+import { calculateMRR } from "@/types/admin.types";
 import { Skeleton } from "@/components/ui/skeleton";
 
 // Loading skeleton for KPI cards
