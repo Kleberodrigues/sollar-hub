@@ -183,27 +183,48 @@ export async function importParticipants(
     const importedCount = inserted?.length || validRows.length;
     const skippedCount = data.length - validRows.length;
 
-    // Dispatch event for n8n
+    // Dispatch event for n8n to send emails
     try {
+      // Get user profile for event payload
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: userProfile } = await (supabase
+        .from('user_profiles')
+        .select('full_name')
+        .eq('id', user.id)
+        .single() as any);
+
+      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://app.sollarsaude.com.br';
+      const publicUrl = `${baseUrl}/assessments/${assessmentId}/respond`;
+
       await dispatchEvent({
         organizationId: profile.organization_id,
-        eventType: 'diagnostic.activated', // Using existing event type
+        eventType: 'participants.imported',
         data: {
-          diagnostic_id: assessmentId,
-          title: assessment.title,
-          participants_imported: importedCount,
-          participants: validRows.map(p => ({
+          assessment_id: assessmentId,
+          assessment_title: assessment.title,
+          organization_id: profile.organization_id,
+          participants: (inserted || []).map((p: { id: string; email: string; name: string; department?: string; role?: string }) => ({
+            id: p.id,
             email: p.email,
             name: p.name,
             department: p.department,
             role: p.role,
           })),
+          total_count: importedCount,
+          public_url: publicUrl,
+          imported_by: {
+            id: user.id,
+            name: userProfile?.full_name || user.email || 'Admin',
+            email: user.email || '',
+          },
         },
         metadata: {
           triggered_by: user.id,
           source: 'participant_import',
         },
       });
+
+      console.log(`[ParticipantImport] Event dispatched for ${importedCount} participants`);
     } catch (eventError) {
       console.error('[ParticipantImport] Event dispatch error:', eventError);
       // Don't fail the import if event dispatch fails
