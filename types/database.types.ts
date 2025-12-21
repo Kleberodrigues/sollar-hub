@@ -91,6 +91,63 @@ export type Database = {
           },
         ]
       }
+      assessment_participants: {
+        Row: {
+          id: string
+          assessment_id: string
+          organization_id: string
+          email: string
+          name: string
+          department: string | null
+          role: string | null
+          status: Database["public"]["Enums"]["participant_status"]
+          sent_at: string | null
+          responded_at: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          assessment_id: string
+          organization_id: string
+          email: string
+          name: string
+          department?: string | null
+          role?: string | null
+          status?: Database["public"]["Enums"]["participant_status"]
+          sent_at?: string | null
+          responded_at?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          assessment_id?: string
+          organization_id?: string
+          email?: string
+          name?: string
+          department?: string | null
+          role?: string | null
+          status?: Database["public"]["Enums"]["participant_status"]
+          sent_at?: string | null
+          responded_at?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assessment_participants_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "assessments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assessment_participants_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       billing_customers: {
         Row: {
           created_at: string
@@ -1005,6 +1062,7 @@ export type Database = {
         | "incomplete"
         | "incomplete_expired"
       user_role: "admin" | "manager" | "member" | "viewer"
+      participant_status: "pending" | "sent" | "responded" | "bounced" | "opted_out"
     }
     CompositeTypes: {
       [_ in never]: never
