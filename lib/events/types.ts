@@ -14,6 +14,9 @@ export type SollarEventType =
   | "diagnostic.completed"
   | "diagnostic.reminder"
   | "diagnostic.deactivated"
+  // Participant events
+  | "participants.imported"
+  | "participants.email_requested"
   // Risk events
   | "risk.threshold.exceeded"
   | "risk.report.generated"
@@ -139,6 +142,44 @@ export interface RiskReportGeneratedPayload {
     overall_risk_level: "low" | "medium" | "high";
   };
   generated_by: {
+    id: string;
+    name: string;
+    email: string;
+  };
+}
+
+// ============================================
+// Participant Event Payloads
+// ============================================
+
+export interface ParticipantsImportedPayload {
+  assessment_id: string;
+  assessment_title: string;
+  organization_id: string;
+  organization_name?: string;
+  participants: Array<{
+    id: string;
+    email: string;
+    name: string;
+    department?: string;
+    role?: string;
+  }>;
+  total_count: number;
+  public_url: string;
+  imported_by: {
+    id: string;
+    name: string;
+    email: string;
+  };
+}
+
+export interface ParticipantsEmailRequestedPayload {
+  assessment_id: string;
+  assessment_title: string;
+  organization_id: string;
+  participant_ids: string[];
+  public_url: string;
+  requested_by: {
     id: string;
     name: string;
     email: string;
