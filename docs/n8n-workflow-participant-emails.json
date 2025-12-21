@@ -1,18 +1,18 @@
 {
-  "name": "Sollar - Disparo de Emails para Participantes",
+  "name": "Sollar - Disparo Emails Participantes",
   "nodes": [
     {
       "parameters": {
         "httpMethod": "POST",
-        "path": "sollar-events",
+        "path": "sollar-participants",
         "options": {}
       },
-      "id": "webhook-trigger",
-      "name": "Webhook Sollar",
+      "id": "webhook-participants",
+      "name": "Webhook Participantes",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [250, 300],
-      "webhookId": "sollar-events"
+      "position": [-400, 300],
+      "webhookId": "sollar-participants"
     },
     {
       "parameters": {
@@ -24,8 +24,8 @@
           },
           "conditions": [
             {
-              "id": "condition-event-type",
-              "leftValue": "={{ $json.event }}",
+              "id": "filter-event",
+              "leftValue": "={{ $json.body.event }}",
               "rightValue": "participants.imported",
               "operator": {
                 "type": "string",
@@ -37,264 +37,98 @@
         },
         "options": {}
       },
-      "id": "filter-event",
-      "name": "Filtrar participants.imported",
+      "id": "filter-participants",
+      "name": "Filtrar Evento",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
-      "position": [470, 300]
+      "position": [-160, 300]
     },
     {
       "parameters": {
         "assignments": {
           "assignments": [
             {
-              "id": "set-assessment-title",
+              "id": "set-title",
               "name": "assessment_title",
-              "value": "={{ $json.data.assessment_title }}",
+              "value": "={{ $json.body.data.assessment_title }}",
               "type": "string"
             },
             {
-              "id": "set-assessment-id",
-              "name": "assessment_id",
-              "value": "={{ $json.data.assessment_id }}",
-              "type": "string"
-            },
-            {
-              "id": "set-public-url",
+              "id": "set-url",
               "name": "public_url",
-              "value": "={{ $json.data.public_url }}",
+              "value": "={{ $json.body.data.public_url }}",
               "type": "string"
             },
             {
-              "id": "set-org-id",
-              "name": "organization_id",
-              "value": "={{ $json.data.organization_id }}",
-              "type": "string"
+              "id": "set-participants",
+              "name": "participants",
+              "value": "={{ $json.body.data.participants }}",
+              "type": "array"
             }
           ]
         },
         "options": {}
       },
-      "id": "set-context",
-      "name": "Extrair Contexto",
+      "id": "extract-data",
+      "name": "Extrair Dados",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [690, 300]
+      "position": [80, 300]
     },
     {
       "parameters": {
-        "fieldToSplitOut": "data.participants",
+        "fieldToSplitOut": "participants",
         "options": {}
       },
       "id": "split-participants",
       "name": "Separar Participantes",
       "type": "n8n-nodes-base.splitOut",
       "typeVersion": 1,
-      "position": [910, 300]
+      "position": [320, 300]
     },
     {
       "parameters": {
-        "batchSize": 5,
-        "options": {
-          "reset": false
-        }
-      },
-      "id": "batch-participants",
-      "name": "Lotes de 5",
-      "type": "n8n-nodes-base.splitInBatches",
-      "typeVersion": 3,
-      "position": [1130, 300]
-    },
-    {
-      "parameters": {
-        "fromEmail": "noreply@sollarsaude.com.br",
-        "toEmail": "={{ $json.email }}",
-        "subject": "Convite: {{ $('Extrair Contexto').item.json.assessment_title }} - Avaliação de Riscos Psicossociais",
-        "emailType": "html",
-        "html": "<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <style>\n    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }\n    .container { max-width: 600px; margin: 0 auto; padding: 20px; }\n    .header { background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }\n    .header h1 { color: white; margin: 0; font-size: 24px; }\n    .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }\n    .button { display: inline-block; background: #8B4513; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; margin: 20px 0; font-weight: bold; }\n    .button:hover { background: #A0522D; }\n    .footer { text-align: center; margin-top: 20px; color: #666; font-size: 12px; }\n    .info-box { background: #fff; border-left: 4px solid #8B4513; padding: 15px; margin: 20px 0; }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <div class=\"header\">\n      <h1>Sollar Saude</h1>\n    </div>\n    <div class=\"content\">\n      <p>Ola <strong>{{ $json.name }}</strong>,</p>\n      \n      <p>Voce foi convidado(a) a participar da avaliacao:</p>\n      \n      <div class=\"info-box\">\n        <strong>{{ $('Extrair Contexto').item.json.assessment_title }}</strong>\n      </div>\n      \n      <p>Esta e uma avaliacao de riscos psicossociais conforme a NR-1. Suas respostas sao <strong>confidenciais e anonimas</strong>.</p>\n      \n      <p style=\"text-align: center;\">\n        <a href=\"{{ $('Extrair Contexto').item.json.public_url }}\" class=\"button\">Responder Questionario</a>\n      </p>\n      \n      <p>O questionario leva aproximadamente <strong>15-20 minutos</strong> para ser respondido.</p>\n      \n      <p>Se o botao acima nao funcionar, copie e cole este link no seu navegador:</p>\n      <p style=\"word-break: break-all; color: #666; font-size: 12px;\">{{ $('Extrair Contexto').item.json.public_url }}</p>\n    </div>\n    <div class=\"footer\">\n      <p>Este e um email automatico. Por favor, nao responda.</p>\n      <p>&copy; 2025 Sollar Saude - Todos os direitos reservados</p>\n    </div>\n  </div>\n</body>\n</html>",
-        "options": {
-          "appendAttribution": false
-        }
+        "sendTo": "={{ $json.email }}",
+        "subject": "=Convite: {{ $(\"Extrair Dados\").first().json.assessment_title }} - Avaliacao de Riscos NR-1",
+        "message": "=<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><style>body{font-family:Arial,sans-serif;background:#f5f5f5;margin:0;padding:20px}.container{max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1)}.header{background:linear-gradient(135deg,#8B4513,#A0522D);padding:32px;text-align:center}.header h1{color:#fff;margin:0;font-size:24px}.content{padding:32px}.btn{display:inline-block;background:#8B4513;color:#fff;padding:14px 28px;text-decoration:none;border-radius:8px;font-weight:600}.footer{background:#f9f9f9;padding:20px;text-align:center;color:#666;font-size:12px}</style></head><body><div class=\"container\"><div class=\"header\"><h1>Sollar Saude</h1></div><div class=\"content\"><p>Ola <strong>{{ $json.name }}</strong>,</p><p>Voce foi convidado(a) a participar da avaliacao:</p><h2 style=\"color:#8B4513\">{{ $(\"Extrair Dados\").first().json.assessment_title }}</h2><p>Esta e uma avaliacao de riscos psicossociais conforme a NR-1. Suas respostas sao <strong>confidenciais e anonimas</strong>.</p><p style=\"text-align:center;margin:30px 0\"><a href=\"{{ $(\"Extrair Dados\").first().json.public_url }}\" class=\"btn\">Responder Questionario</a></p><p>O questionario leva aproximadamente <strong>15-20 minutos</strong>.</p></div><div class=\"footer\"><p>Este e um email automatico.</p><p>2025 Sollar Saude</p></div></div></body></html>",
+        "options": {}
       },
       "id": "send-email",
       "name": "Enviar Email",
-      "type": "n8n-nodes-base.emailSend",
-      "typeVersion": 2.1,
-      "position": [1350, 300],
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [560, 300],
       "credentials": {
-        "smtp": {
-          "id": "smtp-credentials",
-          "name": "SMTP Sollar"
+        "gmailOAuth2": {
+          "id": "qUO4rhqI3RcVhau8",
+          "name": "Gmail account"
         }
       }
     },
     {
-      "parameters": {
-        "method": "PATCH",
-        "url": "https://sollar-insight-hub.vercel.app/api/n8n/participants",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "x-api-key",
-              "value": "={{ $env.N8N_API_KEY }}"
-            },
-            {
-              "name": "Content-Type",
-              "value": "application/json"
-            }
-          ]
-        },
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={\n  \"participant_id\": \"{{ $json.id }}\",\n  \"status\": \"sent\"\n}",
-        "options": {}
-      },
-      "id": "update-status",
-      "name": "Atualizar Status",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [1570, 300]
-    },
-    {
-      "parameters": {
-        "amount": 1,
-        "unit": "seconds"
-      },
-      "id": "wait-rate-limit",
-      "name": "Rate Limit (1s)",
-      "type": "n8n-nodes-base.wait",
-      "typeVersion": 1.1,
-      "position": [1790, 300]
-    },
-    {
       "parameters": {},
-      "id": "no-op-end",
-      "name": "Fim",
+      "id": "no-op",
+      "name": "Concluido",
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
-      "position": [2010, 300]
-    },
-    {
-      "parameters": {
-        "content": "## Workflow: Disparo de Emails para Participantes\n\n### Fluxo:\n1. **Webhook** recebe evento `participants.imported`\n2. **Filtro** verifica se e o evento correto\n3. **Extrair Contexto** salva dados do assessment\n4. **Separar Participantes** divide array em items\n5. **Lotes de 5** processa em batches para rate limiting\n6. **Enviar Email** dispara email HTML\n7. **Atualizar Status** marca como `sent` na API\n8. **Rate Limit** aguarda 1s entre emails\n\n### Configuracao Necessaria:\n- Credenciais SMTP\n- Variavel de ambiente `N8N_API_KEY`",
-        "height": 380,
-        "width": 350
-      },
-      "id": "sticky-note",
-      "name": "Instrucoes",
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [240, 520]
-    },
-    {
-      "parameters": {
-        "content": "### Evento Esperado:\n```json\n{\n  \"event\": \"participants.imported\",\n  \"data\": {\n    \"assessment_title\": \"...\",\n    \"public_url\": \"...\",\n    \"participants\": [\n      { \"id\": \"...\", \"email\": \"...\", \"name\": \"...\" }\n    ]\n  }\n}\n```",
-        "height": 250,
-        "width": 300
-      },
-      "id": "sticky-note-2",
-      "name": "Payload Esperado",
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [620, 520]
+      "position": [800, 300]
     }
   ],
   "connections": {
-    "Webhook Sollar": {
-      "main": [
-        [
-          {
-            "node": "Filtrar participants.imported",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+    "Webhook Participantes": {
+      "main": [[{"node": "Filtrar Evento", "type": "main", "index": 0}]]
     },
-    "Filtrar participants.imported": {
-      "main": [
-        [
-          {
-            "node": "Extrair Contexto",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+    "Filtrar Evento": {
+      "main": [[{"node": "Extrair Dados", "type": "main", "index": 0}]]
     },
-    "Extrair Contexto": {
-      "main": [
-        [
-          {
-            "node": "Separar Participantes",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+    "Extrair Dados": {
+      "main": [[{"node": "Separar Participantes", "type": "main", "index": 0}]]
     },
     "Separar Participantes": {
-      "main": [
-        [
-          {
-            "node": "Lotes de 5",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Lotes de 5": {
-      "main": [
-        [
-          {
-            "node": "Enviar Email",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Fim",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{"node": "Enviar Email", "type": "main", "index": 0}]]
     },
     "Enviar Email": {
-      "main": [
-        [
-          {
-            "node": "Atualizar Status",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Atualizar Status": {
-      "main": [
-        [
-          {
-            "node": "Rate Limit (1s)",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Rate Limit (1s)": {
-      "main": [
-        [
-          {
-            "node": "Lotes de 5",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{"node": "Concluido", "type": "main", "index": 0}]]
     }
   },
   "settings": {
@@ -311,8 +145,21 @@
       "name": "Email",
       "createdAt": "2025-12-21T00:00:00.000Z",
       "updatedAt": "2025-12-21T00:00:00.000Z"
+    },
+    {
+      "name": "Participants",
+      "createdAt": "2025-12-21T00:00:00.000Z",
+      "updatedAt": "2025-12-21T00:00:00.000Z"
     }
   ],
-  "triggerCount": 0,
-  "pinData": {}
+  "_notes": {
+    "workflow_id": "DJYJxu2Oe4LbOULs",
+    "webhook_url": "https://sollar-n8n.7wxwzr.easypanel.host/webhook/sollar-participants",
+    "status": "Fluxo de dados funcionando. Gmail OAuth precisa reautorizacao.",
+    "next_steps": [
+      "1. Acessar n8n UI e reautorizar Gmail OAuth",
+      "2. Configurar Vercel deployment",
+      "3. Adicionar node HTTP Request para atualizar status apos envio"
+    ]
+  }
 }
