@@ -4,7 +4,8 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Shield } from "lucide-react";
 import Link from "next/link";
-import { DeleteQuestionnaireButton } from "@/components/questionnaires/delete-questionnaire-button";
+// DeleteQuestionnaireButton is imported for future use
+// import { DeleteQuestionnaireButton } from "@/components/questionnaires/delete-questionnaire-button";
 import { TEMPLATE_IDS_ARRAY, isTemplateQuestionnaire, getLockedQuestionnaireInfo } from "@/lib/constants/questionnaire-templates";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -47,7 +48,7 @@ export default async function QuestionnairePage({
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const canManage = ["admin", "manager"].includes((profile as any).role);
+  const _canManage = ["admin", "manager"].includes((profile as any).role);
 
   // Buscar questionário com perguntas (templates globais OU da organização)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

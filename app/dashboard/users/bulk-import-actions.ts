@@ -8,7 +8,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { checkRateLimit, getClientIP, rateLimitConfigs } from "@/lib/rate-limit";
+import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { headers } from "next/headers";
 import { dispatchEvent } from "@/lib/events";
 import {
@@ -272,7 +272,7 @@ export async function bulkImportUsers(
   });
 
   // Check existing emails
-  const emails = rows.map((r) => r.email.toLowerCase());
+  const _emails = rows.map((r) => r.email.toLowerCase());
   const { data: existingUsers } = await supabaseAdmin.auth.admin.listUsers();
   const existingEmails = new Set(
     existingUsers?.users?.map((u) => u.email?.toLowerCase()) || []

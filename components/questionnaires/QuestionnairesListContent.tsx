@@ -26,7 +26,7 @@ interface QuestionnairesListContentProps {
   canManage: boolean;
 }
 
-function QuestionnaireCard({ questionnaire, canManage }: { questionnaire: Questionnaire; canManage: boolean }) {
+function QuestionnaireCard({ questionnaire, canManage: _canManage }: { questionnaire: Questionnaire; canManage: boolean }) {
   const questionCount = questionnaire.questions?.[0]?.count || 0;
   const isLocked = questionnaire.is_locked === true || isTemplateQuestionnaire(questionnaire.id);
   const lockedInfo = getLockedQuestionnaireInfo(questionnaire.id);

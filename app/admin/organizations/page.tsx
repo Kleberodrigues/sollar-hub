@@ -60,7 +60,7 @@ export default function OrganizationsListPage() {
   // State
   const [organizations, setOrganizations] = useState<OrganizationListItem[]>([]);
   const [total, setTotal] = useState(0);
-  const [hasMore, setHasMore] = useState(false);
+  const [_hasMore, setHasMore] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

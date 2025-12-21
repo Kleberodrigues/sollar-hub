@@ -52,7 +52,7 @@ export function AssessmentResponseFormV2({
   questionnaire,
   questions,
 }: AssessmentResponseFormProps) {
-  const router = useRouter();
+  const _router = useRouter();
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);

@@ -5,7 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { getBillingHistory, type BillingItem, type BillingFilters } from "../actions";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+// Input component not currently used but may be needed for search
+// import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -53,7 +54,7 @@ export default function BillingPage() {
   const [payments, setPayments] = useState<BillingItem[]>([]);
   const [total, setTotal] = useState(0);
   const [totalAmount, setTotalAmount] = useState(0);
-  const [hasMore, setHasMore] = useState(false);
+  const [_hasMore, setHasMore] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

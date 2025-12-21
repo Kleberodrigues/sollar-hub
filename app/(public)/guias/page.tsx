@@ -1,5 +1,5 @@
 import { SlideUp } from '@/components/animated'
-import { FileText, Download, Clock } from 'lucide-react'
+import { FileText, Download } from 'lucide-react'
 
 export const metadata = {
   title: 'Guias | PsicoMapa',
