@@ -155,7 +155,8 @@ async function testAnonymity(): Promise<TestResult[]> {
         assessment_id: assessment.id,
         question_id: question.id,
         anonymous_id: anonymousId,
-        value: 'Resposta anônima de teste'
+        response_text: 'Resposta anônima de teste',
+        value: null // value é INTEGER para escalas numéricas
       });
 
     results.push({
