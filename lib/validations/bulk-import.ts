@@ -7,9 +7,11 @@
 import { z } from "zod";
 
 /**
- * Roles válidos para usuários
+ * Roles válidos para usuários (novos roles)
+ * - responsavel_empresa: Admin da empresa cliente
+ * - membro: Acesso limitado (visualizar relatórios)
  */
-export const validRoles = ["admin", "manager", "member", "viewer"] as const;
+export const validRoles = ["responsavel_empresa", "membro"] as const;
 export type ValidRole = (typeof validRoles)[number];
 
 /**
@@ -38,7 +40,7 @@ export const bulkImportRowSchema = z.object({
         message: `Cargo inválido. Use: ${validRoles.join(", ")}`,
       }),
     })
-    .default("member"),
+    .default("membro"),
 });
 
 export type BulkImportRow = z.infer<typeof bulkImportRowSchema>;
@@ -134,7 +136,7 @@ export function validateImportRow(
     email: rawRow.email?.trim() || "",
     fullName: rawRow.nome?.trim() || "",
     department: rawRow.departamento?.trim() || undefined,
-    role: normalizeRole(rawRow.cargo?.trim() || "member"),
+    role: normalizeRole(rawRow.cargo?.trim() || "membro"),
   };
 
   // Validar com Zod
@@ -169,19 +171,22 @@ export function validateImportRow(
 function normalizeRole(role: string): ValidRole {
   const normalized = role.toLowerCase().trim();
   const roleMap: Record<string, ValidRole> = {
-    admin: "admin",
-    administrador: "admin",
-    manager: "manager",
-    gerente: "manager",
-    gestor: "manager",
-    member: "member",
-    membro: "member",
-    colaborador: "member",
-    viewer: "viewer",
-    visualizador: "viewer",
-    leitor: "viewer",
+    // Novos roles
+    responsavel_empresa: "responsavel_empresa",
+    responsavel: "responsavel_empresa",
+    admin: "responsavel_empresa",
+    administrador: "responsavel_empresa",
+    manager: "responsavel_empresa",
+    gerente: "responsavel_empresa",
+    gestor: "responsavel_empresa",
+    membro: "membro",
+    member: "membro",
+    colaborador: "membro",
+    viewer: "membro",
+    visualizador: "membro",
+    leitor: "membro",
   };
-  return roleMap[normalized] || "member";
+  return roleMap[normalized] || "membro";
 }
 
 /**

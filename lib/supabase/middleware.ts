@@ -71,19 +71,19 @@ export async function updateSession(request: NextRequest) {
 
   // Se usuário está autenticado, verificar role-based access
   if (user && pathname.startsWith("/dashboard")) {
-    // Rotas que exigem role admin
-    const adminRoutes = ["/dashboard/users", "/dashboard/settings"];
+    // Rotas que exigem role responsavel_empresa (admin da empresa cliente)
+    const responsavelRoutes = ["/dashboard/users", "/dashboard/settings"];
 
-    if (adminRoutes.some((route) => pathname.startsWith(route))) {
+    if (responsavelRoutes.some((route) => pathname.startsWith(route))) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data: profile } = await (supabase as any)
         .from("user_profiles")
-        .select("role")
+        .select("role, is_super_admin")
         .eq("id", user.id)
         .single();
 
-      // Se não é admin, redirecionar para dashboard home
-      if (profile?.role !== "admin") {
+      // Se não é responsavel_empresa nem super_admin, redirecionar para dashboard home
+      if (profile?.role !== "responsavel_empresa" && !profile?.is_super_admin) {
         const url = request.nextUrl.clone();
         url.pathname = "/dashboard";
         return NextResponse.redirect(url);

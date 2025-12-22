@@ -52,9 +52,8 @@ export function AssessmentResponseFormV2({
   questionnaire,
   questions,
 }: AssessmentResponseFormProps) {
-  const _router = useRouter();
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState(0);
   const [showIntroduction, setShowIntroduction] = useState(true);
@@ -185,8 +184,8 @@ export function AssessmentResponseFormV2({
         console.error('[ResponseForm] Failed to dispatch event:', err);
       });
 
-      // Sucesso!
-      setSubmitted(true);
+      // Sucesso! Redirecionar para página de agradecimento
+      router.push(`/assess/${assessmentId}/obrigado`);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Erro ao enviar respostas. Tente novamente.";
       setError(message);
@@ -209,24 +208,6 @@ export function AssessmentResponseFormV2({
           onAccept={() => setShowIntroduction(false)}
         />
       </div>
-    );
-  }
-
-  // Tela de sucesso
-  if (submitted) {
-    return (
-      <Card className="border-green-200 bg-green-50">
-        <CardContent className="py-12 text-center">
-          <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-text-heading mb-2">
-            Respostas Enviadas com Sucesso!
-          </h2>
-          <p className="text-text-secondary">
-            Obrigado por participar desta avaliação. Suas respostas foram
-            registradas de forma anônima.
-          </p>
-        </CardContent>
-      </Card>
     );
   }
 

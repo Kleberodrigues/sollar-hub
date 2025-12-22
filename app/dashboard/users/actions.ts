@@ -45,8 +45,8 @@ export async function listOrganizationUsers() {
     .single() as any);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if (!currentProfile || (currentProfile as any).role !== "admin") {
-    return { error: "Apenas administradores podem gerenciar usuários" };
+  if (!currentProfile || (currentProfile as any).role !== "responsavel_empresa") {
+    return { error: "Apenas responsáveis podem gerenciar usuários" };
   }
 
   // Listar usuários da organização (RLS garante isolamento)
@@ -102,8 +102,8 @@ export async function inviteUser(formData: FormData) {
     .single() as any);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if (!currentProfile || (currentProfile as any).role !== "admin") {
-    return { error: "Apenas administradores podem convidar usuários" };
+  if (!currentProfile || (currentProfile as any).role !== "responsavel_empresa") {
+    return { error: "Apenas responsáveis podem convidar usuários" };
   }
 
   try {
@@ -164,9 +164,9 @@ export async function updateUserRole(userId: string, newRole: UserRole) {
     return { error: "ID de usuário inválido" };
   }
 
-  const roleResult = z.enum(["admin", "manager", "member", "viewer"]).safeParse(newRole);
+  const roleResult = z.enum(["responsavel_empresa", "membro"]).safeParse(newRole);
   if (!roleResult.success) {
-    return { error: "Role inválido" };
+    return { error: "Role inválido. Use 'responsavel_empresa' ou 'membro'" };
   }
 
   const supabase = await createClient();
@@ -179,7 +179,7 @@ export async function updateUserRole(userId: string, newRole: UserRole) {
     return { error: "Não autenticado" };
   }
 
-  // Verificar se é admin
+  // Verificar se é responsavel_empresa
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: currentProfile } = await (supabase
     .from("user_profiles")
@@ -188,8 +188,8 @@ export async function updateUserRole(userId: string, newRole: UserRole) {
     .single() as any);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if (!currentProfile || (currentProfile as any).role !== "admin") {
-    return { error: "Apenas administradores podem alterar roles" };
+  if (!currentProfile || (currentProfile as any).role !== "responsavel_empresa") {
+    return { error: "Apenas responsáveis podem alterar roles" };
   }
 
   // Não permitir alterar próprio role
@@ -238,7 +238,7 @@ export async function deactivateUser(userId: string) {
     return { error: "Não autenticado" };
   }
 
-  // Verificar se é admin
+  // Verificar se é responsavel_empresa
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: currentProfile } = await (supabase
     .from("user_profiles")
@@ -247,8 +247,8 @@ export async function deactivateUser(userId: string) {
     .single() as any);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if (!currentProfile || (currentProfile as any).role !== "admin") {
-    return { error: "Apenas administradores podem desativar usuários" };
+  if (!currentProfile || (currentProfile as any).role !== "responsavel_empresa") {
+    return { error: "Apenas responsáveis podem desativar usuários" };
   }
 
   // Não permitir desativar a si mesmo
@@ -303,7 +303,7 @@ export async function reactivateUser(userId: string) {
     return { error: "Não autenticado" };
   }
 
-  // Verificar se é admin
+  // Verificar se é responsavel_empresa
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: currentProfile } = await (supabase
     .from("user_profiles")
@@ -312,8 +312,8 @@ export async function reactivateUser(userId: string) {
     .single() as any);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if (!currentProfile || (currentProfile as any).role !== "admin") {
-    return { error: "Apenas administradores podem reativar usuários" };
+  if (!currentProfile || (currentProfile as any).role !== "responsavel_empresa") {
+    return { error: "Apenas responsáveis podem reativar usuários" };
   }
 
   try {

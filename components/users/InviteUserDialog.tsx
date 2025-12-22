@@ -43,7 +43,7 @@ export function InviteUserDialog() {
     const validation = inviteUserSchema.safeParse({
       fullName: formData.get("fullName"),
       email: formData.get("email"),
-      role: formData.get("role") || "member",
+      role: formData.get("role") || "membro",
     });
 
     if (!validation.success) {
@@ -134,22 +134,19 @@ export function InviteUserDialog() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="role">Role *</Label>
-            <Select name="role" defaultValue="member" disabled={loading}>
+            <Label htmlFor="role">Perfil *</Label>
+            <Select name="role" defaultValue="membro" disabled={loading}>
               <SelectTrigger>
-                <SelectValue placeholder="Selecione o role" />
+                <SelectValue placeholder="Selecione o perfil" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="admin">Administrador</SelectItem>
-                <SelectItem value="manager">Gerente</SelectItem>
-                <SelectItem value="member">Membro</SelectItem>
-                <SelectItem value="viewer">Visualizador</SelectItem>
+                <SelectItem value="responsavel_empresa">Responsável</SelectItem>
+                <SelectItem value="membro">Membro</SelectItem>
               </SelectContent>
             </Select>
             <p className="text-xs text-text-muted">
-              <strong>Admin:</strong> Acesso total | <strong>Manager:</strong>{" "}
-              Gerenciar diagnósticos | <strong>Membro:</strong> Visualizar e
-              responder | <strong>Visualizador:</strong> Apenas visualizar
+              <strong>Responsável:</strong> Acesso completo, gerencia usuários e diagnósticos |{" "}
+              <strong>Membro:</strong> Acesso limitado, visualiza relatórios
             </p>
           </div>
 

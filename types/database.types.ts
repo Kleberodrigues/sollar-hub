@@ -1061,7 +1061,7 @@ export type Database = {
         | "unpaid"
         | "incomplete"
         | "incomplete_expired"
-      user_role: "admin" | "manager" | "member" | "viewer"
+      user_role: "admin" | "responsavel_empresa" | "membro"
       participant_status: "pending" | "sent" | "responded" | "bounced" | "opted_out"
     }
     CompositeTypes: {
@@ -1226,7 +1226,7 @@ export const Constants = {
         "incomplete",
         "incomplete_expired",
       ],
-      user_role: ["admin", "manager", "member", "viewer"],
+      user_role: ["admin", "responsavel_empresa", "membro"],
     },
   },
 } as const

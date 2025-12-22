@@ -49,12 +49,24 @@ export function useUser() {
     return () => subscription.unsubscribe()
   }, [])
 
+  // Type assertion for is_super_admin since it may not be in generated types yet
+  const isSuperAdmin = !!(profile as UserProfile & { is_super_admin?: boolean })?.is_super_admin
+
   return {
     user,
     profile,
     loading,
     isAuthenticated: !!user,
-    isAdmin: profile?.role === 'admin',
-    isManager: profile?.role === 'manager' || profile?.role === 'admin',
+    // New role system
+    isSuperAdmin,
+    isResponsavel: profile?.role === 'responsavel_empresa',
+    isMembro: profile?.role === 'membro',
+    // Permission helpers
+    canManage: profile?.role === 'responsavel_empresa' || isSuperAdmin,
+    canInvite: profile?.role === 'responsavel_empresa' || isSuperAdmin,
+    canViewReports: profile?.role === 'responsavel_empresa' || profile?.role === 'membro' || isSuperAdmin,
+    // Legacy compatibility (will be removed)
+    isAdmin: isSuperAdmin,
+    isManager: profile?.role === 'responsavel_empresa' || isSuperAdmin,
   }
 }

@@ -13,11 +13,30 @@ import { registerUser } from '@/app/(auth)/register/actions'
  * - Estado de autenticação (user, profile, organization)
  * - Actions (login, logout, register, updateProfile)
  * - Loading states
- * - Role checks (isAdmin, isManager)
+ * - Role checks:
+ *   - isSuperAdmin: apenas proprietários da plataforma (Laura/Julia)
+ *   - isResponsavel: administrador da empresa cliente
+ *   - isMembro: acesso limitado (visualizar relatórios)
+ *   - canManage: pode gerenciar (responsavel_empresa ou super_admin)
+ *   - canInvite: pode convidar usuários (apenas responsavel_empresa)
  */
 export function useAuth() {
   const router = useRouter()
-  const { user, profile, loading: userLoading, isAuthenticated, isAdmin, isManager } = useUser()
+  const {
+    user,
+    profile,
+    loading: userLoading,
+    isAuthenticated,
+    isSuperAdmin,
+    isResponsavel,
+    isMembro,
+    canManage,
+    canInvite,
+    canViewReports,
+    // Legacy
+    isAdmin,
+    isManager
+  } = useUser()
   const { organization, loading: orgLoading } = useOrganization()
 
   const supabase = createClient()
@@ -106,6 +125,16 @@ export function useAuth() {
     organization,
     loading: userLoading || orgLoading,
     isAuthenticated,
+
+    // New role system
+    isSuperAdmin,
+    isResponsavel,
+    isMembro,
+    canManage,
+    canInvite,
+    canViewReports,
+
+    // Legacy compatibility (will be removed)
     isAdmin,
     isManager,
 

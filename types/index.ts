@@ -33,7 +33,7 @@ export type RiskScoreUpdate = Database['public']['Tables']['risk_scores']['Updat
 
 // Enum Types
 export type AppRole = Database['public']['Enums']['app_role']
-export type UserRole = 'admin' | 'manager' | 'member' | 'viewer' // Not in DB, defined locally
+export type UserRole = 'admin' | 'responsavel_empresa' | 'membro' // admin=super admin only, responsavel_empresa=company admin, membro=limited access
 export type QuestionnaireStatus = Database['public']['Enums']['questionnaire_status']
 export type QuestionnaireType = 'nr1_full' | 'pulse_monthly' | 'custom' // Not in DB, defined locally
 export type QuestionType = Database['public']['Enums']['question_type']
@@ -118,6 +118,20 @@ export const QUESTION_TYPE_LABELS: Record<QuestionType, string> = {
   likert_7: 'Likert 7 Pontos',
   number: 'Número',
   date: 'Data'
+}
+
+// User Role Labels (PT-BR)
+export const USER_ROLE_LABELS: Record<UserRole, string> = {
+  admin: 'Super Admin',
+  responsavel_empresa: 'Responsável',
+  membro: 'Membro'
+}
+
+// User Role Descriptions (PT-BR)
+export const USER_ROLE_DESCRIPTIONS: Record<UserRole, string> = {
+  admin: 'Acesso total à plataforma (apenas proprietários)',
+  responsavel_empresa: 'Acesso completo à empresa, pode convidar membros',
+  membro: 'Acesso limitado (ver relatórios e dashboards)'
 }
 
 // Helper function to calculate risk level from score

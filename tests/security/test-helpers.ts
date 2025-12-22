@@ -88,7 +88,7 @@ export async function createTestOrganization(
 export async function createTestUser(
   adminClient: ReturnType<typeof createAdminClient>,
   organizationId: string,
-  role: 'admin' | 'manager' | 'member' | 'viewer' = 'member',
+  role: 'admin' | 'responsavel_empresa' | 'membro' = 'membro',
   emailPrefix?: string
 ): Promise<TestUser> {
   const timestamp = Date.now();

@@ -27,10 +27,9 @@ interface UserListProps {
 }
 
 const ROLE_LABELS: Record<UserRole, string> = {
-  admin: "Administrador",
-  manager: "Gerente",
-  member: "Membro",
-  viewer: "Visualizador",
+  admin: "Super Admin",
+  responsavel_empresa: "Responsável",
+  membro: "Membro",
 };
 
 export function UserList({ users }: UserListProps) {
@@ -129,7 +128,7 @@ export function UserList({ users }: UserListProps) {
                   </TableCell>
                   <TableCell>
                     <Select
-                      value={user.role || "member"}
+                      value={user.role || "membro"}
                       onValueChange={(value: UserRole) =>
                         handleRoleChange(user.id, value)
                       }
@@ -139,17 +138,11 @@ export function UserList({ users }: UserListProps) {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="admin">
-                          {ROLE_LABELS.admin}
+                        <SelectItem value="responsavel_empresa">
+                          {ROLE_LABELS.responsavel_empresa}
                         </SelectItem>
-                        <SelectItem value="manager">
-                          {ROLE_LABELS.manager}
-                        </SelectItem>
-                        <SelectItem value="member">
-                          {ROLE_LABELS.member}
-                        </SelectItem>
-                        <SelectItem value="viewer">
-                          {ROLE_LABELS.viewer}
+                        <SelectItem value="membro">
+                          {ROLE_LABELS.membro}
                         </SelectItem>
                       </SelectContent>
                     </Select>

@@ -19,54 +19,61 @@ interface SidebarProps {
   userRole: string;
 }
 
+// Role labels for display
+const ROLE_LABELS: Record<string, string> = {
+  admin: "Super Admin",
+  responsavel_empresa: "Responsável",
+  membro: "Membro",
+};
+
 const navigationItems = [
   {
     title: "Página Inicial",
     href: "/dashboard",
     icon: LayoutDashboard,
-    roles: ["admin", "manager", "member", "viewer"],
+    roles: ["responsavel_empresa", "membro"],
   },
   {
     title: "Questionários",
     href: "/dashboard/questionnaires",
     icon: FileText,
-    roles: ["admin", "manager"],
+    roles: ["responsavel_empresa"],
   },
   {
     title: "Assessments",
     href: "/dashboard/assessments",
     icon: ClipboardList,
-    roles: ["admin", "manager", "member", "viewer"],
+    roles: ["responsavel_empresa", "membro"],
   },
   {
     title: "Análise de Riscos",
     href: "/dashboard/analytics",
     icon: BarChart3,
-    roles: ["admin", "manager", "viewer"],
+    roles: ["responsavel_empresa", "membro"],
   },
   {
     title: "Departamentos",
     href: "/dashboard/departments",
     icon: Building2,
-    roles: ["admin", "manager"],
+    roles: ["responsavel_empresa"],
   },
   {
     title: "Usuários",
     href: "/dashboard/users",
     icon: Users,
-    roles: ["admin"],
+    roles: ["responsavel_empresa"],
   },
   {
     title: "Assinatura",
     href: "/dashboard/configuracoes/billing",
     icon: CreditCard,
-    roles: ["admin"],
+    roles: ["responsavel_empresa"],
   },
   {
     title: "Configurações",
     href: "/dashboard/settings",
     icon: Settings,
-    roles: ["admin"],
+    roles: ["responsavel_empresa"],
   },
 ];
 
@@ -135,8 +142,8 @@ export function Sidebar({ userRole }: SidebarProps) {
               <p className="text-xs font-medium text-text-muted">
                 Seu Perfil
               </p>
-              <p className="text-sm font-semibold text-text-heading capitalize">
-                {userRole}
+              <p className="text-sm font-semibold text-text-heading">
+                {ROLE_LABELS[userRole] || userRole}
               </p>
             </div>
           </div>

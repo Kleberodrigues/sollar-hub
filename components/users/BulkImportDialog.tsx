@@ -298,11 +298,9 @@ export function BulkImportDialog({
   // Get role badge color
   const getRoleBadgeVariant = (role: string): "default" | "success" | "warning" | "outline" => {
     switch (role) {
-      case 'admin':
+      case 'responsavel_empresa':
         return 'default';
-      case 'manager':
-        return 'success';
-      case 'member':
+      case 'membro':
         return 'outline';
       default:
         return 'outline';
@@ -406,7 +404,7 @@ export function BulkImportDialog({
                 <li>• <strong>email</strong> - Email do usuário (obrigatório)</li>
                 <li>• <strong>nome</strong> - Nome completo (obrigatório)</li>
                 <li>• <strong>departamento</strong> - Nome do departamento (opcional)</li>
-                <li>• <strong>cargo</strong> - admin, manager, member ou viewer (obrigatório)</li>
+                <li>• <strong>cargo</strong> - responsavel_empresa ou membro (obrigatório)</li>
               </ul>
               {departments.length > 0 && (
                 <p className="mt-2 text-xs text-muted-foreground">
