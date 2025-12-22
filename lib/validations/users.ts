@@ -14,10 +14,10 @@ export const inviteUserSchema = z.object({
     .max(100, "Nome deve ter no máximo 100 caracteres")
     .regex(/^[a-zA-ZÀ-ÿ\s]+$/, "Nome deve conter apenas letras"),
   role: z
-    .enum(["admin", "manager", "member", "viewer"], {
-      errorMap: () => ({ message: "Role inválido" }),
+    .enum(["responsavel_empresa", "membro"], {
+      errorMap: () => ({ message: "Role inválido. Use 'responsavel_empresa' ou 'membro'" }),
     })
-    .default("member"),
+    .default("membro"),
 });
 
 export type InviteUserInput = z.infer<typeof inviteUserSchema>;
@@ -29,8 +29,8 @@ export const updateRoleSchema = z.object({
   userId: z
     .string()
     .uuid("ID de usuário inválido"),
-  role: z.enum(["admin", "manager", "member", "viewer"], {
-    errorMap: () => ({ message: "Role inválido" }),
+  role: z.enum(["responsavel_empresa", "membro"], {
+    errorMap: () => ({ message: "Role inválido. Use 'responsavel_empresa' ou 'membro'" }),
   }),
 });
 

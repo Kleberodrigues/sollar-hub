@@ -1,7 +1,7 @@
 /**
  * Teste de Hierarquia de Roles
  *
- * Valida permissões por role: admin > manager > member > viewer
+ * Valida permissoes por role: admin (super) > responsavel_empresa > membro
  */
 
 import { loadEnv } from './load-env';
@@ -41,253 +41,174 @@ async function testRoleHierarchy(): Promise<TestResult[]> {
 
   try {
     // ========================================================================
-    // SETUP: Criar organização e 4 usuários (1 de cada role)
+    // SETUP: Criar organizacao e 2 usuarios (responsavel_empresa + membro)
     // ========================================================================
-    console.log('📝 Setup: Criando organização e usuários...\n');
+    console.log('📝 Setup: Criando organizacao e usuarios...\n');
 
     const org = await createTestOrganization(adminClient, 'Role Test Org');
     organizationIds.push(org.id);
-    console.log(`✅ Organização: ${org.name} (${org.id})`);
+    console.log(`✅ Organizacao: ${org.name} (${org.id})`);
 
     const dept = await createTestDepartment(adminClient, org.id, 'Test Department');
     departmentIds.push(dept.id);
     console.log(`✅ Departamento: ${dept.name} (${dept.id})\n`);
 
-    // Criar usuários com diferentes roles
-    const admin = await createTestUser(adminClient, org.id, 'admin', 'role-admin');
-    userIds.push(admin.id);
-    console.log(`✅ Admin: ${admin.email}`);
+    // Criar usuarios com diferentes roles
+    const responsavel = await createTestUser(adminClient, org.id, 'responsavel_empresa', 'role-responsavel');
+    userIds.push(responsavel.id);
+    console.log(`✅ Responsavel: ${responsavel.email}`);
 
-    const manager = await createTestUser(adminClient, org.id, 'manager', 'role-manager');
-    userIds.push(manager.id);
-    console.log(`✅ Manager: ${manager.email}`);
-
-    const member = await createTestUser(adminClient, org.id, 'member', 'role-member');
-    userIds.push(member.id);
-    console.log(`✅ Member: ${member.email}`);
-
-    const viewer = await createTestUser(adminClient, org.id, 'viewer', 'role-viewer');
-    userIds.push(viewer.id);
-    console.log(`✅ Viewer: ${viewer.email}\n`);
+    const membro = await createTestUser(adminClient, org.id, 'membro', 'role-membro');
+    userIds.push(membro.id);
+    console.log(`✅ Membro: ${membro.email}\n`);
 
     results.push({
-      test: 'Setup - Criar org e 4 usuários com diferentes roles',
+      test: 'Setup - Criar org e 2 usuarios com diferentes roles',
       passed: true,
-      message: '✅ 1 org + 1 dept + 4 usuários criados (admin, manager, member, viewer)'
+      message: '✅ 1 org + 1 dept + 2 usuarios criados (responsavel_empresa, membro)'
     });
 
     // ========================================================================
-    // TESTE 1: ADMIN - Pode criar questionário
+    // TESTE 1: RESPONSAVEL_EMPRESA - Pode criar questionario
     // ========================================================================
-    console.log('🔍 Teste 1: Admin - Criar questionário\n');
+    console.log('🔍 Teste 1: Responsavel - Criar questionario\n');
 
-    const adminClient1 = await signInTestUser(admin.email, admin.password);
+    const responsavelClient = await signInTestUser(responsavel.email, responsavel.password);
 
-    const { data: adminQuestionnaire, error: adminQError } = await adminClient1
+    const { data: responsavelQuestionnaire, error: responsavelQError } = await responsavelClient
       .from('questionnaires')
       .insert({
-        title: 'Admin Questionnaire',
+        title: 'Responsavel Questionnaire',
         organization_id: org.id,
-        created_by: admin.id
+        created_by: responsavel.id
       })
       .select()
       .single();
 
     results.push({
-      test: 'Admin - CREATE questionnaire',
-      passed: adminQError === null && adminQuestionnaire !== null,
-      message: adminQError
-        ? `❌ Admin falhou ao criar questionário: ${adminQError.message}`
-        : `✅ Admin criou questionário com sucesso`
+      test: 'Responsavel - CREATE questionnaire',
+      passed: responsavelQError === null && responsavelQuestionnaire !== null,
+      message: responsavelQError
+        ? `❌ Responsavel falhou ao criar questionario: ${responsavelQError.message}`
+        : `✅ Responsavel criou questionario com sucesso`
     });
 
     // ========================================================================
-    // TESTE 2: ADMIN - Pode atualizar organização
+    // TESTE 2: RESPONSAVEL_EMPRESA - Pode atualizar organizacao
     // ========================================================================
-    console.log('🔍 Teste 2: Admin - Atualizar organização\n');
+    console.log('🔍 Teste 2: Responsavel - Atualizar organizacao\n');
 
-    const { data: adminUpdateOrg, error: adminUpdateError } = await adminClient1
+    const { data: responsavelUpdateOrg, error: responsavelUpdateError } = await responsavelClient
       .from('organizations')
-      .update({ name: 'Updated by Admin' })
+      .update({ name: 'Updated by Responsavel' })
       .eq('id', org.id)
       .select();
 
-    const adminCanUpdate = !adminUpdateError && adminUpdateOrg && adminUpdateOrg.length > 0;
+    const responsavelCanUpdate = !responsavelUpdateError && responsavelUpdateOrg && responsavelUpdateOrg.length > 0;
 
     results.push({
-      test: 'Admin - UPDATE organization',
-      passed: adminCanUpdate,
-      message: adminCanUpdate
-        ? `✅ Admin atualizou organização`
-        : `❌ Admin não conseguiu atualizar: ${adminUpdateError?.message || '0 rows'}`
+      test: 'Responsavel - UPDATE organization',
+      passed: responsavelCanUpdate,
+      message: responsavelCanUpdate
+        ? `✅ Responsavel atualizou organizacao`
+        : `❌ Responsavel nao conseguiu atualizar: ${responsavelUpdateError?.message || '0 rows'}`
     });
 
     // ========================================================================
-    // TESTE 3: MANAGER - Pode criar questionário
+    // TESTE 3: MEMBRO - Pode ler questionarios
     // ========================================================================
-    console.log('🔍 Teste 3: Manager - Criar questionário\n');
+    console.log('🔍 Teste 3: Membro - Ler questionarios\n');
 
-    const managerClient = await signInTestUser(manager.email, manager.password);
+    const membroClient = await signInTestUser(membro.email, membro.password);
 
-    const { data: managerQuestionnaire, error: managerQError } = await managerClient
-      .from('questionnaires')
-      .insert({
-        title: 'Manager Questionnaire',
-        organization_id: org.id,
-        created_by: manager.id
-      })
-      .select()
-      .single();
-
-    results.push({
-      test: 'Manager - CREATE questionnaire',
-      passed: managerQError === null && managerQuestionnaire !== null,
-      message: managerQError
-        ? `❌ Manager falhou ao criar questionário: ${managerQError.message}`
-        : `✅ Manager criou questionário com sucesso`
-    });
-
-    // ========================================================================
-    // TESTE 4: MANAGER - NÃO pode atualizar organização
-    // ========================================================================
-    console.log('🔍 Teste 4: Manager - Atualizar organização (deve BLOQUEAR)\n');
-
-    const { data: managerUpdateOrg, error: managerUpdateError } = await managerClient
-      .from('organizations')
-      .update({ name: 'Updated by Manager' })
-      .eq('id', org.id)
-      .select();
-
-    const managerBlocked = managerUpdateError !== null || !managerUpdateOrg || managerUpdateOrg.length === 0;
-
-    results.push({
-      test: 'Manager - UPDATE organization (bloqueado)',
-      passed: managerBlocked,
-      message: managerBlocked
-        ? `✅ Manager bloqueado (correto - apenas admin pode)`
-        : `❌ Manager conseguiu atualizar org (FALHA - deveria bloquear)`
-    });
-
-    // ========================================================================
-    // TESTE 5: MEMBER - Pode ler questionários
-    // ========================================================================
-    console.log('🔍 Teste 5: Member - Ler questionários\n');
-
-    const memberClient = await signInTestUser(member.email, member.password);
-
-    const { data: memberQuestionnaires, error: memberReadError } = await memberClient
+    const { data: membroQuestionnaires, error: membroReadError } = await membroClient
       .from('questionnaires')
       .select('*');
 
     results.push({
-      test: 'Member - SELECT questionnaires',
-      passed: memberReadError === null && memberQuestionnaires !== null,
-      message: memberReadError
-        ? `❌ Member falhou ao ler: ${memberReadError.message}`
-        : `✅ Member leu ${memberQuestionnaires.length} questionários`
+      test: 'Membro - SELECT questionnaires',
+      passed: membroReadError === null && membroQuestionnaires !== null,
+      message: membroReadError
+        ? `❌ Membro falhou ao ler: ${membroReadError.message}`
+        : `✅ Membro leu ${membroQuestionnaires.length} questionarios`
     });
 
     // ========================================================================
-    // TESTE 6: MEMBER - NÃO pode criar questionário
+    // TESTE 4: MEMBRO - NAO pode criar questionario
     // ========================================================================
-    console.log('🔍 Teste 6: Member - Criar questionário (deve BLOQUEAR)\n');
+    console.log('🔍 Teste 4: Membro - Criar questionario (deve BLOQUEAR)\n');
 
-    const { data: memberQuestionnaire, error: memberCreateError } = await memberClient
+    const { data: membroQuestionnaire, error: membroCreateError } = await membroClient
       .from('questionnaires')
       .insert({
-        title: 'Member Questionnaire',
+        title: 'Membro Questionnaire',
         organization_id: org.id,
-        created_by: member.id
+        created_by: membro.id
       })
       .select()
       .single();
 
-    const memberBlocked = memberCreateError !== null || memberQuestionnaire === null;
+    const membroBlocked = membroCreateError !== null || membroQuestionnaire === null;
 
     results.push({
-      test: 'Member - CREATE questionnaire (bloqueado)',
-      passed: memberBlocked,
-      message: memberBlocked
-        ? `✅ Member bloqueado: ${memberCreateError?.message || 'RLS block'}`
-        : `❌ Member criou questionário (FALHA - deveria bloquear)`
+      test: 'Membro - CREATE questionnaire (bloqueado)',
+      passed: membroBlocked,
+      message: membroBlocked
+        ? `✅ Membro bloqueado: ${membroCreateError?.message || 'RLS block'}`
+        : `❌ Membro criou questionario (FALHA - deveria bloquear)`
     });
 
     // ========================================================================
-    // TESTE 7: VIEWER - Pode ler questionários
+    // TESTE 5: MEMBRO - NAO pode atualizar organizacao
     // ========================================================================
-    console.log('🔍 Teste 7: Viewer - Ler questionários\n');
+    console.log('🔍 Teste 5: Membro - Atualizar organizacao (deve BLOQUEAR)\n');
 
-    const viewerClient = await signInTestUser(viewer.email, viewer.password);
+    const { data: membroUpdateOrg, error: membroUpdateError } = await membroClient
+      .from('organizations')
+      .update({ name: 'Updated by Membro' })
+      .eq('id', org.id)
+      .select();
 
-    const { data: viewerQuestionnaires, error: viewerReadError } = await viewerClient
-      .from('questionnaires')
-      .select('*');
+    const membroUpdateBlocked = membroUpdateError !== null || !membroUpdateOrg || membroUpdateOrg.length === 0;
 
     results.push({
-      test: 'Viewer - SELECT questionnaires',
-      passed: viewerReadError === null && viewerQuestionnaires !== null,
-      message: viewerReadError
-        ? `❌ Viewer falhou ao ler: ${viewerReadError.message}`
-        : `✅ Viewer leu ${viewerQuestionnaires.length} questionários`
+      test: 'Membro - UPDATE organization (bloqueado)',
+      passed: membroUpdateBlocked,
+      message: membroUpdateBlocked
+        ? `✅ Membro bloqueado ao atualizar org`
+        : `❌ Membro conseguiu atualizar org (FALHA - deveria bloquear)`
     });
 
     // ========================================================================
-    // TESTE 8: VIEWER - NÃO pode criar questionário
+    // TESTE 6: MEMBRO - NAO pode atualizar questionario
     // ========================================================================
-    console.log('🔍 Teste 8: Viewer - Criar questionário (deve BLOQUEAR)\n');
+    console.log('🔍 Teste 6: Membro - Atualizar questionario (deve BLOQUEAR)\n');
 
-    const { data: viewerQuestionnaire, error: viewerCreateError } = await viewerClient
-      .from('questionnaires')
-      .insert({
-        title: 'Viewer Questionnaire',
-        organization_id: org.id,
-        created_by: viewer.id
-      })
-      .select()
-      .single();
-
-    const viewerBlocked = viewerCreateError !== null || viewerQuestionnaire === null;
-
-    results.push({
-      test: 'Viewer - CREATE questionnaire (bloqueado)',
-      passed: viewerBlocked,
-      message: viewerBlocked
-        ? `✅ Viewer bloqueado: ${viewerCreateError?.message || 'RLS block'}`
-        : `❌ Viewer criou questionário (FALHA - deveria bloquear)`
-    });
-
-    // ========================================================================
-    // TESTE 9: VIEWER - NÃO pode atualizar questionário
-    // ========================================================================
-    console.log('🔍 Teste 9: Viewer - Atualizar questionário (deve BLOQUEAR)\n');
-
-    if (adminQuestionnaire) {
-      const { data: viewerUpdateQ, error: viewerUpdateError } = await viewerClient
+    if (responsavelQuestionnaire) {
+      const { data: membroUpdateQ, error: membroUpdateQError } = await membroClient
         .from('questionnaires')
-        .update({ title: 'Updated by Viewer' })
-        .eq('id', adminQuestionnaire.id)
+        .update({ title: 'Updated by Membro' })
+        .eq('id', responsavelQuestionnaire.id)
         .select();
 
-      const viewerUpdateBlocked = viewerUpdateError !== null || !viewerUpdateQ || viewerUpdateQ.length === 0;
+      const membroQUpdateBlocked = membroUpdateQError !== null || !membroUpdateQ || membroUpdateQ.length === 0;
 
       results.push({
-        test: 'Viewer - UPDATE questionnaire (bloqueado)',
-        passed: viewerUpdateBlocked,
-        message: viewerUpdateBlocked
-          ? `✅ Viewer bloqueado ao atualizar`
-          : `❌ Viewer conseguiu atualizar (FALHA)`
+        test: 'Membro - UPDATE questionnaire (bloqueado)',
+        passed: membroQUpdateBlocked,
+        message: membroQUpdateBlocked
+          ? `✅ Membro bloqueado ao atualizar questionario`
+          : `❌ Membro conseguiu atualizar (FALHA)`
       });
     }
 
     // Cleanup
-    await adminClient1.auth.signOut();
-    await managerClient.auth.signOut();
-    await memberClient.auth.signOut();
-    await viewerClient.auth.signOut();
+    await responsavelClient.auth.signOut();
+    await membroClient.auth.signOut();
 
   } catch (error: any) {
     results.push({
-      test: 'Execução de Testes',
+      test: 'Execucao de Testes',
       passed: false,
       message: `❌ Erro inesperado: ${error.message}`
     });
@@ -301,7 +222,7 @@ async function testRoleHierarchy(): Promise<TestResult[]> {
     await cleanupTestUsers(adminClient, userIds);
     await cleanupTestOrganizations(adminClient, organizationIds);
 
-    console.log('✅ Cleanup concluído\n');
+    console.log('✅ Cleanup concluido\n');
   }
 
   return results;
@@ -309,7 +230,7 @@ async function testRoleHierarchy(): Promise<TestResult[]> {
 
 // Executar testes
 async function runTests() {
-  console.log('\n🚀 Iniciando Testes de Segurança - Hierarquia de Roles\n');
+  console.log('\n🚀 Iniciando Testes de Seguranca - Hierarquia de Roles\n');
 
   const results = await testRoleHierarchy();
 
@@ -331,7 +252,7 @@ async function runTests() {
   console.log(`\n📈 RESUMO: ${passed}/${total} testes passaram (${percentage}%)\n`);
   console.log('='.repeat(60) + '\n');
 
-  // Retornar código de saída
+  // Retornar codigo de saida
   process.exit(passed === total ? 0 : 1);
 }
 

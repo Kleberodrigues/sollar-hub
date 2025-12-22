@@ -19,16 +19,17 @@ export default async function UsersPage() {
     redirect("/login");
   }
 
-  // Verificar se é admin
+  // Verificar se é responsavel_empresa ou super_admin
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: profile } = await (supabase
     .from("user_profiles")
-    .select("role, organization_id, organizations(name)")
+    .select("role, organization_id, is_super_admin, organizations(name)")
     .eq("id", user.id)
     .single() as any);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if (!profile || (profile as any).role !== "admin") {
+  const profileData = profile as any;
+  if (!profileData || (profileData.role !== "responsavel_empresa" && !profileData.is_super_admin)) {
     redirect("/dashboard");
   }
 
