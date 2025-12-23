@@ -189,14 +189,17 @@ export async function inviteUser(formData: FormData) {
       userId = authData.user.id;
     }
 
-    // 2. Criar perfil do usuário usando ADMIN CLIENT (bypass RLS)
+    // 2. Criar ou atualizar perfil do usuário usando ADMIN CLIENT (bypass RLS)
+    // Usando upsert para evitar problemas de race condition
     const { error: profileError } = await supabaseAdmin
       .from("user_profiles")
-      .insert({
+      .upsert({
         id: userId,
         organization_id: currentProfile.organization_id,
         role: role,
         full_name: fullName,
+      }, {
+        onConflict: 'id'
       });
 
     if (profileError) {
