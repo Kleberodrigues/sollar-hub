@@ -119,37 +119,68 @@ export async function inviteUser(formData: FormData) {
   }
 
   try {
-    // 1. Criar usuário no Supabase Auth usando ADMIN CLIENT
-    const { data: authData, error: authError } =
-      await supabaseAdmin.auth.admin.createUser({
-        email,
-        email_confirm: true, // Skip confirmação de email
-        user_metadata: {
-          full_name: fullName,
-        },
-      });
+    // 1. Verificar se o email já existe no auth
+    const { data: existingUsers } = await supabaseAdmin.auth.admin.listUsers();
+    const existingAuthUser = existingUsers?.users?.find(u => u.email === email);
 
-    if (authError) {
-      return { error: authError.message };
+    let userId: string;
+
+    if (existingAuthUser) {
+      // Usuário já existe no auth - verificar se tem perfil
+      const { data: existingProfile } = await supabaseAdmin
+        .from("user_profiles")
+        .select("id, organization_id")
+        .eq("id", existingAuthUser.id)
+        .single();
+
+      if (existingProfile) {
+        // Perfil já existe
+        if (existingProfile.organization_id === currentProfile.organization_id) {
+          return { error: "Este usuário já faz parte da sua organização" };
+        } else {
+          return { error: "Este email já está cadastrado em outra organização" };
+        }
+      }
+
+      // Auth user existe mas sem perfil - usar o ID existente
+      userId = existingAuthUser.id;
+    } else {
+      // 2. Criar novo usuário no Supabase Auth
+      const { data: authData, error: authError } =
+        await supabaseAdmin.auth.admin.createUser({
+          email,
+          email_confirm: true,
+          user_metadata: {
+            full_name: fullName,
+          },
+        });
+
+      if (authError) {
+        return { error: authError.message };
+      }
+
+      if (!authData.user) {
+        return { error: "Falha ao criar usuário" };
+      }
+
+      userId = authData.user.id;
     }
 
-    if (!authData.user) {
-      return { error: "Falha ao criar usuário" };
-    }
-
-    // 2. Criar perfil do usuário usando ADMIN CLIENT (bypass RLS)
+    // 3. Criar perfil do usuário usando ADMIN CLIENT (bypass RLS)
     const { error: profileError } = await supabaseAdmin
       .from("user_profiles")
       .insert({
-        id: authData.user.id,
+        id: userId,
         organization_id: currentProfile.organization_id,
         role: role,
         full_name: fullName,
       });
 
     if (profileError) {
-      // Tentar deletar o usuário criado se o perfil falhar
-      await supabaseAdmin.auth.admin.deleteUser(authData.user.id);
+      // Se criamos um novo usuário e o perfil falhou, deletar o usuário
+      if (!existingAuthUser) {
+        await supabaseAdmin.auth.admin.deleteUser(userId);
+      }
       return { error: "Erro ao criar perfil: " + profileError.message };
     }
 
