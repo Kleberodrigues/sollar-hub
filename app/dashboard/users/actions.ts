@@ -119,54 +119,73 @@ export async function inviteUser(formData: FormData) {
   }
 
   try {
-    // 1. Verificar se o email já existe no auth
-    const { data: existingUsers } = await supabaseAdmin.auth.admin.listUsers();
-    const existingAuthUser = existingUsers?.users?.find(u => u.email === email);
+    // 1. Tentar criar novo usuário no Supabase Auth
+    const { data: authData, error: authError } =
+      await supabaseAdmin.auth.admin.createUser({
+        email,
+        email_confirm: true,
+        user_metadata: {
+          full_name: fullName,
+        },
+      });
 
     let userId: string;
+    let isNewUser = true;
 
-    if (existingAuthUser) {
-      // Usuário já existe no auth - verificar se tem perfil
-      const { data: existingProfile } = await supabaseAdmin
-        .from("user_profiles")
-        .select("id, organization_id")
-        .eq("id", existingAuthUser.id)
-        .single();
+    if (authError) {
+      // Verificar se o erro é porque o usuário já existe
+      if (authError.message.includes("already been registered") ||
+          authError.message.includes("already exists")) {
+        // Buscar usuário existente por email (com paginação)
+        let existingAuthUser = null;
+        let page = 1;
 
-      if (existingProfile) {
-        // Perfil já existe
-        if (existingProfile.organization_id === currentProfile.organization_id) {
-          return { error: "Este usuário já faz parte da sua organização" };
-        } else {
-          return { error: "Este email já está cadastrado em outra organização" };
+        while (!existingAuthUser) {
+          const { data: users } = await supabaseAdmin.auth.admin.listUsers({
+            page,
+            perPage: 100
+          });
+
+          if (!users?.users?.length) break;
+
+          existingAuthUser = users.users.find(u => u.email === email);
+          if (users.users.length < 100) break;
+          page++;
         }
-      }
 
-      // Auth user existe mas sem perfil - usar o ID existente
-      userId = existingAuthUser.id;
-    } else {
-      // 2. Criar novo usuário no Supabase Auth
-      const { data: authData, error: authError } =
-        await supabaseAdmin.auth.admin.createUser({
-          email,
-          email_confirm: true,
-          user_metadata: {
-            full_name: fullName,
-          },
-        });
+        if (!existingAuthUser) {
+          return { error: "Usuário existe mas não foi encontrado. Tente novamente." };
+        }
 
-      if (authError) {
+        // Verificar se já tem perfil
+        const { data: existingProfile } = await supabaseAdmin
+          .from("user_profiles")
+          .select("id, organization_id")
+          .eq("id", existingAuthUser.id)
+          .single();
+
+        if (existingProfile) {
+          if (existingProfile.organization_id === currentProfile.organization_id) {
+            return { error: "Este usuário já faz parte da sua organização" };
+          } else {
+            return { error: "Este email já está cadastrado em outra organização" };
+          }
+        }
+
+        // Auth user existe mas sem perfil - usar o ID existente
+        userId = existingAuthUser.id;
+        isNewUser = false;
+      } else {
         return { error: authError.message };
       }
-
+    } else {
       if (!authData.user) {
         return { error: "Falha ao criar usuário" };
       }
-
       userId = authData.user.id;
     }
 
-    // 3. Criar perfil do usuário usando ADMIN CLIENT (bypass RLS)
+    // 2. Criar perfil do usuário usando ADMIN CLIENT (bypass RLS)
     const { error: profileError } = await supabaseAdmin
       .from("user_profiles")
       .insert({
@@ -178,7 +197,7 @@ export async function inviteUser(formData: FormData) {
 
     if (profileError) {
       // Se criamos um novo usuário e o perfil falhou, deletar o usuário
-      if (!existingAuthUser) {
+      if (isNewUser) {
         await supabaseAdmin.auth.admin.deleteUser(userId);
       }
       return { error: "Erro ao criar perfil: " + profileError.message };
