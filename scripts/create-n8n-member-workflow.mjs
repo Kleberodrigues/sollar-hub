@@ -2,8 +2,12 @@
  * Script para criar workflow de convite de membros no n8n
  */
 
-const N8N_API_URL = 'https://sollar-n8n.7wxwzr.easypanel.host/api/v1';
-const N8N_API_KEY = process.env.N8N_API_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NmIzOTJhNC0yYzA4LTRhZDEtYmZjOS1jOWViODU4YjkwNGMiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzY1NDgyMTU1fQ.vu_dpD-6UdjYgW4enAkB--ep7PPLBkPX0A6c1qix7ZQ';
+const N8N_API_URL = process.env.N8N_API_URL || 'https://sollar-n8n.7wxwzr.easypanel.host/api/v1';
+const N8N_API_KEY = process.env.N8N_API_KEY;
+if (!N8N_API_KEY) {
+  console.error('❌ N8N_API_KEY environment variable is required');
+  process.exit(1);
+}
 
 // Template HTML para convite de membro da plataforma
 const memberEmailHTML = `<!DOCTYPE html>
