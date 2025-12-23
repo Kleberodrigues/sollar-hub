@@ -137,10 +137,10 @@ export async function inviteUser(formData: FormData) {
       if (authError.message.includes("already been registered") ||
           authError.message.includes("already exists")) {
         // Buscar usuário existente por email (com paginação)
-        let existingAuthUser = null;
+        let foundUserId: string | null = null;
         let page = 1;
 
-        while (!existingAuthUser) {
+        while (!foundUserId) {
           const { data: users } = await supabaseAdmin.auth.admin.listUsers({
             page,
             perPage: 100
@@ -148,12 +148,16 @@ export async function inviteUser(formData: FormData) {
 
           if (!users?.users?.length) break;
 
-          existingAuthUser = users.users.find(u => u.email === email);
+          const foundUser = users.users.find(u => u.email === email);
+          if (foundUser) {
+            foundUserId = foundUser.id;
+            break;
+          }
           if (users.users.length < 100) break;
           page++;
         }
 
-        if (!existingAuthUser) {
+        if (!foundUserId) {
           return { error: "Usuário existe mas não foi encontrado. Tente novamente." };
         }
 
@@ -161,7 +165,7 @@ export async function inviteUser(formData: FormData) {
         const { data: existingProfile } = await supabaseAdmin
           .from("user_profiles")
           .select("id, organization_id")
-          .eq("id", existingAuthUser.id)
+          .eq("id", foundUserId)
           .single();
 
         if (existingProfile) {
@@ -173,7 +177,7 @@ export async function inviteUser(formData: FormData) {
         }
 
         // Auth user existe mas sem perfil - usar o ID existente
-        userId = existingAuthUser.id;
+        userId = foundUserId;
         isNewUser = false;
       } else {
         return { error: authError.message };
