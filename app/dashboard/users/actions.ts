@@ -7,6 +7,7 @@ import { inviteUserSchema, userIdSchema, validateFormData } from "@/lib/validati
 import { checkRateLimit, getClientIP, rateLimitConfigs } from "@/lib/rate-limit";
 import { headers } from "next/headers";
 import { z } from "zod";
+import { dispatchEvent } from "@/lib/events";
 
 // Helper function para rate limiting
 async function checkUserManagementRateLimit(): Promise<{ error?: string }> {
@@ -208,6 +209,32 @@ export async function inviteUser(formData: FormData) {
         await supabaseAdmin.auth.admin.deleteUser(userId);
       }
       return { error: "Erro ao criar perfil: " + profileError.message };
+    }
+
+    // 3. Buscar nome da organização para o email
+    const { data: organization } = await supabaseAdmin
+      .from("organizations")
+      .select("name")
+      .eq("id", currentProfile.organization_id)
+      .single();
+
+    // 4. Disparar evento para n8n enviar email de convite
+    try {
+      await dispatchEvent({
+        organizationId: currentProfile.organization_id,
+        eventType: "member.invited",
+        data: {
+          email,
+          name: fullName,
+          role,
+          invite_url: `${process.env.NEXT_PUBLIC_APP_URL || "https://psicomapa.cloud"}/login`,
+          organization_name: organization?.name || "sua empresa",
+          members: [{ email, name: fullName }], // Formato esperado pelo n8n
+        },
+      });
+    } catch (eventError) {
+      // Log error but don't fail the invite - user was created successfully
+      console.error("[inviteUser] Failed to dispatch member.invited event:", eventError);
     }
 
     return { success: true };

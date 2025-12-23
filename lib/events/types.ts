@@ -24,6 +24,8 @@ export type SollarEventType =
   | "user.invited"
   | "user.joined"
   | "user.removed"
+  // Member events (for n8n platform member invites)
+  | "member.invited"
   // Billing events
   | "subscription.created"
   | "subscription.upgraded"
@@ -210,6 +212,18 @@ export interface UserJoinedPayload {
   organization_name: string;
   role: "admin" | "member";
   joined_at: string;
+}
+
+export interface MemberInvitedPayload {
+  email: string;
+  name: string;
+  role: string;
+  invite_url: string;
+  organization_name: string;
+  members: Array<{
+    email: string;
+    name: string;
+  }>;
 }
 
 // ============================================
