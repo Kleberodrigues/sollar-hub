@@ -70,11 +70,16 @@ async function verifyAdminAccess() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: profile } = (await supabase
     .from("user_profiles")
-    .select("organization_id, role, full_name")
+    .select("organization_id, role, full_name, is_super_admin")
     .eq("id", user.id)
     .single()) as any;
 
-  if (!profile || profile.role !== "admin") {
+  const isAuthorized = profile && (
+    profile.role === "responsavel_empresa" ||
+    profile.role === "admin" ||
+    profile.is_super_admin
+  );
+  if (!isAuthorized) {
     return { error: "Apenas administradores podem importar usuários" };
   }
 
