@@ -40,12 +40,18 @@ export async function listOrganizationUsers() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: currentProfile } = await (supabase
     .from("user_profiles")
-    .select("organization_id, role")
+    .select("organization_id, role, is_super_admin")
     .eq("id", user.id)
     .single() as any);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if (!currentProfile || (currentProfile as any).role !== "responsavel_empresa") {
+  const profile = currentProfile as any;
+  const isAuthorized = profile && (
+    profile.role === "responsavel_empresa" ||
+    profile.role === "admin" ||
+    profile.is_super_admin
+  );
+  if (!isAuthorized) {
     return { error: "Apenas responsáveis podem gerenciar usuários" };
   }
 
@@ -97,12 +103,18 @@ export async function inviteUser(formData: FormData) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: currentProfile } = await (supabase
     .from("user_profiles")
-    .select("organization_id, role")
+    .select("organization_id, role, is_super_admin")
     .eq("id", user.id)
     .single() as any);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if (!currentProfile || (currentProfile as any).role !== "responsavel_empresa") {
+  const inviteProfile = currentProfile as any;
+  const canInvite = inviteProfile && (
+    inviteProfile.role === "responsavel_empresa" ||
+    inviteProfile.role === "admin" ||
+    inviteProfile.is_super_admin
+  );
+  if (!canInvite) {
     return { error: "Apenas responsáveis podem convidar usuários" };
   }
 
@@ -179,16 +191,22 @@ export async function updateUserRole(userId: string, newRole: UserRole) {
     return { error: "Não autenticado" };
   }
 
-  // Verificar se é responsavel_empresa
+  // Verificar se é responsavel_empresa ou admin
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: currentProfile } = await (supabase
     .from("user_profiles")
-    .select("role")
+    .select("role, is_super_admin")
     .eq("id", user.id)
     .single() as any);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if (!currentProfile || (currentProfile as any).role !== "responsavel_empresa") {
+  const roleProfile = currentProfile as any;
+  const canUpdateRole = roleProfile && (
+    roleProfile.role === "responsavel_empresa" ||
+    roleProfile.role === "admin" ||
+    roleProfile.is_super_admin
+  );
+  if (!canUpdateRole) {
     return { error: "Apenas responsáveis podem alterar roles" };
   }
 
@@ -238,16 +256,22 @@ export async function deactivateUser(userId: string) {
     return { error: "Não autenticado" };
   }
 
-  // Verificar se é responsavel_empresa
+  // Verificar se é responsavel_empresa ou admin
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: currentProfile } = await (supabase
     .from("user_profiles")
-    .select("role")
+    .select("role, is_super_admin")
     .eq("id", user.id)
     .single() as any);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if (!currentProfile || (currentProfile as any).role !== "responsavel_empresa") {
+  const deactivateProfile = currentProfile as any;
+  const canDeactivate = deactivateProfile && (
+    deactivateProfile.role === "responsavel_empresa" ||
+    deactivateProfile.role === "admin" ||
+    deactivateProfile.is_super_admin
+  );
+  if (!canDeactivate) {
     return { error: "Apenas responsáveis podem desativar usuários" };
   }
 
@@ -303,16 +327,22 @@ export async function reactivateUser(userId: string) {
     return { error: "Não autenticado" };
   }
 
-  // Verificar se é responsavel_empresa
+  // Verificar se é responsavel_empresa ou admin
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: currentProfile } = await (supabase
     .from("user_profiles")
-    .select("role")
+    .select("role, is_super_admin")
     .eq("id", user.id)
     .single() as any);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if (!currentProfile || (currentProfile as any).role !== "responsavel_empresa") {
+  const reactivateProfile = currentProfile as any;
+  const canReactivate = reactivateProfile && (
+    reactivateProfile.role === "responsavel_empresa" ||
+    reactivateProfile.role === "admin" ||
+    reactivateProfile.is_super_admin
+  );
+  if (!canReactivate) {
     return { error: "Apenas responsáveis podem reativar usuários" };
   }
 
