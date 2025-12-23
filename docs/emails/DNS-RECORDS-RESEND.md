@@ -78,10 +78,12 @@ Se o e-mail for enviado com sucesso, a configuração está completa.
 | Campo | Valor |
 |-------|-------|
 | **Conta** | ***REMOVED_EMAIL*** |
-| **API Key** | `re_ioFx1gJf_FSxuB8Y78SJa76ZkVJD1WpUo` |
+| **API Key** | Configurar via variável de ambiente `RESEND_API_KEY` |
 | **Domínio** | mail.psicomapa.cloud |
 | **Região** | São Paulo (sa-east-1) |
 | **From Email** | noreply@mail.psicomapa.cloud |
+
+> ⚠️ **IMPORTANTE**: A API Key deve ser configurada como variável de ambiente, nunca commitada no código.
 
 ---
 

@@ -2,7 +2,12 @@
  * Script para testar envio de e-mail via Resend API diretamente
  */
 
-const RESEND_API_KEY = process.env.RESEND_API_KEY || 're_ioFx1gJf_FSxuB8Y78SJa76ZkVJD1WpUo';
+const RESEND_API_KEY = process.env.RESEND_API_KEY;
+if (!RESEND_API_KEY) {
+  console.error('❌ RESEND_API_KEY environment variable is required');
+  console.error('   Set it with: export RESEND_API_KEY=re_xxxxx');
+  process.exit(1);
+}
 
 async function sendTestEmail() {
   const emailData = {

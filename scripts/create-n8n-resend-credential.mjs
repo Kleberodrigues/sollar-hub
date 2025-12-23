@@ -2,11 +2,19 @@
  * Script para criar credencial Resend no n8n via API
  */
 
-const N8N_API_URL = 'https://sollar-n8n.7wxwzr.easypanel.host/api/v1';
-const N8N_API_KEY = process.env.N8N_API_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NmIzOTJhNC0yYzA4LTRhZDEtYmZjOS1jOWViODU4YjkwNGMiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzY1NDgyMTU1fQ.vu_dpD-6UdjYgW4enAkB--ep7PPLBkPX0A6c1qix7ZQ';
+const N8N_API_URL = process.env.N8N_API_URL || 'https://sollar-n8n.7wxwzr.easypanel.host/api/v1';
+const N8N_API_KEY = process.env.N8N_API_KEY;
+if (!N8N_API_KEY) {
+  console.error('❌ N8N_API_KEY environment variable is required');
+  process.exit(1);
+}
 
-// Resend API Key
-const RESEND_API_KEY = process.env.RESEND_API_KEY || 're_ioFx1gJf_FSxuB8Y78SJa76ZkVJD1WpUo';
+// Resend API Key - MUST be set via environment variable
+const RESEND_API_KEY = process.env.RESEND_API_KEY;
+if (!RESEND_API_KEY) {
+  console.error('❌ RESEND_API_KEY environment variable is required');
+  process.exit(1);
+}
 
 async function listCredentials() {
   const response = await fetch(`${N8N_API_URL}/credentials`, {
@@ -93,7 +101,7 @@ async function main() {
     console.log('5. Configure:');
     console.log('   - Name: Resend API Key');
     console.log('   - Header Name: Authorization');
-    console.log(`   - Header Value: Bearer ${RESEND_API_KEY}`);
+    console.log('   - Header Value: Bearer <your-resend-api-key>');
     console.log('6. Salve a credencial');
   }
 }
