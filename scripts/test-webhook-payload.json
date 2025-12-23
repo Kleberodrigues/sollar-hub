@@ -1,0 +1,16 @@
+{
+  "event": "participants.imported",
+  "timestamp": "2024-12-23T12:00:00Z",
+  "organization_id": "test-org-123",
+  "data": {
+    "assessment_title": "Avaliação NR-1 - Teste",
+    "public_url": "https://sollar-hub-yurq.vercel.app/assess/test-123",
+    "organization_name": "Empresa Teste LTDA",
+    "participants": [
+      {
+        "name": "Kleber Rodrigues",
+        "email": "kleber@psicomapa.cloud"
+      }
+    ]
+  }
+}
