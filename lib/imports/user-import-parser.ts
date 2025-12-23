@@ -421,16 +421,14 @@ export function generateUserImportCSVTemplate(
     "# Colunas obrigatórias:",
     "#   email - Email válido do usuário",
     "#   nome - Nome completo (apenas letras, 2-100 caracteres)",
-    "#   cargo - admin | manager | member | viewer",
+    "#   cargo - responsavel_empresa | membro",
     "#",
     "# Colunas opcionais:",
     "#   departamento - Nome exato do departamento (deve existir)",
     "#",
     "# Cargos disponíveis:",
-    "#   admin - Acesso total, gerencia usuários",
-    "#   manager - Gerencia diagnósticos e visualiza relatórios",
-    "#   member - Visualiza e responde diagnósticos",
-    "#   viewer - Apenas visualização",
+    "#   responsavel_empresa - Administrador da empresa, gerencia usuários e diagnósticos",
+    "#   membro - Visualiza relatórios e participa de diagnósticos",
     "#",
     `# Departamentos disponíveis: ${departments.map((d) => d.name).join(", ") || "Nenhum cadastrado"}`,
     "#",
@@ -441,9 +439,9 @@ export function generateUserImportCSVTemplate(
   const headers = ["email", "nome", "departamento", "cargo"];
 
   const exampleRows = [
-    ["joao.silva@empresa.com", "João Silva", departments[0]?.name || "TI", "member"],
-    ["maria.santos@empresa.com", "Maria Santos", departments[1]?.name || "RH", "admin"],
-    ["carlos.oliveira@empresa.com", "Carlos Oliveira", "", "viewer"],
+    ["joao.silva@empresa.com", "João Silva", departments[0]?.name || "TI", "membro"],
+    ["maria.santos@empresa.com", "Maria Santos", departments[1]?.name || "RH", "responsavel_empresa"],
+    ["carlos.oliveira@empresa.com", "Carlos Oliveira", "", "membro"],
   ];
 
   const csvContent = [
@@ -490,9 +488,9 @@ export async function generateUserImportXLSXTemplate(
 
   // Dados de exemplo
   const exampleRows = [
-    ["joao.silva@empresa.com", "João Silva", departments[0]?.name || "TI", "member"],
-    ["maria.santos@empresa.com", "Maria Santos", departments[1]?.name || "RH", "admin"],
-    ["carlos.oliveira@empresa.com", "Carlos Oliveira", "", "viewer"],
+    ["joao.silva@empresa.com", "João Silva", departments[0]?.name || "TI", "membro"],
+    ["maria.santos@empresa.com", "Maria Santos", departments[1]?.name || "RH", "responsavel_empresa"],
+    ["carlos.oliveira@empresa.com", "Carlos Oliveira", "", "membro"],
   ];
 
   exampleRows.forEach((row) => {
@@ -509,7 +507,7 @@ export async function generateUserImportXLSXTemplate(
         formulae: [`"${validRoles.join(",")}"`],
         showErrorMessage: true,
         errorTitle: "Cargo Inválido",
-        error: "Selecione um cargo válido: admin, manager, member, viewer",
+        error: "Selecione um cargo válido: responsavel_empresa ou membro",
       };
     }
   });
@@ -541,16 +539,14 @@ export async function generateUserImportXLSXTemplate(
     "Colunas obrigatórias:",
     "  • email - Email válido do usuário",
     "  • nome - Nome completo (apenas letras, 2-100 caracteres)",
-    "  • cargo - admin | manager | member | viewer",
+    "  • cargo - responsavel_empresa | membro",
     "",
     "Colunas opcionais:",
     "  • departamento - Nome exato do departamento (deve existir na organização)",
     "",
     "Cargos disponíveis:",
-    "  • admin - Acesso total, gerencia usuários e configurações",
-    "  • manager - Gerencia diagnósticos, visualiza relatórios completos",
-    "  • member - Visualiza diagnósticos e responde questionários",
-    "  • viewer - Apenas visualização de resultados",
+    "  • responsavel_empresa - Administrador da empresa, gerencia usuários e diagnósticos",
+    "  • membro - Visualiza relatórios e participa de diagnósticos",
     "",
     "Departamentos disponíveis:",
     departments.length > 0
