@@ -102,7 +102,7 @@ export const ALL_CATEGORIES: RiskCategory[] = [
 // Questionnaire Type Labels (PT-BR)
 export const QUESTIONNAIRE_TYPE_LABELS: Record<QuestionnaireType, string> = {
   nr1_full: 'NR-1 Completo',
-  pulse_monthly: 'Pulse Mensal',
+  pulse_monthly: 'Pesquisa de Clima',
   custom: 'Personalizado'
 }
 
