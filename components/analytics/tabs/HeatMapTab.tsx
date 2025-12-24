@@ -1,8 +1,10 @@
 'use client';
 
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Grid3X3, Info } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Grid3X3, Info, AlertTriangle, CheckCircle, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Tooltip,
@@ -26,6 +28,8 @@ interface HeatMapTabProps {
 }
 
 export function HeatMapTab({ heatMapData, categories }: HeatMapTabProps) {
+  const [selectedCell, setSelectedCell] = useState<HeatMapCell | null>(null);
+
   // Group data by category
   const groupedData = categories.reduce((acc, category) => {
     acc[category] = heatMapData
@@ -34,22 +38,34 @@ export function HeatMapTab({ heatMapData, categories }: HeatMapTabProps) {
     return acc;
   }, {} as Record<string, HeatMapCell[]>);
 
+  // Calculate risk levels
+  const getRiskLevel = (score: number): 'low' | 'medium' | 'high' => {
+    if (score >= 3.5) return 'high';
+    if (score >= 2.5) return 'medium';
+    return 'low';
+  };
+
   const getHeatColor = (score: number): string => {
-    // Score 1-5, where higher can be good or bad depending on context
-    // Using a neutral color scale
-    if (score >= 4.5) return "bg-red-600";
-    if (score >= 4.0) return "bg-red-500";
-    if (score >= 3.5) return "bg-orange-500";
+    // Score 1-5, using risk-based color scale
+    if (score >= 4.5) return "bg-red-600 shadow-red-500/30 shadow-md";
+    if (score >= 4.0) return "bg-red-500 shadow-red-400/20 shadow-sm";
+    if (score >= 3.5) return "bg-orange-500 shadow-orange-400/20 shadow-sm";
     if (score >= 3.0) return "bg-yellow-500";
     if (score >= 2.5) return "bg-yellow-400";
     if (score >= 2.0) return "bg-green-400";
-    if (score >= 1.5) return "bg-green-500";
-    return "bg-green-600";
+    if (score >= 1.5) return "bg-green-500 shadow-green-400/20 shadow-sm";
+    return "bg-green-600 shadow-green-500/30 shadow-md";
   };
 
   const getTextColor = (score: number): string => {
     if (score >= 3.5 || score < 2.0) return "text-white";
     return "text-gray-800";
+  };
+
+  const getRiskIcon = (score: number) => {
+    if (score >= 3.5) return <AlertTriangle className="w-4 h-4 text-red-500" />;
+    if (score < 2.0) return <CheckCircle className="w-4 h-4 text-green-500" />;
+    return null;
   };
 
   if (heatMapData.length === 0) {
@@ -150,6 +166,7 @@ export function HeatMapTab({ heatMapData, categories }: HeatMapTabProps) {
                                 initial={{ opacity: 0, scale: 0.8 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ duration: 0.2, delay: index * 0.03 }}
+                                onClick={() => setSelectedCell(cell)}
                                 className={cn(
                                   "w-12 h-12 rounded-lg flex items-center justify-center cursor-pointer hover:ring-2 hover:ring-offset-2 hover:ring-pm-olive transition-all",
                                   getHeatColor(cell.averageScore),
@@ -178,6 +195,78 @@ export function HeatMapTab({ heatMapData, categories }: HeatMapTabProps) {
                   ))}
               </div>
             </TooltipProvider>
+
+            {/* Selected Cell Detail Panel */}
+            <AnimatePresence>
+              {selectedCell && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="mt-6 overflow-hidden"
+                >
+                  <div className="p-4 rounded-xl bg-bg-secondary border border-border relative">
+                    <button
+                      onClick={() => setSelectedCell(null)}
+                      className="absolute top-3 right-3 p-1 rounded-full hover:bg-white/50 transition-colors"
+                    >
+                      <X className="w-4 h-4 text-text-muted" />
+                    </button>
+                    <div className="flex items-start gap-4">
+                      <div
+                        className={cn(
+                          "w-16 h-16 rounded-xl flex items-center justify-center flex-shrink-0",
+                          getHeatColor(selectedCell.averageScore),
+                          getTextColor(selectedCell.averageScore)
+                        )}
+                      >
+                        <span className="text-xl font-bold">
+                          {selectedCell.averageScore.toFixed(1)}
+                        </span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Badge variant="outline" className="text-xs">
+                            {getCategoryName(selectedCell.category)}
+                          </Badge>
+                          <Badge variant="default" className="text-xs">
+                            Q{selectedCell.questionIndex + 1}
+                          </Badge>
+                          {getRiskIcon(selectedCell.averageScore)}
+                        </div>
+                        <p className="text-sm font-medium text-text-heading mb-2">
+                          {selectedCell.questionText}
+                        </p>
+                        <div className="flex items-center gap-4 text-xs text-text-muted">
+                          <span className="flex items-center gap-1">
+                            <span className="font-medium">Média:</span>
+                            {selectedCell.averageScore.toFixed(2)}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <span className="font-medium">Respostas:</span>
+                            {selectedCell.responseCount}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <span className="font-medium">Risco:</span>
+                            <span className={cn(
+                              "font-semibold",
+                              getRiskLevel(selectedCell.averageScore) === 'high' && "text-red-600",
+                              getRiskLevel(selectedCell.averageScore) === 'medium' && "text-yellow-600",
+                              getRiskLevel(selectedCell.averageScore) === 'low' && "text-green-600"
+                            )}>
+                              {getRiskLevel(selectedCell.averageScore) === 'high' && "Alto"}
+                              {getRiskLevel(selectedCell.averageScore) === 'medium' && "Médio"}
+                              {getRiskLevel(selectedCell.averageScore) === 'low' && "Baixo"}
+                            </span>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </CardContent>
         </Card>
       </motion.div>
