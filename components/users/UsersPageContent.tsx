@@ -10,10 +10,7 @@ import {
   UserCog,
   Shield,
   Eye,
-  ShieldCheck,
   Building2,
-  CheckCircle2,
-  Lock,
   AlertTriangle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -79,40 +76,6 @@ export function UsersPageContent({
       bgGradient: "from-pm-olive-light/30 to-white",
       borderColor: "border-pm-olive/20",
     },
-  ];
-
-  const roleInfo = [
-    {
-      role: "Administrador",
-      description: "Acesso total ao sistema, incluindo gestão de usuários e configurações",
-      icon: Shield,
-      color: "text-pm-terracotta",
-    },
-    {
-      role: "Gerente",
-      description: "Pode criar e gerenciar diagnósticos, visualizar relatórios",
-      icon: UserCog,
-      color: "text-pm-olive",
-    },
-    {
-      role: "Membro",
-      description: "Pode visualizar diagnósticos e responder questionários",
-      icon: Users,
-      color: "text-pm-green-dark",
-    },
-    {
-      role: "Visualizador",
-      description: "Apenas visualização de diagnósticos e relatórios",
-      icon: Eye,
-      color: "text-text-muted",
-    },
-  ];
-
-  const securityItems = [
-    { text: "Todos os dados são isolados por organização (RLS multi-tenant)", icon: Building2 },
-    { text: "Apenas administradores podem gerenciar usuários", icon: ShieldCheck },
-    { text: "Usuários desativados não podem mais acessar a plataforma", icon: AlertTriangle },
-    { text: "Alterações de role são aplicadas imediatamente no próximo login", icon: CheckCircle2 },
   ];
 
   return (
@@ -210,77 +173,6 @@ export function UsersPageContent({
         </Card>
       </motion.div>
 
-      {/* Info Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Roles Info */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, delay: 0.6 }}
-        >
-          <Card className="border-l-4 border-l-pm-olive h-full">
-            <CardHeader className="flex flex-row items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-pm-olive/10 flex items-center justify-center">
-                <UserCog className="w-5 h-5 text-pm-olive" />
-              </div>
-              <CardTitle className="font-display text-lg text-text-heading">
-                Sobre os Roles
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {roleInfo.map((item, index) => (
-                <motion.div
-                  key={item.role}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={isInView ? { opacity: 1, x: 0 } : {}}
-                  transition={{ duration: 0.3, delay: 0.7 + index * 0.05 }}
-                  className="flex items-start gap-3 p-2 rounded-lg hover:bg-bg-sage/50 transition-colors"
-                >
-                  <item.icon className={cn("w-5 h-5 mt-0.5", item.color)} />
-                  <div>
-                    <strong className="text-text-heading text-sm">{item.role}:</strong>{" "}
-                    <span className="text-text-secondary text-sm">{item.description}</span>
-                  </div>
-                </motion.div>
-              ))}
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* Security Info */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, delay: 0.7 }}
-        >
-          <Card className="border-l-4 border-l-pm-green-dark h-full">
-            <CardHeader className="flex flex-row items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-pm-green-dark/10 flex items-center justify-center">
-                <Lock className="w-5 h-5 text-pm-green-dark" />
-              </div>
-              <CardTitle className="font-display text-lg text-text-heading">
-                Segurança
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {securityItems.map((item, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={isInView ? { opacity: 1, x: 0 } : {}}
-                  transition={{ duration: 0.3, delay: 0.8 + index * 0.05 }}
-                  className="flex items-start gap-3 p-2 rounded-lg hover:bg-bg-sage/50 transition-colors"
-                >
-                  <div className="w-6 h-6 rounded-full bg-pm-green-light/50 flex items-center justify-center flex-shrink-0">
-                    <item.icon className="w-3.5 h-3.5 text-pm-green-dark" />
-                  </div>
-                  <span className="text-text-secondary text-sm">{item.text}</span>
-                </motion.div>
-              ))}
-            </CardContent>
-          </Card>
-        </motion.div>
-      </div>
     </div>
   );
 }

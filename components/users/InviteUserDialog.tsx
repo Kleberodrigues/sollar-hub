@@ -24,7 +24,12 @@ import {
 import { inviteUser } from "@/app/dashboard/users/actions";
 import { inviteUserSchema } from "@/lib/validations";
 
-export function InviteUserDialog() {
+interface InviteUserDialogProps {
+  memberCount?: number;
+}
+
+export function InviteUserDialog({ memberCount = 0 }: InviteUserDialogProps) {
+  const memberLimitReached = memberCount >= 1;
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -135,19 +140,30 @@ export function InviteUserDialog() {
 
           <div className="space-y-2">
             <Label htmlFor="role">Perfil *</Label>
-            <Select name="role" defaultValue="membro" disabled={loading}>
+            <Select
+              name="role"
+              defaultValue={memberLimitReached ? "responsavel_empresa" : "membro"}
+              disabled={loading}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Selecione o perfil" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="responsavel_empresa">Responsável</SelectItem>
-                <SelectItem value="membro">Membro</SelectItem>
+                <SelectItem value="membro" disabled={memberLimitReached}>
+                  Membro {memberLimitReached && "(limite atingido)"}
+                </SelectItem>
               </SelectContent>
             </Select>
             <p className="text-xs text-text-muted">
               <strong>Responsável:</strong> Acesso completo, gerencia usuários e diagnósticos |{" "}
               <strong>Membro:</strong> Acesso limitado, visualiza relatórios
             </p>
+            {memberLimitReached && (
+              <p className="text-xs text-amber-600">
+                Limite de 1 membro atingido. Contate o suporte para aumentar.
+              </p>
+            )}
           </div>
 
           <DialogFooter>
