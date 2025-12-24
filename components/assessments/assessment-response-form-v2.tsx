@@ -41,6 +41,25 @@ interface Questionnaire {
   questionnaire_type?: string | null;
 }
 
+// Default LGPD consent text if none is configured
+const DEFAULT_LGPD_CONSENT = `## Termo de Consentimento Livre e Esclarecido (LGPD)
+
+Ao participar desta pesquisa, você concorda com os seguintes termos:
+
+**1. Anonimato**: Suas respostas são **completamente anônimas**. Não coletamos nome, e-mail ou qualquer informação que permita sua identificação.
+
+**2. Finalidade**: Os dados serão utilizados **exclusivamente** para análise de clima organizacional e identificação de riscos psicossociais, visando melhorias no ambiente de trabalho.
+
+**3. Confidencialidade**: Os resultados serão apresentados apenas de forma agregada (estatísticas gerais), nunca individualmente.
+
+**4. Voluntariedade**: Sua participação é voluntária. Você pode interromper o questionário a qualquer momento.
+
+**5. Base Legal**: Este tratamento de dados está fundamentado no Art. 7º, V da LGPD (Lei 13.709/18) - execução de políticas públicas de saúde e segurança do trabalho.
+
+**6. Direitos**: Você tem direito a solicitar informações sobre o tratamento dos dados junto ao responsável pela pesquisa.
+
+Ao prosseguir, você declara estar ciente e de acordo com os termos acima.`;
+
 interface AssessmentResponseFormProps {
   assessmentId: string;
   questionnaire: Questionnaire;
@@ -194,8 +213,11 @@ export function AssessmentResponseFormV2({
     }
   }
 
-  // Tela de introdução/LGPD
-  if (showIntroduction && (questionnaire.introduction_text || questionnaire.lgpd_consent_text)) {
+  // Tela de introdução/LGPD - sempre mostrar termo de aceite
+  // Use default LGPD text if questionnaire doesn't have one
+  const lgpdText = questionnaire.lgpd_consent_text || DEFAULT_LGPD_CONSENT;
+
+  if (showIntroduction) {
     return (
       <div className="space-y-6">
         <h1 className="font-display text-3xl font-bold text-text-heading">
@@ -204,7 +226,7 @@ export function AssessmentResponseFormV2({
         <QuestionnaireIntroduction
           title={questionnaire.title}
           introductionText={questionnaire.introduction_text}
-          lgpdConsentText={questionnaire.lgpd_consent_text}
+          lgpdConsentText={lgpdText}
           onAccept={() => setShowIntroduction(false)}
         />
       </div>
