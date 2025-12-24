@@ -1,14 +1,14 @@
+/* eslint-disable no-console */
 'use server';
 
 /**
  * AI Action Plan Generation Actions
  *
  * Server actions para geração de plano de ação com IA
- * Usa OpenAI GPT-4o-mini ou Anthropic Claude
+ * Usa OpenAI GPT-4.1-mini ou Anthropic Claude
  */
 
 import { createClient } from '@/lib/supabase/server';
-import { redirect } from 'next/navigation';
 import { CATEGORY_LABELS } from '@/types';
 
 export interface ActionItem {
@@ -40,27 +40,41 @@ export async function generateAIActionPlan(
   assessmentId: string,
   highRiskCategories: HighRiskCategory[]
 ): Promise<AIActionPlanResult> {
+  console.log('[AI Action Plan] Starting generation for assessment:', assessmentId);
+  console.log('[AI Action Plan] High risk categories:', highRiskCategories);
+
   const supabase = await createClient();
 
   // Verificar autenticação
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
-    redirect('/login');
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    console.error('[AI Action Plan] Auth error:', authError);
+    return {
+      success: false,
+      error: 'Usuário não autenticado. Faça login novamente.',
+    };
   }
 
   try {
     // Buscar dados do assessment
     const assessmentData = await getAssessmentContext(assessmentId);
+    console.log('[AI Action Plan] Assessment data:', assessmentData);
 
     // Verificar se API key está configurada
     const openaiKey = process.env.OPENAI_API_KEY;
     const anthropicKey = process.env.ANTHROPIC_API_KEY;
 
+    console.log('[AI Action Plan] OpenAI key configured:', !!openaiKey);
+    console.log('[AI Action Plan] Anthropic key configured:', !!anthropicKey);
+
     if (openaiKey) {
+      console.log('[AI Action Plan] Using OpenAI...');
       return await generateWithOpenAI(assessmentData, highRiskCategories, openaiKey);
     } else if (anthropicKey) {
+      console.log('[AI Action Plan] Using Anthropic...');
       return await generateWithAnthropic(assessmentData, highRiskCategories, anthropicKey);
     } else {
+      console.log('[AI Action Plan] No API keys, using template fallback...');
       // Fallback: gerar plano template-based
       return generateTemplateActionPlan(highRiskCategories);
     }
@@ -115,61 +129,75 @@ async function generateWithOpenAI(
   apiKey: string
 ): Promise<AIActionPlanResult> {
   const prompt = buildActionPlanPrompt(assessmentData, highRiskCategories);
-
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model: 'gpt-4.1-mini-2025-04-14',
-      messages: [
-        {
-          role: 'system',
-          content: 'Você é um consultor especialista em saúde ocupacional e riscos psicossociais (NR-1). Sempre responda em JSON válido.',
-        },
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-      max_tokens: 2048,
-      temperature: 0.7,
-    }),
-  });
-
-  if (!response.ok) {
-    const error = await response.text();
-    console.error('[OpenAI API] Error:', error);
-    return generateTemplateActionPlan(highRiskCategories);
-  }
-
-  const result = await response.json();
-  const content = result.choices?.[0]?.message?.content;
-
-  if (!content) {
-    return generateTemplateActionPlan(highRiskCategories);
-  }
+  console.log('[OpenAI] Sending request...');
 
   try {
-    // Tentar extrair JSON do conteúdo
-    const jsonMatch = content.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: 'gpt-4.1-mini-2025-04-14',
+        messages: [
+          {
+            role: 'system',
+            content: 'Você é um consultor especialista em saúde ocupacional e riscos psicossociais (NR-1). Sempre responda em JSON válido.',
+          },
+          {
+            role: 'user',
+            content: prompt,
+          },
+        ],
+        max_tokens: 2048,
+        temperature: 0.7,
+      }),
+    });
+
+    console.log('[OpenAI] Response status:', response.status);
+
+    if (!response.ok) {
+      const error = await response.text();
+      console.error('[OpenAI API] Error response:', error);
+      console.log('[OpenAI] Falling back to template...');
       return generateTemplateActionPlan(highRiskCategories);
     }
 
-    const parsed = JSON.parse(jsonMatch[0]);
-    const actions = parsed.actions || parsed;
+    const result = await response.json();
+    console.log('[OpenAI] Response received, choices:', result.choices?.length);
+    const content = result.choices?.[0]?.message?.content;
 
-    return {
-      success: true,
-      actions: Array.isArray(actions) ? actions.map((a: ActionItem, i: number) => ({
-        ...a,
-        id: a.id || `ai-${i + 1}`,
-      })) : [],
-    };
-  } catch {
+    if (!content) {
+      console.log('[OpenAI] No content in response, using template...');
+      return generateTemplateActionPlan(highRiskCategories);
+    }
+
+    try {
+      // Tentar extrair JSON do conteúdo
+      const jsonMatch = content.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) {
+        console.log('[OpenAI] No JSON found in content, using template...');
+        return generateTemplateActionPlan(highRiskCategories);
+      }
+
+      const parsed = JSON.parse(jsonMatch[0]);
+      const actions = parsed.actions || parsed;
+
+      console.log('[OpenAI] Successfully parsed', Array.isArray(actions) ? actions.length : 0, 'actions');
+      return {
+        success: true,
+        actions: Array.isArray(actions) ? actions.map((a: ActionItem, i: number) => ({
+          ...a,
+          id: a.id || `ai-${i + 1}`,
+        })) : [],
+      };
+    } catch (parseError) {
+      console.error('[OpenAI] JSON parse error:', parseError);
+      return generateTemplateActionPlan(highRiskCategories);
+    }
+  } catch (fetchError) {
+    console.error('[OpenAI] Fetch error:', fetchError);
     return generateTemplateActionPlan(highRiskCategories);
   }
 }

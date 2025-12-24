@@ -45,19 +45,27 @@ export function ActionPlanTab({
   const handleGenerate = async () => {
     if (!canUseAI) return;
 
+    console.log('[ActionPlanTab] Starting generation...');
+    console.log('[ActionPlanTab] Assessment ID:', assessmentId);
+    console.log('[ActionPlanTab] High risk categories:', highRiskCategories);
+
     setIsGenerating(true);
     setError(null);
 
     try {
       // Chamar server action com IA real
       const result = await generateAIActionPlan(assessmentId, highRiskCategories);
+      console.log('[ActionPlanTab] Result:', result);
 
       if (result.success && result.actions) {
+        console.log('[ActionPlanTab] Success! Actions:', result.actions.length);
         setActionPlan(result.actions);
       } else {
+        console.error('[ActionPlanTab] Error:', result.error);
         setError(result.error || "Erro ao gerar plano de ação. Tente novamente.");
       }
-    } catch {
+    } catch (err) {
+      console.error('[ActionPlanTab] Exception:', err);
       setError("Erro ao gerar plano de ação. Tente novamente.");
     } finally {
       setIsGenerating(false);
