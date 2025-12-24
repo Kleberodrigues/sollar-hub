@@ -41,7 +41,7 @@ const navigationItems = [
     roles: ["admin", "responsavel_empresa"],
   },
   {
-    title: "Assessments",
+    title: "Avaliações",
     href: "/dashboard/assessments",
     icon: ClipboardList,
     roles: ["admin", "responsavel_empresa", "membro"],

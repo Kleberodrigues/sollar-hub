@@ -37,7 +37,7 @@ const routeLabels: Record<string, string> = {
   "/dashboard": "Página Inicial",
   "/dashboard/users": "Usuários",
   "/dashboard/questionnaires": "Questionários",
-  "/dashboard/assessments": "Assessments",
+  "/dashboard/assessments": "Avaliações",
   "/dashboard/analytics": "Análise de Riscos",
   "/dashboard/departments": "Departamentos",
   "/dashboard/team": "Equipe",

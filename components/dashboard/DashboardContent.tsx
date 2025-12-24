@@ -43,7 +43,7 @@ const metricsConfig = [
   },
   {
     key: "assessmentsCount",
-    title: "Assessments Ativos",
+    title: "Avaliações Ativas",
     icon: ClipboardList,
     color: "text-pm-terracotta",
     bgColor: "bg-pm-terracotta/10",
@@ -101,7 +101,7 @@ export function DashboardContent({ metrics, profile, userEmail }: DashboardConte
             >
               <Link href="/dashboard/assessments/new">
                 <Plus className="w-4 h-4 mr-2" />
-                Novo Assessment
+                Nova Avaliação
               </Link>
             </Button>
             <Button

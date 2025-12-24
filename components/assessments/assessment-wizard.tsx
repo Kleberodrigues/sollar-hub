@@ -119,7 +119,7 @@ export function AssessmentWizard({
     switch (currentStep) {
       case 1:
         if (!wizardData.title.trim()) {
-          setError('Digite um título para o assessment');
+          setError('Digite um título para a avaliação');
           return false;
         }
         break;
@@ -268,7 +268,7 @@ export function AssessmentWizard({
       router.push(`/dashboard/assessments/${data.id}`);
       router.refresh();
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Erro ao ativar assessment';
+      const message = err instanceof Error ? err.message : 'Erro ao ativar avaliação';
       setError(message);
     } finally {
       setLoading(false);
@@ -333,10 +333,10 @@ export function AssessmentWizard({
         </Link>
         <div>
           <h1 className="text-3xl font-bold text-text-heading">
-            Novo Assessment
+            Nova Avaliação
           </h1>
           <p className="text-text-secondary mt-1">
-            Configure seu assessment em 5 passos simples
+            Configure sua avaliação em 5 passos simples
           </p>
         </div>
       </div>
@@ -407,7 +407,7 @@ export function AssessmentWizard({
           ) : (
             <Button onClick={handleActivate} disabled={loading}>
               <CheckCircle2 className="h-4 w-4 mr-2" />
-              {loading ? 'Ativando...' : 'Ativar Assessment'}
+              {loading ? 'Ativando...' : 'Ativar Avaliação'}
             </Button>
           )}
         </div>

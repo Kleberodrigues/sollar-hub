@@ -393,7 +393,7 @@ export function AnalyticsDashboardContent({
                 Ainda não há respostas
               </h3>
               <p className="text-text-secondary max-w-md mx-auto">
-                Os gráficos e análises aparecerão quando houver respostas coletadas para este assessment.
+                Os gráficos e análises aparecerão quando houver respostas coletadas para esta avaliação.
               </p>
             </div>
           </CardContent>

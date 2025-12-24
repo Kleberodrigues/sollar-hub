@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 const testimonials = [
   {
     quote:
-      "A Sollar transformou nossa abordagem de saúde ocupacional. Em 3 meses, conseguimos reduzir em 40% os afastamentos por questões psicológicas.",
+      "O PsicoMapa transformou nossa abordagem de saúde ocupacional. Em 3 meses, conseguimos reduzir em 40% os afastamentos por questões psicológicas.",
     author: "Maria Silva",
     role: "Diretora de RH",
     company: "TechCorp Brasil",
@@ -54,7 +54,7 @@ export function Testimonials() {
             O que nossos clientes dizem
           </h2>
           <p className="text-lg text-text-secondary">
-            Mais de 500 organizações confiam na Sollar para cuidar da saúde
+            Mais de 500 organizações confiam no PsicoMapa para cuidar da saúde
             mental dos seus colaboradores.
           </p>
         </div>

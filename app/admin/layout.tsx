@@ -4,8 +4,8 @@ import { AdminSidebar } from "@/components/admin/admin-sidebar";
 import { Toaster } from "@/components/ui/toaster";
 
 export const metadata = {
-  title: "Sollar Admin - Painel da Plataforma",
-  description: "Painel administrativo para visualização de métricas da plataforma Sollar",
+  title: "PsicoMapa Admin - Painel da Plataforma",
+  description: "Painel administrativo para visualização de métricas da plataforma PsicoMapa",
 };
 
 export default async function AdminLayout({

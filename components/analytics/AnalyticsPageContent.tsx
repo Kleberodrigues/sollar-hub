@@ -89,7 +89,7 @@ export function AnalyticsEmptyState() {
               Análise de Riscos
             </h3>
             <p className="text-text-secondary mb-6 max-w-md mx-auto">
-              Selecione um assessment para visualizar os dados de análise e métricas detalhadas.
+              Selecione uma avaliação para visualizar os dados de análise e métricas detalhadas.
             </p>
             <Button
               asChild
@@ -97,7 +97,7 @@ export function AnalyticsEmptyState() {
             >
               <Link href="/dashboard/assessments">
                 <FileSearch className="w-4 h-4 mr-2" />
-                Ver Assessments
+                Ver Avaliações
               </Link>
             </Button>
           </div>
@@ -125,10 +125,10 @@ export function AnalyticsNotFoundState() {
               <FileSearch className="w-8 h-8 text-red-500" />
             </div>
             <h3 className="text-xl font-display font-semibold text-text-heading mb-2">
-              Assessment não encontrado
+              Avaliação não encontrada
             </h3>
             <p className="text-text-secondary mb-6 max-w-md mx-auto">
-              O assessment solicitado não foi encontrado ou você não tem permissão para visualizá-lo.
+              A avaliação solicitada não foi encontrada ou você não tem permissão para visualizá-la.
             </p>
             <Button
               asChild
@@ -136,7 +136,7 @@ export function AnalyticsNotFoundState() {
             >
               <Link href="/dashboard/assessments">
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Voltar para Assessments
+                Voltar para Avaliações
               </Link>
             </Button>
           </div>

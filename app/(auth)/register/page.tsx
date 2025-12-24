@@ -80,7 +80,7 @@ export default function RegisterPage() {
           <CardHeader className="text-center">
             <CardTitle className="text-3xl">Criar Conta</CardTitle>
             <CardDescription>
-              Comece a usar o Sollar Insight Hub gratuitamente
+              Comece a usar o PsicoMapa gratuitamente
             </CardDescription>
           </CardHeader>
           <CardContent>
