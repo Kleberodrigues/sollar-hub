@@ -244,10 +244,6 @@ function buildActionPlanPrompt(
   assessmentData: { assessmentTitle: string; organizationName: string; employeeCount: number },
   highRiskCategories: HighRiskCategory[]
 ): string {
-  const categoryNames = highRiskCategories.map(c =>
-    CATEGORY_LABELS[c.category as keyof typeof CATEGORY_LABELS] || c.category
-  );
-
   return `Analise os dados abaixo e gere um plano de ação prático para mitigar os riscos psicossociais identificados.
 
 CONTEXTO:
