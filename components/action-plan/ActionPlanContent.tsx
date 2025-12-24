@@ -38,11 +38,13 @@ import {
   type ActionPlan,
   type ActionPlanStatus,
   type RiskBlock,
+  RISK_BLOCK_LABELS,
+  STATUS_LABELS,
+} from '@/app/dashboard/action-plan/types';
+import {
   createActionPlan,
   updateActionPlan,
   deleteActionPlan,
-  RISK_BLOCK_LABELS,
-  STATUS_LABELS,
 } from '@/app/dashboard/action-plan/actions';
 
 interface ActionPlanContentProps {
