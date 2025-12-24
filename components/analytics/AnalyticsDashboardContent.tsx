@@ -460,16 +460,16 @@ export function AnalyticsDashboardContent({
         </div>
       </motion.div>
 
-      {/* KPIs Principais - Estilo Premium */}
+      {/* KPIs Principais - Design Limpo */}
       <motion.div variants={sollarMotion.fadeUp} className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
         {/* Participantes */}
-        <Card className="bg-gradient-to-br from-pm-terracotta/5 via-white to-white border-pm-terracotta/20">
+        <Card className="bg-white border border-gray-200 hover:border-pm-terracotta/40 transition-colors">
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-2">
               <Users className="w-4 h-4 text-pm-terracotta" />
               <span className="text-xs font-medium text-text-muted">Participantes</span>
             </div>
-            <p className="text-3xl font-display font-bold text-pm-terracotta">{analytics.totalParticipants}</p>
+            <p className="text-3xl font-display font-bold text-text-heading">{analytics.totalParticipants}</p>
             <div className="flex items-center gap-1 mt-2">
               <TrendingUp className="w-3 h-3 text-pm-olive" />
               <span className="text-xs text-pm-olive font-medium">Ativos</span>
@@ -478,21 +478,21 @@ export function AnalyticsDashboardContent({
         </Card>
 
         {/* Taxa de Conclusão */}
-        <Card className="bg-gradient-to-br from-pm-olive/5 via-white to-white border-pm-olive/20">
+        <Card className="bg-white border border-gray-200 hover:border-pm-olive/40 transition-colors">
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-2">
               <Target className="w-4 h-4 text-pm-olive" />
               <span className="text-xs font-medium text-text-muted">Conclusão</span>
             </div>
-            <p className="text-3xl font-display font-bold text-pm-olive">{analytics.completionRate}%</p>
-            <div className="w-full h-1.5 bg-pm-olive/20 rounded-full mt-2">
+            <p className="text-3xl font-display font-bold text-text-heading">{analytics.completionRate}%</p>
+            <div className="w-full h-1.5 bg-gray-100 rounded-full mt-2">
               <div className="h-full bg-pm-olive rounded-full transition-all" style={{ width: `${analytics.completionRate}%` }} />
             </div>
           </CardContent>
         </Card>
 
         {/* Score Médio */}
-        <Card className="bg-gradient-to-br from-bg-sage via-white to-white border-pm-olive/20">
+        <Card className="bg-white border border-gray-200 hover:border-gray-300 transition-colors">
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-2">
               <Activity className="w-4 h-4 text-pm-olive" />
@@ -504,7 +504,7 @@ export function AnalyticsDashboardContent({
         </Card>
 
         {/* Baixo Risco */}
-        <Card className="bg-gradient-to-br from-green-50 via-white to-white border-green-200">
+        <Card className="bg-white border border-green-200 hover:border-green-300 transition-colors">
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-2">
               <Shield className="w-4 h-4 text-green-600" />
@@ -516,7 +516,7 @@ export function AnalyticsDashboardContent({
         </Card>
 
         {/* Médio Risco */}
-        <Card className="bg-gradient-to-br from-amber-50 via-white to-white border-amber-200">
+        <Card className="bg-white border border-amber-200 hover:border-amber-300 transition-colors">
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-2">
               <AlertTriangle className="w-4 h-4 text-amber-600" />
@@ -528,7 +528,7 @@ export function AnalyticsDashboardContent({
         </Card>
 
         {/* Alto Risco */}
-        <Card className="bg-gradient-to-br from-red-50 via-white to-white border-red-200">
+        <Card className="bg-white border border-red-200 hover:border-red-300 transition-colors">
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-2">
               <AlertCircle className="w-4 h-4 text-red-600" />
@@ -540,16 +540,16 @@ export function AnalyticsDashboardContent({
         </Card>
       </motion.div>
 
-      {/* Cards de Ação - Relatório e IA - MOVIDOS PARA O TOPO */}
+      {/* Cards de Ação - Relatório e IA */}
       <motion.div variants={sollarMotion.fadeUp} className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Relatório Executivo */}
-        <Card className="bg-gradient-to-br from-pm-terracotta/5 via-bg-cream to-white border-l-4 border-l-pm-terracotta hover:shadow-lg transition-all cursor-pointer group"
+        <Card className="bg-white border border-gray-200 border-l-4 border-l-pm-terracotta hover:shadow-md hover:border-gray-300 transition-all cursor-pointer group"
           onClick={() => setFullscreenSection("report")}
         >
           <CardContent className="p-5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-pm-terracotta/10 flex items-center justify-center group-hover:bg-pm-terracotta/20 transition-colors">
+                <div className="w-12 h-12 rounded-xl bg-pm-terracotta/10 flex items-center justify-center">
                   <FileOutput className="w-6 h-6 text-pm-terracotta" />
                 </div>
                 <div>
@@ -557,19 +557,19 @@ export function AnalyticsDashboardContent({
                   <p className="text-sm text-text-muted">Gere relatório PDF/CSV completo</p>
                 </div>
               </div>
-              <ChevronRight className="w-5 h-5 text-pm-terracotta opacity-0 group-hover:opacity-100 transition-opacity" />
+              <ChevronRight className="w-5 h-5 text-text-muted group-hover:text-pm-terracotta transition-colors" />
             </div>
           </CardContent>
         </Card>
 
         {/* Plano de Ação com IA */}
-        <Card className="bg-gradient-to-br from-purple-50 via-white to-white border-l-4 border-l-purple-500 hover:shadow-lg transition-all cursor-pointer group"
+        <Card className="bg-white border border-gray-200 border-l-4 border-l-purple-500 hover:shadow-md hover:border-gray-300 transition-all cursor-pointer group"
           onClick={() => setFullscreenSection("action")}
         >
           <CardContent className="p-5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center group-hover:bg-purple-200 transition-colors">
+                <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center">
                   <Sparkles className="w-6 h-6 text-purple-600" />
                 </div>
                 <div>
@@ -578,8 +578,8 @@ export function AnalyticsDashboardContent({
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <Badge className="bg-purple-100 text-purple-700 text-xs">IA</Badge>
-                <ChevronRight className="w-5 h-5 text-purple-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <Badge className="bg-purple-100 text-purple-700 text-xs border-0">IA</Badge>
+                <ChevronRight className="w-5 h-5 text-text-muted group-hover:text-purple-500 transition-colors" />
               </div>
             </div>
           </CardContent>

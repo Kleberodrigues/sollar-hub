@@ -22,17 +22,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { PlanType } from "@/lib/stripe/config";
-
-interface ActionItem {
-  id: string;
-  priority: "high" | "medium" | "low";
-  category: string;
-  title: string;
-  description: string;
-  timeline: string;
-  responsible: string;
-  expectedImpact: string;
-}
+import { generateAIActionPlan, type ActionItem } from "@/app/dashboard/analytics/ai-action-plan-actions";
 
 interface ActionPlanTabProps {
   assessmentId: string;
@@ -40,120 +30,8 @@ interface ActionPlanTabProps {
   highRiskCategories: { category: string; score: number }[];
 }
 
-// Simulated AI-generated action plan (in production, this would call an API)
-const generateActionPlan = async (
-  highRiskCategories: { category: string; score: number }[]
-): Promise<ActionItem[]> => {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 2000));
-
-  const actionTemplates: Record<string, ActionItem[]> = {
-    demands_and_pace: [
-      {
-        id: "1",
-        priority: "high",
-        category: "Demandas e Ritmo",
-        title: "Revisão da distribuição de tarefas",
-        description: "Realizar análise da carga de trabalho por colaborador e redistribuir demandas de forma equilibrada.",
-        timeline: "2-4 semanas",
-        responsible: "Gestores de Área",
-        expectedImpact: "Redução de 30% nas queixas de sobrecarga",
-      },
-      {
-        id: "2",
-        priority: "medium",
-        category: "Demandas e Ritmo",
-        title: "Implementar pausas programadas",
-        description: "Estabelecer política de pausas regulares durante a jornada de trabalho.",
-        timeline: "1-2 semanas",
-        responsible: "RH",
-        expectedImpact: "Aumento de 20% na produtividade",
-      },
-    ],
-    autonomy_clarity_change: [
-      {
-        id: "3",
-        priority: "high",
-        category: "Autonomia e Clareza",
-        title: "Definir papéis e responsabilidades",
-        description: "Documentar e comunicar claramente as responsabilidades de cada função.",
-        timeline: "3-4 semanas",
-        responsible: "Gestão + RH",
-        expectedImpact: "Redução de 40% em conflitos de papel",
-      },
-    ],
-    leadership_recognition: [
-      {
-        id: "4",
-        priority: "high",
-        category: "Liderança",
-        title: "Programa de feedback contínuo",
-        description: "Implementar ciclos regulares de feedback entre líderes e equipes.",
-        timeline: "4-6 semanas",
-        responsible: "Liderança",
-        expectedImpact: "Aumento de 25% no engajamento",
-      },
-    ],
-    relationships_communication: [
-      {
-        id: "5",
-        priority: "medium",
-        category: "Relações",
-        title: "Workshops de comunicação",
-        description: "Realizar treinamentos sobre comunicação não-violenta e resolução de conflitos.",
-        timeline: "4-8 semanas",
-        responsible: "RH + Consultoria",
-        expectedImpact: "Melhoria de 35% no clima organizacional",
-      },
-    ],
-    work_life_health: [
-      {
-        id: "6",
-        priority: "high",
-        category: "Equilíbrio",
-        title: "Política de desconexão",
-        description: "Implementar política que limite comunicações fora do horário de trabalho.",
-        timeline: "2-3 semanas",
-        responsible: "Diretoria + RH",
-        expectedImpact: "Redução de 50% em burnout",
-      },
-    ],
-    violence_harassment: [
-      {
-        id: "7",
-        priority: "high",
-        category: "Violência e Assédio",
-        title: "Canal de denúncias confidencial",
-        description: "Implementar ou fortalecer canal seguro para relatos de assédio.",
-        timeline: "1-2 semanas",
-        responsible: "Compliance + RH",
-        expectedImpact: "100% de cobertura em casos reportados",
-      },
-    ],
-  };
-
-  const actions: ActionItem[] = [];
-  highRiskCategories.forEach(({ category }) => {
-    const categoryActions = actionTemplates[category] || [];
-    actions.push(...categoryActions);
-  });
-
-  return actions.length > 0 ? actions : [
-    {
-      id: "default",
-      priority: "low",
-      category: "Geral",
-      title: "Manter monitoramento contínuo",
-      description: "Continuar acompanhando indicadores e realizando pesquisas periódicas.",
-      timeline: "Contínuo",
-      responsible: "RH",
-      expectedImpact: "Manutenção dos níveis atuais",
-    },
-  ];
-};
-
 export function ActionPlanTab({
-  assessmentId: _assessmentId,
+  assessmentId,
   currentPlan: _currentPlan,
   highRiskCategories,
 }: ActionPlanTabProps) {
@@ -171,8 +49,14 @@ export function ActionPlanTab({
     setError(null);
 
     try {
-      const plan = await generateActionPlan(highRiskCategories);
-      setActionPlan(plan);
+      // Chamar server action com IA real
+      const result = await generateAIActionPlan(assessmentId, highRiskCategories);
+
+      if (result.success && result.actions) {
+        setActionPlan(result.actions);
+      } else {
+        setError(result.error || "Erro ao gerar plano de ação. Tente novamente.");
+      }
     } catch {
       setError("Erro ao gerar plano de ação. Tente novamente.");
     } finally {
@@ -196,6 +80,16 @@ export function ActionPlanTab({
     }
   };
 
+  const handleCopyPlan = () => {
+    if (!actionPlan) return;
+
+    const text = actionPlan.map(a =>
+      `[${getPriorityLabel(a.priority)}] ${a.title}\n${a.description}\nPrazo: ${a.timeline} | Responsável: ${a.responsible}\nImpacto: ${a.expectedImpact}\n`
+    ).join('\n---\n\n');
+
+    navigator.clipboard.writeText(text);
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -204,12 +98,12 @@ export function ActionPlanTab({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <Card className="bg-gradient-to-br from-purple-50 via-white to-pm-terracotta/5 border-l-4 border-l-purple-500">
+        <Card className="border-l-4 border-l-purple-500 bg-white">
           <CardContent className="p-6">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center">
-                  <Sparkles className="w-8 h-8 text-white" />
+                <div className="w-14 h-14 rounded-xl bg-purple-100 flex items-center justify-center">
+                  <Sparkles className="w-7 h-7 text-purple-600" />
                 </div>
                 <div>
                   <h2 className="text-xl font-display font-bold text-text-heading">
@@ -251,7 +145,6 @@ export function ActionPlanTab({
                 )}
               </Button>
             </div>
-
           </CardContent>
         </Card>
       </motion.div>
@@ -332,7 +225,7 @@ export function ActionPlanTab({
                   </CardTitle>
                 </div>
                 <div className="flex gap-2">
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" onClick={handleCopyPlan}>
                     <Copy className="w-4 h-4 mr-2" />
                     Copiar
                   </Button>
@@ -361,7 +254,7 @@ export function ActionPlanTab({
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.3, delay: index * 0.05 }}
-                        className="p-4 rounded-xl bg-bg-secondary hover:bg-bg-sage transition-colors"
+                        className="p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors border border-gray-100"
                       >
                         <div className="flex items-start justify-between gap-4">
                           <div className="flex-1">
@@ -409,10 +302,10 @@ export function ActionPlanTab({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <Card className="border-dashed border-2">
+          <Card className="border-dashed border-2 bg-white">
             <CardContent className="py-16">
               <div className="text-center">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-purple-100 to-purple-50 flex items-center justify-center">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-purple-100 flex items-center justify-center">
                   <Sparkles className="w-8 h-8 text-purple-500" />
                 </div>
                 <h3 className="text-xl font-display font-semibold text-text-heading mb-2">

@@ -279,7 +279,7 @@ async function generateWithOpenAI(data: ReportData, apiKey: string): Promise<AIR
       'Authorization': `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      model: 'gpt-4.1-mini-2025-04-14',
+      model: 'gpt-4o-mini',
       messages: [
         {
           role: 'user',
