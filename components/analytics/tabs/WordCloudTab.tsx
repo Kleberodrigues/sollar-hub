@@ -78,25 +78,37 @@ export function WordCloudTab({ textResponses }: WordCloudTabProps) {
 
   const maxValue = Math.max(...words.map(w => w.value), 1);
 
-  // Color palette for words
-  const getWordColor = (index: number) => {
-    const colors = [
-      "text-pm-terracotta",
-      "text-pm-olive",
-      "text-pm-green-dark",
-      "text-pm-brown",
-      "text-pm-olive-dark",
-    ];
-    return colors[index % colors.length];
+  // Color palette for words - matching the reference image
+  const getWordColor = (index: number, value: number) => {
+    const ratio = value / maxValue;
+    // Higher frequency = more prominent colors
+    if (ratio > 0.7) {
+      return index % 2 === 0 ? "text-pm-olive" : "text-pm-terracotta";
+    }
+    if (ratio > 0.4) {
+      const colors = ["text-pm-green-dark", "text-[#8B7355]", "text-pm-olive-dark"];
+      return colors[index % colors.length];
+    }
+    // Lower frequency = muted colors
+    const mutedColors = ["text-[#A89078]", "text-[#6B8E5A]", "text-[#9C7A5A]", "text-[#7A9A6A]"];
+    return mutedColors[index % mutedColors.length];
   };
 
   const getWordSize = (value: number) => {
     const ratio = value / maxValue;
-    if (ratio > 0.8) return "text-4xl font-bold";
-    if (ratio > 0.6) return "text-3xl font-semibold";
-    if (ratio > 0.4) return "text-2xl font-medium";
-    if (ratio > 0.2) return "text-xl";
+    if (ratio > 0.85) return "text-5xl font-bold";
+    if (ratio > 0.7) return "text-4xl font-bold";
+    if (ratio > 0.5) return "text-3xl font-semibold";
+    if (ratio > 0.35) return "text-2xl font-medium";
+    if (ratio > 0.2) return "text-xl font-medium";
+    if (ratio > 0.1) return "text-lg";
     return "text-base";
+  };
+
+  // Rotation angles for organic cloud effect
+  const getWordRotation = (index: number) => {
+    const rotations = [-15, -10, -5, 0, 0, 0, 5, 10, 15, -8, 8, -3, 3];
+    return rotations[index % rotations.length];
   };
 
   if (textResponses.length === 0 || filteredTexts.length === 0) {
@@ -174,23 +186,51 @@ export function WordCloudTab({ textResponses }: WordCloudTabProps) {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-wrap gap-3 justify-center items-center py-8 min-h-[300px]">
-              {words.map((word, index) => (
-                <motion.span
-                  key={word.text}
-                  initial={{ opacity: 0, scale: 0 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.3, delay: index * 0.02 }}
-                  className={cn(
-                    "cursor-default hover:opacity-70 transition-opacity",
-                    getWordSize(word.value),
-                    getWordColor(index)
-                  )}
-                  title={`${word.text}: ${word.value} ocorrências`}
-                >
-                  {word.text}
-                </motion.span>
-              ))}
+            <div className="relative flex flex-wrap gap-x-2 gap-y-1 justify-center items-center py-8 min-h-[350px] px-4">
+              {words.map((word, index) => {
+                const rotation = getWordRotation(index);
+                return (
+                  <motion.span
+                    key={word.text}
+                    initial={{
+                      opacity: 0,
+                      scale: 0,
+                      rotate: rotation - 20,
+                      y: 30
+                    }}
+                    animate={{
+                      opacity: 1,
+                      scale: 1,
+                      rotate: rotation,
+                      y: 0
+                    }}
+                    transition={{
+                      duration: 0.5,
+                      delay: index * 0.03,
+                      type: "spring",
+                      stiffness: 100,
+                      damping: 15
+                    }}
+                    whileHover={{
+                      scale: 1.15,
+                      transition: { duration: 0.2 }
+                    }}
+                    className={cn(
+                      "cursor-default transition-all inline-block leading-tight",
+                      getWordSize(word.value),
+                      getWordColor(index, word.value)
+                    )}
+                    style={{
+                      transform: `rotate(${rotation}deg)`,
+                      marginLeft: index % 3 === 0 ? '-0.25rem' : undefined,
+                      marginRight: index % 4 === 0 ? '-0.25rem' : undefined,
+                    }}
+                    title={`${word.text}: ${word.value} ocorrências`}
+                  >
+                    {word.text}
+                  </motion.span>
+                );
+              })}
             </div>
           </CardContent>
         </Card>
