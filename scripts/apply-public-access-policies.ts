@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Script para aplicar políticas RLS de acesso público
  *

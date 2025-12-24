@@ -84,6 +84,7 @@ export function AIInsightsCard({
   const { toast } = useToast();
 
   // Load data on mount
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- loadData is stable, only depends on assessmentId
   useEffect(() => {
     loadData();
   }, [assessmentId]);

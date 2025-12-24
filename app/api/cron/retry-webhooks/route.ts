@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Cron Job: Retry Failed Webhooks
  * Runs daily at 6:00 AM UTC via Vercel Cron (free tier limit)

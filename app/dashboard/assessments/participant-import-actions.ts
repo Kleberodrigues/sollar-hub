@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Participant Import Actions for Assessments
  *
