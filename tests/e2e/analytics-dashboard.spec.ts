@@ -19,7 +19,7 @@ test.describe('Analytics Dashboard - Basic UI', () => {
     // Mover para analytics.auth.spec.ts quando implementar testes autenticados de analytics
     await page.goto('/dashboard/analytics');
 
-    await expect(page.getByText('Análise de Dados')).toBeVisible();
+    await expect(page.getByText('Análise de Riscos')).toBeVisible();
     await expect(page.getByText(/Selecione um assessment/i)).toBeVisible();
   });
 });
@@ -310,7 +310,7 @@ test.describe.skip('Analytics Dashboard - Com Autenticação', () => {
       // Verificar h1 principal
       const h1 = page.locator('h1').first();
       await expect(h1).toBeVisible();
-      await expect(h1).toHaveText(/Análise de Dados/i);
+      await expect(h1).toHaveText(/Análise de Riscos/i);
     });
 
     test('gráficos devem ter labels descritivos', async ({ page }) => {

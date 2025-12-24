@@ -86,7 +86,7 @@ export function AnalyticsEmptyState() {
               <BarChart3 className="w-8 h-8 text-pm-olive" />
             </div>
             <h3 className="text-xl font-display font-semibold text-text-heading mb-2">
-              Análise de Dados
+              Análise de Riscos
             </h3>
             <p className="text-text-secondary mb-6 max-w-md mx-auto">
               Selecione um assessment para visualizar os dados de análise e métricas detalhadas.
