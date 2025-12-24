@@ -15,6 +15,32 @@ import type {
 const N8N_WEBHOOK_URL = process.env.N8N_WEBHOOK_URL;
 const N8N_WEBHOOK_SECRET = process.env.N8N_WEBHOOK_SECRET;
 
+// Event type to webhook path mapping
+const WEBHOOK_ROUTES: Record<string, string> = {
+  "member.invited": "/webhook/sollar-member-invite",
+  "participant.batch_imported": "/webhook/sollar-participants-imported",
+  // Default route handled separately
+};
+
+/**
+ * Get the correct webhook URL for an event type
+ */
+function getWebhookUrl(eventType: string): string | undefined {
+  if (!N8N_WEBHOOK_URL) return undefined;
+
+  // Extract base URL (remove any path)
+  const baseUrl = N8N_WEBHOOK_URL.replace(/\/webhook\/.*$/, "");
+
+  // Check if event type has a specific route
+  const route = WEBHOOK_ROUTES[eventType];
+  if (route) {
+    return `${baseUrl}${route}`;
+  }
+
+  // Default to the configured URL (generic events)
+  return N8N_WEBHOOK_URL;
+}
+
 // ============================================
 // Signature Generation
 // ============================================
@@ -134,8 +160,11 @@ export async function dispatchEvent<T extends Record<string, unknown>>({
     return { success: false, error: "Failed to store event" };
   }
 
+  // Get the correct webhook URL for this event type
+  const webhookUrl = getWebhookUrl(eventType);
+
   // If no webhook URL configured, mark as skipped
-  if (!N8N_WEBHOOK_URL) {
+  if (!webhookUrl) {
     console.warn("[EventDispatcher] N8N_WEBHOOK_URL not configured, skipping dispatch");
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -185,7 +214,9 @@ export async function dispatchEvent<T extends Record<string, unknown>>({
       ? generateSignature(payloadString, N8N_WEBHOOK_SECRET)
       : undefined;
 
-    const response = await fetch(N8N_WEBHOOK_URL, {
+    console.log(`[EventDispatcher] Sending ${eventType} to ${webhookUrl}`);
+
+    const response = await fetch(webhookUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -309,12 +340,19 @@ export async function retryFailedEvents(maxAttempts: number = 3): Promise<number
 
   for (const event of failedEvents) {
     try {
+      // Get the correct webhook URL for this event type
+      const webhookUrl = getWebhookUrl(event.event_type);
+      if (!webhookUrl) {
+        console.warn(`[EventDispatcher] No webhook URL for event ${event.id}`);
+        continue;
+      }
+
       const payloadString = JSON.stringify(event.payload);
       const signature = N8N_WEBHOOK_SECRET
         ? generateSignature(payloadString, N8N_WEBHOOK_SECRET)
         : undefined;
 
-      const response = await fetch(N8N_WEBHOOK_URL, {
+      const response = await fetch(webhookUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
