@@ -17,9 +17,10 @@ interface AnchorQuestion {
 interface AnchorsTabProps {
   anchors: AnchorQuestion[];
   overallAnchorScore: number;
+  compact?: boolean;
 }
 
-export function AnchorsTab({ anchors, overallAnchorScore }: AnchorsTabProps) {
+export function AnchorsTab({ anchors, overallAnchorScore, compact = false }: AnchorsTabProps) {
   const getSatisfactionLevel = (score: number): { label: string; color: string; icon: typeof Heart } => {
     if (score >= 4) return { label: "Excelente", color: "text-green-600 bg-green-100", icon: Star };
     if (score >= 3) return { label: "Bom", color: "text-blue-600 bg-blue-100", icon: ThumbsUp };
@@ -28,6 +29,78 @@ export function AnchorsTab({ anchors, overallAnchorScore }: AnchorsTabProps) {
   };
 
   const overallLevel = getSatisfactionLevel(overallAnchorScore);
+  const OverallIcon = overallLevel.icon;
+
+  // Compact view for SectionCard
+  if (compact) {
+    if (anchors.length === 0) {
+      return (
+        <div className="flex flex-col items-center justify-center h-full text-center">
+          <Anchor className="w-10 h-10 text-gray-300 mb-3" />
+          <p className="text-sm text-text-muted">Nenhuma âncora configurada</p>
+          <p className="text-xs text-text-muted mt-1">Adicione perguntas da categoria &quot;anchors&quot;</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="flex flex-col h-full">
+        {/* Score principal */}
+        <div className="flex items-center gap-4 mb-4 pb-4 border-b border-gray-100">
+          <div className="relative w-16 h-16 flex-shrink-0">
+            <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
+              <circle cx="18" cy="18" r="14" fill="none" className="stroke-gray-100" strokeWidth="4" />
+              <circle
+                cx="18" cy="18" r="14" fill="none"
+                className="stroke-pm-olive" strokeWidth="4" strokeLinecap="round"
+                strokeDasharray={`${(overallAnchorScore / 5) * 88} 100`}
+              />
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <span className="text-lg font-bold text-text-heading">{overallAnchorScore.toFixed(1)}</span>
+            </div>
+          </div>
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-text-heading">Índice de Satisfação</p>
+            <Badge className={cn("mt-1 text-xs", overallLevel.color)}>
+              <OverallIcon className="w-3 h-3 mr-1" />
+              {overallLevel.label}
+            </Badge>
+          </div>
+        </div>
+
+        {/* Lista de âncoras compacta */}
+        <div className="flex-1 space-y-2 overflow-auto">
+          {anchors.slice(0, 4).map((anchor) => {
+            const level = getSatisfactionLevel(anchor.averageScore);
+            return (
+              <div key={anchor.id} className="flex items-center justify-between gap-2 py-1.5">
+                <span className="text-xs text-text-secondary line-clamp-1 flex-1">
+                  {anchor.text.length > 40 ? anchor.text.substring(0, 40) + '...' : anchor.text}
+                </span>
+                <div className="flex items-center gap-2">
+                  <div className={cn("w-2 h-2 rounded-full",
+                    level.label === "Excelente" && "bg-green-500",
+                    level.label === "Bom" && "bg-blue-500",
+                    level.label === "Regular" && "bg-yellow-500",
+                    level.label === "Baixo" && "bg-red-500"
+                  )} />
+                  <span className="text-xs font-medium text-text-heading w-6 text-right">
+                    {anchor.averageScore.toFixed(1)}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+          {anchors.length > 4 && (
+            <p className="text-xs text-text-muted text-center pt-2">
+              +{anchors.length - 4} mais
+            </p>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   if (anchors.length === 0) {
     return (

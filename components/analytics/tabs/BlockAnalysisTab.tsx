@@ -38,6 +38,7 @@ interface CategoryResponse {
 
 interface BlockAnalysisTabProps {
   categories: CategoryResponse[];
+  compact?: boolean;
 }
 
 // Category icons mapping
@@ -103,7 +104,7 @@ const riskConfig = {
   },
 };
 
-export function BlockAnalysisTab({ categories }: BlockAnalysisTabProps) {
+export function BlockAnalysisTab({ categories, compact = false }: BlockAnalysisTabProps) {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
 
@@ -127,6 +128,81 @@ export function BlockAnalysisTab({ categories }: BlockAnalysisTabProps) {
   };
 
   const overallStatus = getOverallStatus();
+
+  // Compact view for SectionCard
+  if (compact) {
+    return (
+      <div className="flex flex-col h-full">
+        {/* Score circular e resumo */}
+        <div className="flex items-center gap-4 mb-4">
+          <div className="relative w-20 h-20 flex-shrink-0">
+            <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
+              <circle cx="18" cy="18" r="15" fill="none" className="stroke-gray-100" strokeWidth="4" />
+              <circle
+                cx="18" cy="18" r="15" fill="none"
+                className={cn(
+                  overallStatus.status === "low" && "stroke-emerald-500",
+                  overallStatus.status === "medium" && "stroke-amber-500",
+                  overallStatus.status === "high" && "stroke-red-500"
+                )}
+                strokeWidth="4" strokeLinecap="round"
+                strokeDasharray={`${(avgScore / 5) * 94} 100`}
+              />
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <span className="text-xl font-bold text-text-heading">{avgScore.toFixed(1)}</span>
+              <span className="text-[10px] text-text-muted">/5.0</span>
+            </div>
+          </div>
+          <div className="flex-1">
+            <p className={cn("text-sm font-semibold", overallStatus.color)}>{overallStatus.label}</p>
+            <div className="flex gap-3 mt-2">
+              <div className="flex items-center gap-1">
+                <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                <span className="text-xs text-text-muted">{lowRiskCount}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="w-2 h-2 rounded-full bg-amber-500" />
+                <span className="text-xs text-text-muted">{mediumRiskCount}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="w-2 h-2 rounded-full bg-red-500" />
+                <span className="text-xs text-text-muted">{highRiskCount}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Lista de categorias compacta */}
+        <div className="flex-1 space-y-2 overflow-auto">
+          {blockCategories.slice(0, 6).map((cat) => {
+            const percentage = (cat.averageScore / 5) * 100;
+            return (
+              <div key={cat.category} className="flex items-center gap-3">
+                <span className="text-xs text-text-secondary w-24 truncate">
+                  {getCategoryName(cat.category).split(' ')[0]}
+                </span>
+                <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div
+                    className={cn(
+                      "h-full rounded-full transition-all",
+                      cat.riskLevel === "low" && "bg-emerald-500",
+                      cat.riskLevel === "medium" && "bg-amber-500",
+                      cat.riskLevel === "high" && "bg-red-500"
+                    )}
+                    style={{ width: `${percentage}%` }}
+                  />
+                </div>
+                <span className="text-xs font-medium text-text-heading w-8">
+                  {cat.averageScore.toFixed(1)}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
