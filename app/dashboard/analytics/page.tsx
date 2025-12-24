@@ -110,7 +110,7 @@ export default async function AnalyticsPage({
     );
 
     return (
-      <AnalyticsPageContent title="Análise de Dados">
+      <AnalyticsPageContent title="Análise de Riscos">
         <AssessmentSelector assessments={assessments} />
       </AnalyticsPageContent>
     );
@@ -139,7 +139,7 @@ export default async function AnalyticsPage({
 
   if (error || !assessment) {
     return (
-      <AnalyticsPageContent title="Análise de Dados">
+      <AnalyticsPageContent title="Análise de Riscos">
         <AnalyticsNotFoundState />
       </AnalyticsPageContent>
     );
@@ -149,7 +149,7 @@ export default async function AnalyticsPage({
 
   return (
     <AnalyticsPageContent
-      title="Análise de Dados"
+      title="Análise de Riscos"
       subtitle={subtitle}
       showBackButton
     >
