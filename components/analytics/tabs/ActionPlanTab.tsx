@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useState } from "react";
+import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +18,8 @@ import {
   RefreshCw,
   Copy,
   Download,
+  ExternalLink,
+  Plus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { PlanType } from "@/lib/stripe/config";
@@ -337,6 +340,12 @@ export function ActionPlanTab({
                   <Button variant="outline" size="sm">
                     <Download className="w-4 h-4 mr-2" />
                     Exportar
+                  </Button>
+                  <Button asChild size="sm" className="bg-pm-terracotta hover:bg-pm-terracotta/90">
+                    <Link href="/dashboard/action-plan">
+                      <Plus className="w-4 h-4 mr-2" />
+                      Registrar Ação
+                    </Link>
                   </Button>
                 </div>
               </CardHeader>
