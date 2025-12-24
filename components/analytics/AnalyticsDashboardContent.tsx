@@ -15,7 +15,6 @@ import {
   Anchor,
   Cloud,
   Grid3X3,
-  List,
   FileOutput,
   Sparkles,
   Maximize2,
@@ -66,10 +65,6 @@ const HeatMapTab = dynamic(() => import("./tabs/HeatMapTab").then(m => ({ defaul
   loading: () => <TabSkeleton />,
   ssr: false,
 });
-const DetailedResponsesTab = dynamic(() => import("./tabs/DetailedResponsesTab").then(m => ({ default: m.DetailedResponsesTab })), {
-  loading: () => <TabSkeleton />,
-  ssr: false,
-});
 const ReportTab = dynamic(() => import("./tabs/ReportTab").then(m => ({ default: m.ReportTab })), {
   loading: () => <TabSkeleton />,
   ssr: false,
@@ -110,16 +105,6 @@ interface QuestionDistribution {
   responses: { value: string; count: number; percentage: number }[];
 }
 
-interface DetailedResponse {
-  id: string;
-  anonymousId: string;
-  questionText: string;
-  category: string;
-  responseText: string;
-  responseValue?: number;
-  createdAt: string;
-}
-
 interface DepartmentData {
   id: string;
   name: string;
@@ -138,7 +123,6 @@ interface AnalyticsDashboardContentProps {
   assessmentTitle?: string;
   currentPlan?: PlanType;
   onDataChange?: () => void;
-  detailedResponses?: DetailedResponse[];
   departments?: DepartmentData[];
 }
 
@@ -298,7 +282,6 @@ export function AnalyticsDashboardContent({
   assessmentTitle = "Assessment",
   currentPlan = 'base',
   onDataChange,
-  detailedResponses = [],
   departments = [],
 }: AnalyticsDashboardContentProps) {
   const [fullscreenSection, setFullscreenSection] = useState<string | null>(null);
@@ -600,15 +583,6 @@ export function AnalyticsDashboardContent({
           <HeatMapTab heatMapData={heatMapData} categories={categories} />
         </SectionCard>
 
-        {/* Respostas Detalhadas */}
-        <SectionCard
-          title="Respostas Detalhadas"
-          icon={List}
-          onExpand={() => setFullscreenSection("detailed")}
-          accentColor="olive"
-        >
-          <DetailedResponsesTab responses={detailedResponses} categories={categories} totalParticipants={analytics.totalParticipants} />
-        </SectionCard>
       </motion.div>
 
       {/* Cards de Ação - Relatório e IA */}
@@ -703,14 +677,6 @@ export function AnalyticsDashboardContent({
         <HeatMapTab heatMapData={heatMapData} categories={categories} />
       </FullscreenModal>
 
-      <FullscreenModal
-        isOpen={fullscreenSection === "detailed"}
-        onClose={() => setFullscreenSection(null)}
-        title="Respostas Detalhadas"
-        icon={List}
-      >
-        <DetailedResponsesTab responses={detailedResponses} categories={categories} totalParticipants={analytics.totalParticipants} />
-      </FullscreenModal>
 
       <FullscreenModal
         isOpen={fullscreenSection === "report"}
