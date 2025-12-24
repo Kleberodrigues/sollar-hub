@@ -540,6 +540,52 @@ export function AnalyticsDashboardContent({
         </Card>
       </motion.div>
 
+      {/* Cards de Ação - Relatório e IA - MOVIDOS PARA O TOPO */}
+      <motion.div variants={sollarMotion.fadeUp} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Relatório Executivo */}
+        <Card className="bg-gradient-to-br from-pm-terracotta/5 via-bg-cream to-white border-l-4 border-l-pm-terracotta hover:shadow-lg transition-all cursor-pointer group"
+          onClick={() => setFullscreenSection("report")}
+        >
+          <CardContent className="p-5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-pm-terracotta/10 flex items-center justify-center group-hover:bg-pm-terracotta/20 transition-colors">
+                  <FileOutput className="w-6 h-6 text-pm-terracotta" />
+                </div>
+                <div>
+                  <h3 className="font-display text-lg font-semibold text-text-heading">Relatório Executivo</h3>
+                  <p className="text-sm text-text-muted">Gere relatório PDF/CSV completo</p>
+                </div>
+              </div>
+              <ChevronRight className="w-5 h-5 text-pm-terracotta opacity-0 group-hover:opacity-100 transition-opacity" />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Plano de Ação com IA */}
+        <Card className="bg-gradient-to-br from-purple-50 via-white to-white border-l-4 border-l-purple-500 hover:shadow-lg transition-all cursor-pointer group"
+          onClick={() => setFullscreenSection("action")}
+        >
+          <CardContent className="p-5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center group-hover:bg-purple-200 transition-colors">
+                  <Sparkles className="w-6 h-6 text-purple-600" />
+                </div>
+                <div>
+                  <h3 className="font-display text-lg font-semibold text-text-heading">Plano de Ação com IA</h3>
+                  <p className="text-sm text-text-muted">Recomendações personalizadas</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge className="bg-purple-100 text-purple-700 text-xs">IA</Badge>
+                <ChevronRight className="w-5 h-5 text-purple-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+
       {/* Seção Especial: Tendências de Clima (apenas para Pesquisa de Clima) */}
       {isPulse && (
         <motion.div variants={sollarMotion.fadeUp}>
@@ -606,52 +652,6 @@ export function AnalyticsDashboardContent({
           <HeatMapTab heatMapData={heatMapData} categories={categories} />
         </SectionCard>
 
-      </motion.div>
-
-      {/* Cards de Ação - Relatório e IA */}
-      <motion.div variants={sollarMotion.fadeUp} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Relatório Executivo */}
-        <Card className="bg-gradient-to-br from-pm-terracotta/5 via-bg-cream to-white border-l-4 border-l-pm-terracotta hover:shadow-lg transition-all cursor-pointer group"
-          onClick={() => setFullscreenSection("report")}
-        >
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-pm-terracotta/10 flex items-center justify-center group-hover:bg-pm-terracotta/20 transition-colors">
-                  <FileOutput className="w-6 h-6 text-pm-terracotta" />
-                </div>
-                <div>
-                  <h3 className="font-display text-lg font-semibold text-text-heading">Relatório Executivo</h3>
-                  <p className="text-sm text-text-muted">Gere relatório PDF/CSV completo</p>
-                </div>
-              </div>
-              <ChevronRight className="w-5 h-5 text-pm-terracotta opacity-0 group-hover:opacity-100 transition-opacity" />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Plano de Ação com IA */}
-        <Card className="bg-gradient-to-br from-purple-50 via-white to-white border-l-4 border-l-purple-500 hover:shadow-lg transition-all cursor-pointer group"
-          onClick={() => setFullscreenSection("action")}
-        >
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center group-hover:bg-purple-200 transition-colors">
-                  <Sparkles className="w-6 h-6 text-purple-600" />
-                </div>
-                <div>
-                  <h3 className="font-display text-lg font-semibold text-text-heading">Plano de Ação com IA</h3>
-                  <p className="text-sm text-text-muted">Recomendações personalizadas</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <Badge className="bg-purple-100 text-purple-700 text-xs">IA</Badge>
-                <ChevronRight className="w-5 h-5 text-purple-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </motion.div>
 
       {/* Fullscreen Modals */}
