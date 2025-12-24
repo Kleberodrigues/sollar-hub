@@ -16,7 +16,13 @@ import {
   Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 import type { PlanType } from "@/lib/stripe/config";
+import {
+  exportAnalyticsSummaryCSV,
+  getReportData,
+  type ExportResult,
+} from "@/app/dashboard/analytics/export-actions";
 
 interface ReportSection {
   id: string;
@@ -29,8 +35,6 @@ interface ReportTabProps {
   assessmentId: string;
   assessmentTitle: string;
   currentPlan: PlanType;
-  onExportCSV?: () => Promise<void>;
-  onExportPDF?: () => Promise<void>;
 }
 
 const defaultSections: ReportSection[] = [
@@ -45,11 +49,9 @@ const defaultSections: ReportSection[] = [
 ];
 
 export function ReportTab({
-  assessmentId: _assessmentId,
+  assessmentId,
   assessmentTitle,
   currentPlan: _currentPlan,
-  onExportCSV,
-  onExportPDF,
 }: ReportTabProps) {
   const [sections, setSections] = useState<ReportSection[]>(defaultSections);
   const [isGenerating, setIsGenerating] = useState<"csv" | "pdf" | null>(null);
@@ -65,23 +67,91 @@ export function ReportTab({
     );
   };
 
+  // Helper to download file
+  const downloadFile = (content: string, filename: string, mimeType: string) => {
+    const encoder = new TextEncoder();
+    const uint8Array = encoder.encode(content);
+    const blob = new Blob([uint8Array], { type: `${mimeType.replace(/;$/, '')};charset=utf-8` });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  // Helper to handle export result errors
+  const handleExportResult = (result: unknown, format: string): boolean => {
+    if (typeof result === 'object' && result !== null && 'success' in result) {
+      const exportResult = result as ExportResult;
+      if (!exportResult.success) {
+        if (exportResult.upgradeRequired) {
+          toast.error(exportResult.error, {
+            action: {
+              label: 'Ver planos',
+              onClick: () => window.location.href = '/dashboard/configuracoes/billing',
+            },
+          });
+        } else {
+          toast.error(exportResult.error || `Erro ao exportar ${format}`);
+        }
+        return false;
+      }
+    }
+    return true;
+  };
+
   const handleExportCSV = async () => {
-    if (!onExportCSV) return;
     setIsGenerating("csv");
     try {
-      await onExportCSV();
-      setLastGenerated(new Date().toLocaleTimeString("pt-BR"));
+      const result = await exportAnalyticsSummaryCSV(assessmentId);
+
+      if (!handleExportResult(result, 'CSV')) return;
+
+      if (typeof result === 'string') {
+        downloadFile(
+          result,
+          `relatorio-${assessmentId}-${Date.now()}.csv`,
+          'text/csv;charset=utf-8;'
+        );
+        toast.success('Relatório CSV exportado com sucesso!');
+        setLastGenerated(new Date().toLocaleTimeString("pt-BR"));
+      }
+    } catch (error) {
+      console.error('[Export CSV] Error:', error);
+      toast.error('Erro ao exportar CSV. Tente novamente.');
     } finally {
       setIsGenerating(null);
     }
   };
 
   const handleExportPDF = async () => {
-    if (!onExportPDF) return;
     setIsGenerating("pdf");
     try {
-      await onExportPDF();
+      const data = await getReportData(assessmentId);
+
+      if (!handleExportResult(data, 'PDF')) return;
+
+      // Importar dinamicamente o gerador de PDF
+      const { generateAssessmentPDF } = await import('@/lib/pdf/assessment-report');
+      const pdfBlob = await generateAssessmentPDF(data as Exclude<typeof data, ExportResult>);
+
+      const url = URL.createObjectURL(pdfBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `relatorio-${assessmentId}-${Date.now()}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      toast.success('Relatório PDF gerado com sucesso!');
       setLastGenerated(new Date().toLocaleTimeString("pt-BR"));
+    } catch (error) {
+      console.error('[Export PDF] Error:', error);
+      toast.error('Erro ao gerar relatório PDF. Tente novamente.');
     } finally {
       setIsGenerating(null);
     }
