@@ -17,7 +17,7 @@ const features = [
     icon: ClipboardList,
     title: "Diagnósticos Personalizados",
     description:
-      "Crie diagnósticos NR-1, pulse surveys ou questionários customizados para sua realidade organizacional.",
+      "Crie diagnósticos NR-1, pesquisas de clima ou questionários customizados para sua realidade organizacional.",
     color: "pm-olive",
   },
   {

@@ -93,9 +93,9 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
               </SelectItem>
               <SelectItem value="pulse">
                 <div className="flex flex-col items-start">
-                  <span className="font-medium">Pulse Survey</span>
+                  <span className="font-medium">Pesquisa de Clima</span>
                   <span className="text-xs text-text-muted">
-                    Questionário rápido (5-10 questões)
+                    Questionário rápido mensal (5-10 questões)
                   </span>
                 </div>
               </SelectItem>

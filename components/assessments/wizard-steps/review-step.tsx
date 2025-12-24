@@ -44,7 +44,7 @@ export function ReviewStep({
   const getTypeLabel = (type: 'nr1' | 'pulse' | 'custom') => {
     const labels = {
       nr1: 'NR-1 Completo',
-      pulse: 'Pulse Survey',
+      pulse: 'Pesquisa de Clima',
       custom: 'Personalizado',
     };
     return labels[type];
