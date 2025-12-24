@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { Organization } from '@/types'
 import { useUser } from './useUser'
@@ -9,7 +9,7 @@ export function useOrganization() {
   const { profile } = useUser()
   const [organization, setOrganization] = useState<Organization | null>(null)
   const [loading, setLoading] = useState(true)
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
 
   useEffect(() => {
     const fetchOrganization = async () => {
@@ -34,7 +34,7 @@ export function useOrganization() {
     }
 
     fetchOrganization()
-  }, [profile?.organization_id])
+  }, [profile?.organization_id, supabase])
 
   return {
     organization,

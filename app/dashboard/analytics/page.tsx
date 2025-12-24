@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";

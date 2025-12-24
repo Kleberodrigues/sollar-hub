@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Event dispatcher for n8n webhook integration
  * Handles event creation, delivery, and retry logic

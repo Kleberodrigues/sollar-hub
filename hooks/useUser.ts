@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
 import type { UserProfile } from '@/types'
@@ -9,30 +9,30 @@ export function useUser() {
   const [user, setUser] = useState<User | null>(null)
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
+
+  const fetchUser = useCallback(async () => {
+    try {
+      const { data: { user: authUser } } = await supabase.auth.getUser()
+      setUser(authUser)
+
+      if (authUser) {
+        const { data: userProfile } = await supabase
+          .from('user_profiles')
+          .select('*')
+          .eq('id', authUser.id)
+          .single()
+
+        setProfile(userProfile)
+      }
+    } catch (error) {
+      console.error('Error fetching user:', error)
+    } finally {
+      setLoading(false)
+    }
+  }, [supabase])
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const { data: { user: authUser } } = await supabase.auth.getUser()
-        setUser(authUser)
-
-        if (authUser) {
-          const { data: userProfile } = await supabase
-            .from('user_profiles')
-            .select('*')
-            .eq('id', authUser.id)
-            .single()
-
-          setProfile(userProfile)
-        }
-      } catch (error) {
-        console.error('Error fetching user:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
     fetchUser()
 
     const {
@@ -47,7 +47,7 @@ export function useUser() {
     })
 
     return () => subscription.unsubscribe()
-  }, [])
+  }, [supabase, fetchUser])
 
   // Type assertion for is_super_admin since it may not be in generated types yet
   const isSuperAdmin = !!(profile as UserProfile & { is_super_admin?: boolean })?.is_super_admin

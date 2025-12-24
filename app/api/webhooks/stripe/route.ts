@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Stripe Webhook Handler
  * Processes subscription and payment events from Stripe

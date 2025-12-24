@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * n8n Webhook Handler
  * Receives callbacks and delivery confirmations from n8n workflows

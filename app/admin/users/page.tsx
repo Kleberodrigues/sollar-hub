@@ -94,6 +94,7 @@ export default function UsersListPage() {
   }, [loadUsers]);
 
   // Debounced search
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- Only trigger on searchInput change for debounce
   useEffect(() => {
     const timer = setTimeout(() => {
       if (searchInput !== search) {
