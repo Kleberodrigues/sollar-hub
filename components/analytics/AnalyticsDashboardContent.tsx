@@ -218,7 +218,7 @@ function FullscreenModal({
   );
 }
 
-// Card de Seção Compacto
+// Card de Seção - Design Limpo e Profissional
 function SectionCard({
   title,
   icon: Icon,
@@ -234,19 +234,19 @@ function SectionCard({
 }) {
   const colors = {
     terracotta: {
-      bg: "bg-pm-terracotta/5",
-      icon: "bg-pm-terracotta/10 text-pm-terracotta",
-      border: "border-l-pm-terracotta",
+      iconBg: "bg-pm-terracotta/10",
+      iconColor: "text-pm-terracotta",
+      hoverBorder: "hover:border-pm-terracotta/30",
     },
     olive: {
-      bg: "bg-pm-olive/5",
-      icon: "bg-pm-olive/10 text-pm-olive",
-      border: "border-l-pm-olive",
+      iconBg: "bg-pm-olive/10",
+      iconColor: "text-pm-olive",
+      hoverBorder: "hover:border-pm-olive/30",
     },
     amber: {
-      bg: "bg-amber-50",
-      icon: "bg-amber-100 text-amber-600",
-      border: "border-l-amber-500",
+      iconBg: "bg-amber-100",
+      iconColor: "text-amber-600",
+      hoverBorder: "hover:border-amber-300",
     },
   };
 
@@ -254,26 +254,28 @@ function SectionCard({
 
   return (
     <Card className={cn(
-      "overflow-hidden border-l-4 transition-all duration-300 hover:shadow-lg group",
-      colorSet.border
+      "overflow-hidden transition-all duration-300 hover:shadow-md group bg-white border-border-light flex flex-col h-full",
+      colorSet.hoverBorder
     )}>
-      <CardHeader className={cn("py-3 px-4 flex flex-row items-center justify-between", colorSet.bg)}>
+      {/* Header compacto */}
+      <div className="px-5 py-4 border-b border-border-light/50 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className={cn("w-9 h-9 rounded-xl flex items-center justify-center", colorSet.icon)}>
-            <Icon className="w-4 h-4" />
+          <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center", colorSet.iconBg)}>
+            <Icon className={cn("w-5 h-5", colorSet.iconColor)} />
           </div>
-          <CardTitle className="text-sm font-semibold text-text-heading">{title}</CardTitle>
+          <h3 className="text-base font-semibold text-text-heading">{title}</h3>
         </div>
         <Button
           variant="ghost"
           size="sm"
           onClick={onExpand}
-          className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+          className="h-8 w-8 p-0 opacity-50 hover:opacity-100 transition-opacity"
         >
           <Maximize2 className="w-4 h-4 text-text-muted" />
         </Button>
-      </CardHeader>
-      <CardContent className="p-4 h-[280px] overflow-hidden">
+      </div>
+      {/* Content com altura mínima consistente */}
+      <CardContent className="p-5 flex-1 min-h-[260px] flex flex-col">
         {children}
       </CardContent>
     </Card>
@@ -552,8 +554,8 @@ export function AnalyticsDashboardContent({
         </motion.div>
       )}
 
-      {/* Grid de Gráficos - Todos Visíveis */}
-      <motion.div variants={sollarMotion.fadeUp} className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+      {/* Grid de Gráficos - Layout Balanceado */}
+      <motion.div variants={sollarMotion.fadeUp} className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {/* Análise por Blocos NR-1 */}
         <SectionCard
           title={isPulse ? "Indicadores de Clima" : "Blocos NR-1"}
@@ -561,7 +563,7 @@ export function AnalyticsDashboardContent({
           onExpand={() => setFullscreenSection("blocks")}
           accentColor="terracotta"
         >
-          <BlockAnalysisTab categories={analytics.responsesByCategory} />
+          <BlockAnalysisTab categories={analytics.responsesByCategory} compact />
         </SectionCard>
 
         {/* Departamentos */}
@@ -571,7 +573,7 @@ export function AnalyticsDashboardContent({
           onExpand={() => setFullscreenSection("departments")}
           accentColor="olive"
         >
-          <DepartmentAnalysisTab departments={departments} totalParticipants={analytics.totalParticipants} />
+          <DepartmentAnalysisTab departments={departments} totalParticipants={analytics.totalParticipants} compact />
         </SectionCard>
 
         {/* Âncoras */}
@@ -581,7 +583,7 @@ export function AnalyticsDashboardContent({
           onExpand={() => setFullscreenSection("anchors")}
           accentColor="olive"
         >
-          <AnchorsTab anchors={anchorsData.anchors} overallAnchorScore={anchorsData.overallScore} />
+          <AnchorsTab anchors={anchorsData.anchors} overallAnchorScore={anchorsData.overallScore} compact />
         </SectionCard>
 
         {/* Nuvem de Palavras */}

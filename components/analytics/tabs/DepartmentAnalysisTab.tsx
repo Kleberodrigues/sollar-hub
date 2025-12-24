@@ -24,12 +24,88 @@ interface DepartmentData {
 interface DepartmentAnalysisTabProps {
   departments: DepartmentData[];
   totalParticipants: number;
+  compact?: boolean;
 }
 
 export function DepartmentAnalysisTab({
   departments,
-  totalParticipants
+  totalParticipants,
+  compact = false
 }: DepartmentAnalysisTabProps) {
+  const getRiskDotColor = (level: "low" | "medium" | "high") => {
+    switch (level) {
+      case "low": return "bg-green-500";
+      case "medium": return "bg-yellow-500";
+      case "high": return "bg-red-500";
+    }
+  };
+
+  // Compact empty state
+  if (compact && departments.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full text-center">
+        <Building2 className="w-10 h-10 text-gray-300 mb-3" />
+        <p className="text-sm text-text-muted">Nenhum departamento configurado</p>
+        <p className="text-xs text-text-muted mt-1">Configure departamentos no assessment</p>
+      </div>
+    );
+  }
+
+  // Compact view for SectionCard
+  if (compact) {
+    const highRiskCount = departments.filter(d => d.riskLevel === "high").length;
+    const avgScore = departments.length > 0
+      ? departments.reduce((sum, d) => sum + d.averageScore, 0) / departments.length
+      : 0;
+
+    return (
+      <div className="flex flex-col h-full">
+        {/* Resumo */}
+        <div className="flex items-center gap-4 mb-4 pb-4 border-b border-gray-100">
+          <div className="flex-1 grid grid-cols-3 gap-2 text-center">
+            <div>
+              <p className="text-xl font-bold text-pm-olive">{departments.length}</p>
+              <p className="text-[10px] text-text-muted">Deptos</p>
+            </div>
+            <div>
+              <p className="text-xl font-bold text-text-heading">{avgScore.toFixed(1)}</p>
+              <p className="text-[10px] text-text-muted">Score</p>
+            </div>
+            <div>
+              <p className="text-xl font-bold text-red-500">{highRiskCount}</p>
+              <p className="text-[10px] text-text-muted">Alto Risco</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Lista de departamentos compacta */}
+        <div className="flex-1 space-y-2 overflow-auto">
+          {departments.slice(0, 5).map((dept) => (
+            <div key={dept.id} className="flex items-center gap-3">
+              <div className="w-7 h-7 rounded-full bg-pm-olive/10 flex items-center justify-center flex-shrink-0">
+                <span className="text-xs font-medium text-pm-olive">
+                  {dept.name.charAt(0).toUpperCase()}
+                </span>
+              </div>
+              <span className="text-xs text-text-secondary flex-1 truncate">
+                {dept.name}
+              </span>
+              <div className={cn("w-2 h-2 rounded-full", getRiskDotColor(dept.riskLevel))} />
+              <span className="text-xs font-medium text-text-heading w-8 text-right">
+                {dept.averageScore.toFixed(1)}
+              </span>
+            </div>
+          ))}
+          {departments.length > 5 && (
+            <p className="text-xs text-text-muted text-center pt-2">
+              +{departments.length - 5} mais
+            </p>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   if (departments.length === 0) {
     return (
       <Card className="border-dashed border-2">
