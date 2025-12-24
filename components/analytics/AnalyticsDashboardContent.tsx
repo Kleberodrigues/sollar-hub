@@ -73,6 +73,10 @@ const ActionPlanTab = dynamic(() => import("./tabs/ActionPlanTab").then(m => ({ 
   loading: () => <TabSkeleton />,
   ssr: false,
 });
+const ClimaTrendTab = dynamic(() => import("./tabs/ClimaTrendTab").then(m => ({ default: m.ClimaTrendTab })), {
+  loading: () => <TabSkeleton />,
+  ssr: false,
+});
 
 interface CategoryResponse {
   category: string;
@@ -121,6 +125,7 @@ interface AnalyticsDashboardContentProps {
   questionDistributions: QuestionDistribution[];
   assessmentId: string;
   assessmentTitle?: string;
+  assessmentType?: 'nr1' | 'pulse' | 'custom';
   currentPlan?: PlanType;
   onDataChange?: () => void;
   departments?: DepartmentData[];
@@ -280,10 +285,12 @@ export function AnalyticsDashboardContent({
   questionDistributions,
   assessmentId,
   assessmentTitle = "Assessment",
+  assessmentType = 'nr1',
   currentPlan = 'base',
   onDataChange,
   departments = [],
 }: AnalyticsDashboardContentProps) {
+  const isPulse = assessmentType === 'pulse';
   const [fullscreenSection, setFullscreenSection] = useState<string | null>(null);
   const hasResponses = analytics.totalParticipants > 0;
 
@@ -531,11 +538,25 @@ export function AnalyticsDashboardContent({
         </Card>
       </motion.div>
 
+      {/* Seção Especial: Tendências de Clima (apenas para Pesquisa de Clima) */}
+      {isPulse && (
+        <motion.div variants={sollarMotion.fadeUp}>
+          <SectionCard
+            title="Tendência de Clima"
+            icon={TrendingUp}
+            onExpand={() => setFullscreenSection("climatrend")}
+            accentColor="olive"
+          >
+            <ClimaTrendTab assessmentType={assessmentType} />
+          </SectionCard>
+        </motion.div>
+      )}
+
       {/* Grid de Gráficos - Todos Visíveis */}
       <motion.div variants={sollarMotion.fadeUp} className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {/* Análise por Blocos NR-1 */}
         <SectionCard
-          title="Blocos NR-1"
+          title={isPulse ? "Indicadores de Clima" : "Blocos NR-1"}
           icon={BarChart3}
           onExpand={() => setFullscreenSection("blocks")}
           accentColor="terracotta"
@@ -695,6 +716,17 @@ export function AnalyticsDashboardContent({
       >
         <ActionPlanTab assessmentId={assessmentId} currentPlan={currentPlan} highRiskCategories={highRiskCategories} />
       </FullscreenModal>
+
+      {isPulse && (
+        <FullscreenModal
+          isOpen={fullscreenSection === "climatrend"}
+          onClose={() => setFullscreenSection(null)}
+          title="Tendência do Clima Organizacional"
+          icon={TrendingUp}
+        >
+          <ClimaTrendTab assessmentType={assessmentType} />
+        </FullscreenModal>
+      )}
     </motion.div>
   );
 }
