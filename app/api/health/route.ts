@@ -17,6 +17,8 @@ interface HealthStatus {
     database: "up" | "down" | "unknown";
     stripe: "configured" | "not_configured";
     n8n: "configured" | "not_configured";
+    openai: "configured" | "not_configured";
+    anthropic: "configured" | "not_configured";
   };
   uptime: number;
 }
@@ -32,6 +34,8 @@ export async function GET() {
       database: "unknown",
       stripe: process.env.STRIPE_SECRET_KEY ? "configured" : "not_configured",
       n8n: process.env.N8N_WEBHOOK_URL ? "configured" : "not_configured",
+      openai: process.env.OPENAI_API_KEY ? "configured" : "not_configured",
+      anthropic: process.env.ANTHROPIC_API_KEY ? "configured" : "not_configured",
     },
     uptime: Math.floor((Date.now() - startTime) / 1000),
   };
