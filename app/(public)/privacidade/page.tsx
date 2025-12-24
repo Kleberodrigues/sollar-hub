@@ -1,8 +1,8 @@
 import { SlideUp, StaggerContainer, StaggerItem } from '@/components/animated'
 
 export const metadata = {
-  title: 'Política de Privacidade | Sollar',
-  description: 'Política de Privacidade da Sollar - Saiba como protegemos suas informações pessoais em conformidade com a LGPD',
+  title: 'Política de Privacidade | PsicoMapa',
+  description: 'Política de Privacidade do PsicoMapa - Saiba como protegemos suas informações pessoais em conformidade com a LGPD',
 }
 
 export default function PrivacidadePage() {
@@ -15,7 +15,7 @@ export default function PrivacidadePage() {
             Política de Privacidade
           </h1>
           <p className="font-serif text-lg text-text-secondary max-w-2xl mx-auto">
-            A sua privacidade é importante para nós. Esta Política de Privacidade descreve como coletamos, usamos e protegemos as informações pessoais dos visitantes do site da Sollar.
+            A sua privacidade é importante para nós. Esta Política de Privacidade descreve como coletamos, usamos e protegemos as informações pessoais dos visitantes do site do PsicoMapa.
           </p>
         </SlideUp>
 

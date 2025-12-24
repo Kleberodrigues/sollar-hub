@@ -156,7 +156,7 @@ export default async function AssessmentPage({
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
               <CheckCircle className="w-5 h-5 text-pm-green-dark" />
-              Assessment Ativo - Link Público
+              Avaliação Ativa - Link Público
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -186,7 +186,7 @@ export default async function AssessmentPage({
         </Card>
       )}
 
-      {/* Informações do Assessment */}
+      {/* Informações da Avaliação */}
       <div className="grid md:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
@@ -355,7 +355,7 @@ export default async function AssessmentPage({
           </CardHeader>
           <CardContent>
             <p className="text-sm text-text-secondary mb-4">
-              Visualize dashboards interativos, gráficos detalhados e todas as métricas do assessment.
+              Visualize dashboards interativos, gráficos detalhados e todas as métricas da avaliação.
             </p>
             <div className="flex gap-2">
               <Link href={`/dashboard/analytics?assessment=${assessment.id}`}>

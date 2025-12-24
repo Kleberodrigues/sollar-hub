@@ -56,10 +56,10 @@ export default async function NewAssessmentPage() {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-text-heading">
-          Novo Assessment
+          Nova Avaliação
         </h1>
         <p className="text-text-secondary mt-1">
-          Crie um novo assessment para coletar respostas
+          Crie uma nova avaliação para coletar respostas
         </p>
       </div>
 

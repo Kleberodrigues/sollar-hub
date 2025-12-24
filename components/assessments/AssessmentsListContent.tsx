@@ -49,7 +49,7 @@ export function AssessmentsListContent({ assessments, canManage }: AssessmentsLi
         className="flex flex-col md:flex-row md:items-center justify-between gap-4"
       >
         <div>
-          <h1 className="font-display text-3xl font-bold text-text-heading">Assessments</h1>
+          <h1 className="font-display text-3xl font-bold text-text-heading">Avaliações</h1>
           <p className="text-text-secondary mt-1">
             Gerencie avaliações e colete respostas da sua equipe
           </p>
@@ -62,7 +62,7 @@ export function AssessmentsListContent({ assessments, canManage }: AssessmentsLi
           >
             <Link href="/dashboard/assessments/new">
               <Plus className="w-4 h-4" />
-              Novo Assessment
+              Nova Avaliação
             </Link>
           </Button>
         )}
@@ -135,10 +135,10 @@ export function AssessmentsListContent({ assessments, canManage }: AssessmentsLi
                   <ClipboardList className="w-8 h-8 text-pm-terracotta" />
                 </div>
                 <h3 className="text-xl font-display font-semibold text-text-heading mb-2">
-                  Nenhum assessment encontrado
+                  Nenhuma avaliação encontrada
                 </h3>
                 <p className="text-text-secondary mb-6 max-w-md mx-auto">
-                  Crie um assessment para começar a coletar respostas da sua equipe sobre riscos psicossociais.
+                  Crie uma avaliação para começar a coletar respostas da sua equipe sobre riscos psicossociais.
                 </p>
                 {canManage && (
                   <Button
@@ -147,7 +147,7 @@ export function AssessmentsListContent({ assessments, canManage }: AssessmentsLi
                   >
                     <Link href="/dashboard/assessments/new">
                       <Plus className="w-4 h-4 mr-2" />
-                      Criar Primeiro Assessment
+                      Criar Primeira Avaliação
                     </Link>
                   </Button>
                 )}

@@ -20,7 +20,7 @@ const plans = [
       'Relatório técnico personalizado',
       'Plano de ação orientado à prevenção',
       'Análise por clusters de risco',
-      'Assessments ilimitados',
+      'Avaliações ilimitadas',
       'Export PDF e CSV',
       'Suporte por email',
     ],

@@ -76,7 +76,7 @@ export function AdminSidebar({ userName }: AdminSidebarProps) {
           <div className="w-8 h-8 bg-pm-green-dark rounded-lg flex items-center justify-center">
             <span className="text-white font-bold text-sm">SA</span>
           </div>
-          <h1 className="font-semibold text-pm-brown text-sm">Sollar Admin</h1>
+          <h1 className="font-semibold text-pm-brown text-sm">PsicoMapa Admin</h1>
         </div>
       </div>
 
@@ -103,7 +103,7 @@ export function AdminSidebar({ userName }: AdminSidebarProps) {
                 <span className="text-white font-bold text-sm">SA</span>
               </div>
               <div>
-                <h1 className="font-semibold text-pm-brown text-sm">Sollar Admin</h1>
+                <h1 className="font-semibold text-pm-brown text-sm">PsicoMapa Admin</h1>
                 <p className="text-xs text-text-muted">Painel da Plataforma</p>
               </div>
             </div>

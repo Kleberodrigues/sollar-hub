@@ -7,7 +7,7 @@
 import type { EmailTemplate, ParticipantInvitationData } from "../types";
 
 /**
- * Cores do design system Sollar/PsicoMapa
+ * Cores do design system PsicoMapa
  */
 const COLORS = {
   primary: "#7C9A2E", // Verde oliva
@@ -144,7 +144,7 @@ export function generateParticipantInvitation(
             <td style="background-color: ${COLORS.background}; padding: 20px 40px; border-radius: 0 0 8px 8px; text-align: center;">
               <p style="margin: 0; color: ${COLORS.textLight}; font-size: 12px;">
                 Este e-mail foi enviado automaticamente pelo sistema PsicoMapa.<br>
-                © ${new Date().getFullYear()} Sollar Insight Hub. Todos os direitos reservados.
+                © ${new Date().getFullYear()} PsicoMapa. Todos os direitos reservados.
               </p>
             </td>
           </tr>
@@ -181,7 +181,7 @@ Agradecemos pela sua participação!
 
 ---
 Este e-mail foi enviado automaticamente pelo sistema PsicoMapa.
-© ${new Date().getFullYear()} Sollar Insight Hub. Todos os direitos reservados.
+© ${new Date().getFullYear()} PsicoMapa. Todos os direitos reservados.
 `;
 
   return { subject, html, text };
@@ -299,7 +299,7 @@ export function generateParticipantInvitationN8nTemplate(): string {
             <td style="background-color: #F5F7F0; padding: 20px 40px; border-radius: 0 0 8px 8px; text-align: center;">
               <p style="margin: 0; color: #666666; font-size: 12px;">
                 Este e-mail foi enviado automaticamente pelo sistema PsicoMapa.<br>
-                © 2024 Sollar Insight Hub. Todos os direitos reservados.
+                © 2024 PsicoMapa. Todos os direitos reservados.
               </p>
             </td>
           </tr>

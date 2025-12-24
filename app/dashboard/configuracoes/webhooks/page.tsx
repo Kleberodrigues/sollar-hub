@@ -4,7 +4,7 @@ import { getWebhookStats, getEventTypes, getWebhookEvents } from './actions';
 import { WebhooksContent } from './WebhooksContent';
 
 export const metadata = {
-  title: 'Webhooks - Sollar Insight Hub',
+  title: 'Webhooks - PsicoMapa',
   description: 'Monitor Stripe webhook events',
 };
 
