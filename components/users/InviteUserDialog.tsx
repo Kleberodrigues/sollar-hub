@@ -26,10 +26,13 @@ import { inviteUserSchema } from "@/lib/validations";
 
 interface InviteUserDialogProps {
   memberCount?: number;
+  managerCount?: number;
 }
 
-export function InviteUserDialog({ memberCount = 0 }: InviteUserDialogProps) {
+export function InviteUserDialog({ memberCount = 0, managerCount = 0 }: InviteUserDialogProps) {
   const memberLimitReached = memberCount >= 1;
+  const managerLimitReached = managerCount >= 1;
+  const bothLimitsReached = memberLimitReached && managerLimitReached;
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -140,29 +143,46 @@ export function InviteUserDialog({ memberCount = 0 }: InviteUserDialogProps) {
 
           <div className="space-y-2">
             <Label htmlFor="role">Perfil *</Label>
-            <Select
-              name="role"
-              defaultValue={memberLimitReached ? "responsavel_empresa" : "membro"}
-              disabled={loading}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione o perfil" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="responsavel_empresa">Responsável</SelectItem>
-                <SelectItem value="membro" disabled={memberLimitReached}>
-                  Membro {memberLimitReached && "(limite atingido)"}
-                </SelectItem>
-              </SelectContent>
-            </Select>
-            <p className="text-xs text-text-muted">
-              <strong>Responsável:</strong> Acesso completo, gerencia usuários e diagnósticos |{" "}
-              <strong>Membro:</strong> Acesso limitado, visualiza relatórios
-            </p>
-            {memberLimitReached && (
-              <p className="text-xs text-amber-600">
-                Limite de 1 membro atingido. Contate o suporte para aumentar.
-              </p>
+            {bothLimitsReached ? (
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-md">
+                <p className="text-sm text-amber-700 font-medium">
+                  Limite de usuários atingido
+                </p>
+                <p className="text-xs text-amber-600 mt-1">
+                  Sua organização já possui 1 gerente e 1 membro. Contate o suporte para aumentar os limites.
+                </p>
+              </div>
+            ) : (
+              <>
+                <Select
+                  name="role"
+                  defaultValue={managerLimitReached ? "membro" : memberLimitReached ? "responsavel_empresa" : "membro"}
+                  disabled={loading}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione o perfil" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="responsavel_empresa" disabled={managerLimitReached}>
+                      Responsável {managerLimitReached && "(limite atingido)"}
+                    </SelectItem>
+                    <SelectItem value="membro" disabled={memberLimitReached}>
+                      Membro {memberLimitReached && "(limite atingido)"}
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-text-muted">
+                  <strong>Responsável:</strong> Acesso completo, gerencia usuários e diagnósticos |{" "}
+                  <strong>Membro:</strong> Acesso limitado, visualiza relatórios
+                </p>
+                {(memberLimitReached || managerLimitReached) && (
+                  <p className="text-xs text-amber-600">
+                    {memberLimitReached && "Limite de 1 membro atingido. "}
+                    {managerLimitReached && "Limite de 1 gerente atingido. "}
+                    Contate o suporte para aumentar.
+                  </p>
+                )}
+              </>
             )}
           </div>
 
@@ -175,7 +195,7 @@ export function InviteUserDialog({ memberCount = 0 }: InviteUserDialogProps) {
             >
               Cancelar
             </Button>
-            <Button type="submit" disabled={loading}>
+            <Button type="submit" disabled={loading || bothLimitsReached}>
               {loading ? "Convidando..." : "Convidar"}
             </Button>
           </DialogFooter>
