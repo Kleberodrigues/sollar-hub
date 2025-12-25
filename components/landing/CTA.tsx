@@ -32,11 +32,11 @@ export function CTA() {
           className="text-center max-w-3xl mx-auto"
         >
           <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
-            Pronto para transformar a saúde organizacional da sua empresa?
+            Turnover, conflitos e baixa performance custam caro.
           </h2>
           <p className="text-xl text-white/90 mb-8">
-            Comece gratuitamente e veja resultados em poucos dias. Sem
-            compromisso, sem cartão de crédito.
+            Com o PsicoMapa, você antecipa riscos, toma decisões baseadas em dados
+            e cuida do que mais importa: as pessoas da sua organização.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -45,8 +45,8 @@ export function CTA() {
               className="bg-white text-pm-terracotta hover:bg-white/90 text-lg px-8 py-6"
               asChild
             >
-              <Link href="/register">
-                Criar Conta Gratuita
+              <Link href="/precos">
+                Comece Agora
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Link>
             </Button>
@@ -56,7 +56,7 @@ export function CTA() {
               className="border-2 border-white bg-transparent text-white hover:bg-white hover:text-pm-terracotta text-lg px-8 py-6"
               asChild
             >
-              <Link href="/precos">Ver Planos e Preços</Link>
+              <Link href="/contato">Agendar Demonstração</Link>
             </Button>
           </div>
 
@@ -75,7 +75,7 @@ export function CTA() {
                   clipRule="evenodd"
                 />
               </svg>
-              Configuração em 5 minutos
+              Resultados em 24 horas
             </div>
             <div className="flex items-center gap-2">
               <svg
@@ -90,7 +90,7 @@ export function CTA() {
                   clipRule="evenodd"
                 />
               </svg>
-              Sem cartão de crédito
+              100% anônimo
             </div>
             <div className="flex items-center gap-2">
               <svg
@@ -105,7 +105,7 @@ export function CTA() {
                   clipRule="evenodd"
                 />
               </svg>
-              Suporte em português
+              Conformidade NR-1
             </div>
           </div>
         </motion.div>
