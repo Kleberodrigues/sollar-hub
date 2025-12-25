@@ -6,3 +6,6 @@ export { HowItWorks } from "./HowItWorks";
 export { Testimonials } from "./Testimonials";
 export { CTA } from "./CTA";
 export { Footer } from "./Footer";
+export { TargetAudience } from "./TargetAudience";
+export { WhatItMeasures } from "./WhatItMeasures";
+export { FAQ } from "./FAQ";
