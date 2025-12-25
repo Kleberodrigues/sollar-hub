@@ -8,9 +8,12 @@ import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/Logo";
 
 const navLinks = [
-  { href: "/precos", label: "Preços" },
-  { href: "/sobre", label: "Sobre" },
-  { href: "/privacidade", label: "Privacidade" },
+  { href: "#para-quem", label: "Para quem é" },
+  { href: "/sobre", label: "Quem Somos" },
+  { href: "#como-funciona", label: "Como funciona" },
+  { href: "#o-que-mede", label: "O que mede" },
+  { href: "/precos", label: "Planos" },
+  { href: "/blog", label: "Blog" },
 ];
 
 export function Header() {
@@ -47,7 +50,7 @@ export function Header() {
               className="bg-pm-terracotta hover:bg-pm-terracotta-hover"
               asChild
             >
-              <Link href="/register">Começar Grátis</Link>
+              <Link href="/contato">Agendar Demo</Link>
             </Button>
           </div>
 
@@ -93,7 +96,7 @@ export function Header() {
                     className="w-full bg-pm-terracotta hover:bg-pm-terracotta-hover"
                     asChild
                   >
-                    <Link href="/register">Começar Grátis</Link>
+                    <Link href="/contato">Agendar Demo</Link>
                   </Button>
                 </div>
               </nav>

@@ -5,7 +5,6 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
-  Play,
   Shield,
   AlertTriangle,
   AlertCircle,
@@ -18,45 +17,45 @@ import {
 import { Button } from "@/components/ui/button";
 import { SunIcon } from "@/components/Logo";
 
-// Data for each risk level
+// Data for each risk level - Invertido: Alto > Médio > Baixo para demonstrar valor
 const riskData = {
   low: {
     title: "Baixo Risco",
-    percentage: "72%",
-    trend: "+5%",
+    percentage: "18%",
+    trend: "+3%",
     trendDirection: "up" as const,
-    description: "108 colaboradores em zona segura",
+    description: "27 colaboradores em zona segura",
     categories: [
       { name: "Liderança", score: 4.1, color: "bg-green-500" },
       { name: "Relações", score: 4.5, color: "bg-green-500" },
-      { name: "Autonomia", score: 3.8, color: "bg-green-400" },
-      { name: "Equilíbrio", score: 4.2, color: "bg-green-500" },
+      { name: "Equilíbrio", score: 3.8, color: "bg-green-400" },
+      { name: "Comunicação", score: 4.2, color: "bg-green-500" },
     ],
   },
   medium: {
     title: "Risco Médio",
-    percentage: "21%",
-    trend: "-2%",
+    percentage: "35%",
+    trend: "-4%",
     trendDirection: "down" as const,
-    description: "32 colaboradores precisam atenção",
+    description: "53 colaboradores precisam atenção",
     categories: [
-      { name: "Demandas", score: 3.2, color: "bg-yellow-500" },
-      { name: "Clareza", score: 2.8, color: "bg-yellow-500" },
-      { name: "Mudanças", score: 3.0, color: "bg-yellow-400" },
-      { name: "Comunicação", score: 2.9, color: "bg-yellow-500" },
+      { name: "Demandas e Ritmo", score: 3.2, color: "bg-yellow-500" },
+      { name: "Autonomia", score: 2.8, color: "bg-yellow-500" },
+      { name: "Clareza", score: 3.0, color: "bg-yellow-400" },
+      { name: "Mudanças", score: 2.9, color: "bg-yellow-500" },
     ],
   },
   high: {
     title: "Alto Risco",
-    percentage: "7%",
-    trend: "-1%",
+    percentage: "47%",
+    trend: "-8%",
     trendDirection: "down" as const,
-    description: "10 colaboradores em risco crítico",
+    description: "70 colaboradores em risco crítico",
     categories: [
       { name: "Sobrecarga", score: 4.2, color: "bg-red-500" },
-      { name: "Assédio", score: 3.8, color: "bg-red-400" },
-      { name: "Violência", score: 3.5, color: "bg-red-400" },
-      { name: "Estresse", score: 4.0, color: "bg-red-500" },
+      { name: "Assédio/Violência", score: 3.8, color: "bg-red-400" },
+      { name: "Medo Repressão", score: 3.5, color: "bg-red-400" },
+      { name: "Desequilíbrio", score: 4.0, color: "bg-red-500" },
     ],
   },
   default: {
@@ -66,10 +65,10 @@ const riskData = {
     trendDirection: "up" as const,
     description: "Colaboradores avaliados",
     categories: [
-      { name: "Demandas", score: 3.2, color: "bg-pm-terracotta" },
-      { name: "Autonomia", score: 2.5, color: "bg-yellow-500" },
-      { name: "Liderança", score: 4.1, color: "bg-green-500" },
-      { name: "Relações", score: 4.5, color: "bg-pm-olive" },
+      { name: "Demandas e Ritmo", score: 3.8, color: "bg-pm-terracotta" },
+      { name: "Liderança", score: 2.9, color: "bg-yellow-500" },
+      { name: "Relações e Clima", score: 3.2, color: "bg-yellow-400" },
+      { name: "Equilíbrio Vida", score: 2.5, color: "bg-red-400" },
     ],
   },
 };
@@ -113,21 +112,23 @@ export function Hero() {
               Conforme NR-1 e NR-17
             </motion.div>
 
-            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-text-heading leading-tight mb-6">
+            <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-text-heading leading-tight mb-6">
               Diagnóstico de{" "}
               <span className="text-pm-terracotta">Riscos Psicossociais</span>{" "}
-              para sua Organização
+              e Pesquisa de{" "}
+              <span className="text-pm-olive">Clima Contínua</span>
             </h1>
 
             <p className="text-lg md:text-xl text-text-secondary mb-4 max-w-xl mx-auto lg:mx-0">
-              Plataforma completa para aplicar diagnósticos, analisar resultados
-              e gerar relatórios executivos em poucos cliques.
+              Aplique questionários em minutos, acompanhe dashboards automáticos
+              e gere relatórios executivos em poucos cliques.{" "}
+              <span className="font-semibold text-pm-terracotta">Tudo pronto em até 24 horas.</span>
             </p>
 
             {/* Slogan */}
             <p className="text-pm-olive font-medium mb-8 flex items-center justify-center lg:justify-start gap-2">
               <SunIcon size={20} className="text-pm-terracotta" />
-              mapeando o bem-estar &bull; transformando organizações
+              100% automatizado &bull; conforme NR-1
             </p>
 
             {/* CTAs */}
@@ -137,8 +138,8 @@ export function Hero() {
                 className="bg-pm-terracotta hover:bg-pm-terracotta-hover text-lg px-8 py-6"
                 asChild
               >
-                <Link href="/register">
-                  Começar Gratuitamente
+                <Link href="/contato">
+                  Agendar Demonstração
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Link>
               </Button>
@@ -148,9 +149,9 @@ export function Hero() {
                 className="border-pm-olive text-pm-olive hover:bg-pm-olive hover:text-white text-lg px-8 py-6"
                 asChild
               >
-                <Link href="/sobre">
-                  <Play className="mr-2 w-5 h-5" />
-                  Ver Demonstração
+                <Link href="/precos">
+                  Ver Planos
+                  <ArrowRight className="ml-2 w-5 h-5" />
                 </Link>
               </Button>
             </div>
@@ -187,25 +188,25 @@ export function Hero() {
                 <div className="p-5 space-y-4">
                   {/* Risk Metric Cards */}
                   <div className="grid grid-cols-3 gap-3">
-                    {/* Low Risk Card */}
+                    {/* High Risk Card - Primeiro para destacar */}
                     <div
-                      onMouseEnter={() => setHoveredRisk("low")}
+                      onMouseEnter={() => setHoveredRisk("high")}
                       onMouseLeave={() => setHoveredRisk("default")}
-                      className={`bg-gradient-to-br from-green-50 to-green-100/50 rounded-xl p-3 border-2 cursor-pointer transition-all duration-200 ${
-                        hoveredRisk === "low" ? "border-green-400 shadow-lg shadow-green-200/50 scale-105 z-10" : "border-green-200/50"
+                      className={`bg-gradient-to-br from-red-50 to-red-100/50 rounded-xl p-3 border-2 cursor-pointer transition-all duration-200 ${
+                        hoveredRisk === "high" ? "border-red-400 shadow-lg shadow-red-200/50 scale-105 z-10" : "border-red-200/50"
                       }`}
                     >
                       <div className="flex items-center gap-2 mb-2">
-                        <Shield className="w-4 h-4 text-green-600" />
-                        <span className="text-xs font-medium text-green-700">Baixo Risco</span>
+                        <AlertCircle className="w-4 h-4 text-red-600" />
+                        <span className="text-xs font-medium text-red-700">Alto Risco</span>
                       </div>
-                      <div className="text-2xl font-bold text-green-700 mb-1">72%</div>
-                      <div className="w-full h-1.5 bg-green-200 rounded-full overflow-hidden mb-2">
-                        <div className="h-full bg-green-500 rounded-full" style={{ width: "72%" }} />
+                      <div className="text-2xl font-bold text-red-700 mb-1">47%</div>
+                      <div className="w-full h-1.5 bg-red-200 rounded-full overflow-hidden mb-2">
+                        <div className="h-full bg-red-500 rounded-full" style={{ width: "47%" }} />
                       </div>
-                      <div className="flex items-center gap-1 text-xs text-green-600">
-                        <TrendingUp className="w-3 h-3" />
-                        <span>+5%</span>
+                      <div className="flex items-center gap-1 text-xs text-red-600">
+                        <TrendingDown className="w-3 h-3" />
+                        <span>-8%</span>
                       </div>
                     </div>
 
@@ -221,35 +222,35 @@ export function Hero() {
                         <AlertTriangle className="w-4 h-4 text-yellow-600" />
                         <span className="text-xs font-medium text-yellow-700">Médio</span>
                       </div>
-                      <div className="text-2xl font-bold text-yellow-700 mb-1">21%</div>
+                      <div className="text-2xl font-bold text-yellow-700 mb-1">35%</div>
                       <div className="w-full h-1.5 bg-yellow-200 rounded-full overflow-hidden mb-2">
-                        <div className="h-full bg-yellow-500 rounded-full" style={{ width: "21%" }} />
+                        <div className="h-full bg-yellow-500 rounded-full" style={{ width: "35%" }} />
                       </div>
                       <div className="flex items-center gap-1 text-xs text-yellow-600">
                         <TrendingDown className="w-3 h-3" />
-                        <span>-2%</span>
+                        <span>-4%</span>
                       </div>
                     </div>
 
-                    {/* High Risk Card */}
+                    {/* Low Risk Card */}
                     <div
-                      onMouseEnter={() => setHoveredRisk("high")}
+                      onMouseEnter={() => setHoveredRisk("low")}
                       onMouseLeave={() => setHoveredRisk("default")}
-                      className={`bg-gradient-to-br from-red-50 to-red-100/50 rounded-xl p-3 border-2 cursor-pointer transition-all duration-200 ${
-                        hoveredRisk === "high" ? "border-red-400 shadow-lg shadow-red-200/50 scale-105 z-10" : "border-red-200/50"
+                      className={`bg-gradient-to-br from-green-50 to-green-100/50 rounded-xl p-3 border-2 cursor-pointer transition-all duration-200 ${
+                        hoveredRisk === "low" ? "border-green-400 shadow-lg shadow-green-200/50 scale-105 z-10" : "border-green-200/50"
                       }`}
                     >
                       <div className="flex items-center gap-2 mb-2">
-                        <AlertCircle className="w-4 h-4 text-red-600" />
-                        <span className="text-xs font-medium text-red-700">Alto</span>
+                        <Shield className="w-4 h-4 text-green-600" />
+                        <span className="text-xs font-medium text-green-700">Baixo</span>
                       </div>
-                      <div className="text-2xl font-bold text-red-700 mb-1">7%</div>
-                      <div className="w-full h-1.5 bg-red-200 rounded-full overflow-hidden mb-2">
-                        <div className="h-full bg-red-500 rounded-full" style={{ width: "7%" }} />
+                      <div className="text-2xl font-bold text-green-700 mb-1">18%</div>
+                      <div className="w-full h-1.5 bg-green-200 rounded-full overflow-hidden mb-2">
+                        <div className="h-full bg-green-500 rounded-full" style={{ width: "18%" }} />
                       </div>
-                      <div className="flex items-center gap-1 text-xs text-red-600">
-                        <TrendingDown className="w-3 h-3" />
-                        <span>-1%</span>
+                      <div className="flex items-center gap-1 text-xs text-green-600">
+                        <TrendingUp className="w-3 h-3" />
+                        <span>+3%</span>
                       </div>
                     </div>
                   </div>

@@ -7,24 +7,24 @@ import { PenTool, Send, TrendingUp, ArrowRight } from "lucide-react";
 const steps = [
   {
     number: "01",
-    icon: PenTool,
-    title: "Crie seu Diagnóstico",
+    icon: Send,
+    title: "Envie o questionário",
     description:
-      "Escolha entre modelos NR-1 pré-configurados ou crie questionários personalizados para sua organização.",
+      "Envie o link do questionário para sua equipe em poucos cliques. Sem instalação, 100% online.",
   },
   {
     number: "02",
-    icon: Send,
-    title: "Aplique aos Colaboradores",
+    icon: PenTool,
+    title: "Colaboradores respondem",
     description:
-      "Compartilhe o link anônimo por email, WhatsApp ou intranet. Acompanhe a participação em tempo real.",
+      "Eles respondem em 15–20 minutos, de forma anônima e segura. Você acompanha a participação em tempo real.",
   },
   {
     number: "03",
     icon: TrendingUp,
-    title: "Analise e Aja",
+    title: "Receba os resultados",
     description:
-      "Visualize dashboards interativos, identifique áreas de risco e gere relatórios executivos automaticamente.",
+      "A partir das respostas, você recebe dashboards e relatórios de forma automática em até 24 horas.",
   },
 ];
 
@@ -33,7 +33,7 @@ export function HowItWorks() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section className="py-24 bg-white" ref={ref}>
+    <section id="como-funciona" className="py-24 bg-white" ref={ref}>
       <div className="container mx-auto px-6">
         {/* Section Header */}
         <motion.div
@@ -45,9 +45,12 @@ export function HowItWorks() {
           <h2 className="font-display text-3xl md:text-4xl font-bold text-text-heading mb-4">
             Como funciona
           </h2>
-          <p className="text-lg text-text-secondary">
+          <p className="text-lg text-text-secondary mb-4">
             Em três passos simples, você terá um diagnóstico completo da saúde
             organizacional da sua empresa.
+          </p>
+          <p className="text-pm-terracotta font-medium">
+            Nada de planilhas. Nada de análise manual. Nada de esperar semanas.
           </p>
         </motion.div>
 
