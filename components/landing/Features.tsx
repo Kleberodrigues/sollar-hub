@@ -2,57 +2,36 @@
 
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
+import Link from "next/link";
 import {
-  ClipboardList,
-  BarChart3,
   FileText,
   Shield,
-  Bell,
-  Zap,
+  Sparkles,
+  ArrowRight,
 } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 const features = [
-  {
-    icon: ClipboardList,
-    title: "Diagnósticos Personalizados",
-    description:
-      "Crie diagnósticos NR-1, pesquisas de clima ou questionários customizados para sua realidade organizacional.",
-    color: "pm-olive",
-  },
-  {
-    icon: BarChart3,
-    title: "Análise em Tempo Real",
-    description:
-      "Visualize resultados instantaneamente, identifique riscos e tome decisões baseadas em dados confiáveis.",
-    color: "pm-terracotta",
-  },
   {
     icon: FileText,
     title: "Relatórios Automáticos",
     description:
-      "Gere relatórios executivos em PDF com gráficos, métricas e recomendações em poucos cliques.",
-    color: "pm-green-dark",
-  },
-  {
-    icon: Shield,
-    title: "Privacidade Garantida",
-    description:
-      "Respostas anônimas com criptografia de ponta a ponta. Conformidade total com LGPD.",
-    color: "pm-olive",
-  },
-  {
-    icon: Bell,
-    title: "Alertas Inteligentes",
-    description:
-      "Receba notificações automáticas quando indicadores de risco ultrapassarem limites definidos.",
+      "Dashboards + relatórios interpretados automaticamente, com indicadores críticos destacados. Tudo pronto em até 24 horas.",
     color: "pm-terracotta",
   },
   {
-    icon: Zap,
-    title: "Integração Fácil",
+    icon: Shield,
+    title: "Totalmente Anônimo e Seguro",
     description:
-      "Conecte com suas ferramentas favoritas via webhooks e API. Automatize fluxos de trabalho.",
+      "Sem identificação individual. Dados agregados por áreas e sem visualização de respostas abertas por relatório. Conformidade LGPD.",
+    color: "pm-olive",
+  },
+  {
+    icon: Sparkles,
+    title: "Interface Simples",
+    description:
+      "Você entende tudo rapidamente, mesmo sem experiência. Zero curva de aprendizado, resultados imediatos.",
     color: "pm-green-dark",
   },
 ];
@@ -90,12 +69,11 @@ export function Features() {
           className="text-center max-w-3xl mx-auto mb-16"
         >
           <h2 className="font-display text-3xl md:text-4xl font-bold text-text-heading mb-4">
-            Tudo que você precisa para gerenciar{" "}
-            <span className="text-pm-terracotta">riscos psicossociais</span>
+            Por que escolher o{" "}
+            <span className="text-pm-terracotta">PsicoMapa</span>?
           </h2>
           <p className="text-lg text-text-secondary">
-            Uma plataforma completa para diagnosticar, analisar e agir sobre a
-            saúde mental e bem-estar dos seus colaboradores.
+            Simplicidade, segurança e resultados automáticos para sua organização.
           </p>
         </motion.div>
 
@@ -133,6 +111,25 @@ export function Features() {
             );
           })}
         </div>
+
+        {/* CTA Button */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="text-center mt-12"
+        >
+          <Button
+            size="lg"
+            className="bg-pm-terracotta hover:bg-pm-terracotta-hover text-lg px-8 py-6"
+            asChild
+          >
+            <Link href="/precos">
+              Comece Agora
+              <ArrowRight className="ml-2 w-5 h-5" />
+            </Link>
+          </Button>
+        </motion.div>
       </div>
     </section>
   );
