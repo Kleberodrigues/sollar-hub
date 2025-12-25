@@ -125,7 +125,7 @@ export function TargetAudience() {
           className="text-center mb-20"
         >
           <blockquote className="text-xl md:text-2xl font-display font-semibold text-pm-olive italic">
-            "Um único desligamento pode custar mais do que meses de prevenção."
+            &ldquo;Um único desligamento pode custar mais do que meses de prevenção.&rdquo;
           </blockquote>
         </motion.div>
 
