@@ -11,6 +11,7 @@ interface DashboardLayoutClientProps {
   userRole: string;
   userName: string;
   organizationName: string;
+  isSuperAdmin?: boolean;
 }
 
 export function DashboardLayoutClient({
@@ -18,6 +19,7 @@ export function DashboardLayoutClient({
   userRole,
   userName,
   organizationName,
+  isSuperAdmin = false,
 }: DashboardLayoutClientProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -25,12 +27,13 @@ export function DashboardLayoutClient({
     <div className="flex h-screen bg-bg-secondary">
       {/* Desktop Sidebar */}
       <div className="hidden lg:block">
-        <Sidebar userRole={userRole} />
+        <Sidebar userRole={userRole} isSuperAdmin={isSuperAdmin} />
       </div>
 
       {/* Mobile Sidebar */}
       <MobileSidebar
         userRole={userRole}
+        isSuperAdmin={isSuperAdmin}
         isOpen={isMobileMenuOpen}
         onClose={() => setIsMobileMenuOpen(false)}
       />

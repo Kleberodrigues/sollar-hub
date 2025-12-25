@@ -14,10 +14,12 @@ import {
   Settings,
   CreditCard,
   Target,
+  Shield,
 } from "lucide-react";
 
 interface SidebarProps {
   userRole: string;
+  isSuperAdmin?: boolean;
 }
 
 // Role labels for display
@@ -84,7 +86,7 @@ const navigationItems = [
   },
 ];
 
-export function Sidebar({ userRole }: SidebarProps) {
+export function Sidebar({ userRole, isSuperAdmin = false }: SidebarProps) {
   const pathname = usePathname();
 
   // Filtrar itens baseado no role do usuário
@@ -111,6 +113,23 @@ export function Sidebar({ userRole }: SidebarProps) {
           </div>
         </Link>
       </div>
+
+      {/* Link Admin para Super Admins */}
+      {isSuperAdmin && (
+        <div className="px-4 pt-4">
+          <Link
+            href="/admin"
+            className={cn(
+              "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
+              "bg-gradient-to-r from-purple-500/10 to-purple-600/10 text-purple-700 border border-purple-200",
+              "hover:from-purple-500/20 hover:to-purple-600/20 hover:border-purple-300"
+            )}
+          >
+            <Shield className="w-5 h-5" />
+            <span>Painel Admin</span>
+          </Link>
+        </div>
+      )}
 
       {/* Navegação */}
       <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
