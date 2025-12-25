@@ -3,10 +3,11 @@
 import {
   Header,
   Hero,
-  Stats,
-  Features,
+  TargetAudience,
   HowItWorks,
-  Testimonials,
+  WhatItMeasures,
+  Features,
+  FAQ,
   CTA,
   Footer,
 } from "@/components/landing";
@@ -17,10 +18,11 @@ export default function Home() {
       <Header />
       <main>
         <Hero />
-        <Stats />
-        <Features />
+        <TargetAudience />
         <HowItWorks />
-        <Testimonials />
+        <WhatItMeasures />
+        <Features />
+        <FAQ />
         <CTA />
       </main>
       <Footer />
