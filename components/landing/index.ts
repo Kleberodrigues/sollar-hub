@@ -1,9 +1,7 @@
 export { Header } from "./Header";
 export { Hero } from "./Hero";
-export { Stats } from "./Stats";
 export { Features } from "./Features";
 export { HowItWorks } from "./HowItWorks";
-export { Testimonials } from "./Testimonials";
 export { CTA } from "./CTA";
 export { Footer } from "./Footer";
 export { TargetAudience } from "./TargetAudience";
