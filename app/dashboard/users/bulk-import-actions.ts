@@ -264,6 +264,53 @@ export async function bulkImportUsers(
   const supabaseAdmin = createAdminClient();
   const supabase = await createClient();
 
+  // Verificar limites de roles ANTES de processar
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: existingRoles } = await (supabaseAdmin
+    .from("user_profiles")
+    .select("role")
+    .eq("organization_id", profile.organization_id)) as any;
+
+  const currentMemberCount = (existingRoles || []).filter((r: { role: string }) => r.role === "membro").length;
+  const currentManagerCount = (existingRoles || []).filter((r: { role: string }) => r.role === "responsavel_empresa").length;
+
+  const newMembers = rows.filter(r => r.role === "membro").length;
+  const newManagers = rows.filter(r => r.role === "responsavel_empresa").length;
+
+  // Verificar limite de membros (máximo 1)
+  if (currentMemberCount + newMembers > 1) {
+    return {
+      success: false,
+      totalProcessed: 0,
+      successful: 0,
+      failed: rows.length,
+      invitesSent: 0,
+      createdUserIds: [],
+      errors: [{
+        row: 0,
+        email: "",
+        error: `Limite de membros excedido. Sua organização pode ter no máximo 1 membro (atual: ${currentMemberCount}, tentando adicionar: ${newMembers}).`
+      }],
+    };
+  }
+
+  // Verificar limite de gerentes (máximo 1)
+  if (currentManagerCount + newManagers > 1) {
+    return {
+      success: false,
+      totalProcessed: 0,
+      successful: 0,
+      failed: rows.length,
+      invitesSent: 0,
+      createdUserIds: [],
+      errors: [{
+        row: 0,
+        email: "",
+        error: `Limite de gerentes excedido. Sua organização pode ter no máximo 1 gerente (atual: ${currentManagerCount}, tentando adicionar: ${newManagers}).`
+      }],
+    };
+  }
+
   // Get departments map
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: departments } = (await supabase

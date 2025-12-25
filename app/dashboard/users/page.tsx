@@ -53,14 +53,15 @@ export default async function UsersPage() {
       ? (orgData[0] as { name: string }).name
       : "Organização";
 
-  // Contar membros atuais para limitar convites
+  // Contar membros e gerentes atuais para limitar convites
   const memberCount = users.filter((u: { role: string }) => u.role === "membro").length;
+  const managerCount = users.filter((u: { role: string }) => u.role === "responsavel_empresa").length;
 
   return (
     <UsersPageContent
       users={users}
       organizationName={organizationName}
-      inviteDialog={<InviteUserDialog memberCount={memberCount} />}
+      inviteDialog={<InviteUserDialog memberCount={memberCount} managerCount={managerCount} />}
       bulkImportDialog={<BulkImportDialog departments={departments} />}
       userList={<UserList users={users} />}
     />

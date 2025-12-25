@@ -136,6 +136,23 @@ export async function inviteUser(formData: FormData) {
     }
   }
 
+  // Verificar limite de gerentes (máximo 1 responsavel_empresa por organização)
+  if (role === "responsavel_empresa") {
+    const { count, error: countError } = await supabaseAdmin
+      .from("user_profiles")
+      .select("*", { count: "exact", head: true })
+      .eq("organization_id", currentProfile.organization_id)
+      .eq("role", "responsavel_empresa");
+
+    if (countError) {
+      return { error: "Erro ao verificar limite de gerentes" };
+    }
+
+    if (count && count >= 1) {
+      return { error: "Limite atingido: sua organização já possui 1 gerente. Contate o suporte para aumentar o limite." };
+    }
+  }
+
   try {
     // 1. Tentar criar novo usuário no Supabase Auth
     const { data: authData, error: authError } =
@@ -314,6 +331,52 @@ export async function updateUserRole(userId: string, newRole: UserRole) {
   // Não permitir alterar próprio role
   if (userId === user.id) {
     return { error: "Você não pode alterar seu próprio role" };
+  }
+
+  // Buscar organização do usuário atual para verificar limites
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: fullProfile } = await (supabase
+    .from("user_profiles")
+    .select("organization_id")
+    .eq("id", user.id)
+    .single() as any);
+
+  if (!fullProfile) {
+    return { error: "Perfil não encontrado" };
+  }
+
+  // Verificar limite de membros ao mudar para membro
+  if (newRole === "membro") {
+    const { count, error: countError } = await supabase
+      .from("user_profiles")
+      .select("*", { count: "exact", head: true })
+      .eq("organization_id", fullProfile.organization_id)
+      .eq("role", "membro");
+
+    if (countError) {
+      return { error: "Erro ao verificar limite de membros" };
+    }
+
+    if (count && count >= 1) {
+      return { error: "Limite atingido: sua organização já possui 1 membro." };
+    }
+  }
+
+  // Verificar limite de gerentes ao mudar para responsavel_empresa
+  if (newRole === "responsavel_empresa") {
+    const { count, error: countError } = await supabase
+      .from("user_profiles")
+      .select("*", { count: "exact", head: true })
+      .eq("organization_id", fullProfile.organization_id)
+      .eq("role", "responsavel_empresa");
+
+    if (countError) {
+      return { error: "Erro ao verificar limite de gerentes" };
+    }
+
+    if (count && count >= 1) {
+      return { error: "Limite atingido: sua organização já possui 1 gerente." };
+    }
   }
 
   // Atualizar role (RLS garante que só pode alterar users da própria org)
