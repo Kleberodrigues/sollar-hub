@@ -164,7 +164,20 @@ export function ActionPlanTab({
         >
           <Card className="border-red-200 bg-red-50">
             <CardContent className="p-4">
-              <p className="text-red-600">{error}</p>
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="w-5 h-5 text-red-500" />
+                <p className="text-red-600 font-medium">Erro ao gerar plano:</p>
+              </div>
+              <p className="text-red-600 mt-2">{error}</p>
+              <Button
+                onClick={handleGenerate}
+                variant="outline"
+                size="sm"
+                className="mt-3 border-red-300 text-red-600 hover:bg-red-100"
+              >
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Tentar Novamente
+              </Button>
             </CardContent>
           </Card>
         </motion.div>
