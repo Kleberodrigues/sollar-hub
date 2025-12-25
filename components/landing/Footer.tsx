@@ -44,11 +44,11 @@ export function Footer() {
                 contato@psicomapa.cloud
               </a>
               <a
-                href="tel:+5511999999999"
+                href="tel:+5511912345678"
                 className="flex items-center justify-center gap-2 text-white/70 hover:text-white transition-colors text-sm"
               >
                 <Phone className="w-4 h-4" />
-                (11) 99999-9999
+                (11) 91234-5678
               </a>
             </div>
           </div>
