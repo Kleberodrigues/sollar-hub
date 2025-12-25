@@ -19,7 +19,15 @@ import {
   Copy,
   Download,
   Plus,
+  FileSpreadsheet,
+  FileText,
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import type { PlanType } from "@/lib/stripe/config";
 import { generateAIActionPlan, type ActionItem } from "@/app/dashboard/analytics/ai-action-plan-actions";
@@ -96,6 +104,89 @@ export function ActionPlanTab({
     ).join('\n---\n\n');
 
     navigator.clipboard.writeText(text);
+  };
+
+  const handleExportCSV = () => {
+    if (!actionPlan) return;
+
+    const headers = ['Prioridade', 'Categoria', 'Título', 'Descrição', 'Prazo', 'Responsável', 'Impacto Esperado'];
+    const rows = actionPlan.map(a => [
+      getPriorityLabel(a.priority),
+      a.category,
+      a.title,
+      a.description.replace(/"/g, '""'),
+      a.timeline,
+      a.responsible,
+      a.expectedImpact
+    ]);
+
+    const csvContent = [
+      headers.join(';'),
+      ...rows.map(row => row.map(cell => `"${cell}"`).join(';'))
+    ].join('\n');
+
+    const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `plano-acao-${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleExportPDF = () => {
+    if (!actionPlan) return;
+
+    const printContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Plano de Ação - ${new Date().toLocaleDateString('pt-BR')}</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 20px; color: #333; }
+          h1 { color: #7c3aed; border-bottom: 2px solid #7c3aed; padding-bottom: 10px; }
+          .action { border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; margin-bottom: 16px; page-break-inside: avoid; }
+          .header { display: flex; gap: 8px; margin-bottom: 8px; }
+          .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+          .high { background: #fee2e2; color: #dc2626; }
+          .medium { background: #fef3c7; color: #d97706; }
+          .low { background: #dcfce7; color: #16a34a; }
+          .category { background: #f3f4f6; color: #374151; }
+          .title { font-size: 16px; font-weight: bold; margin-bottom: 8px; }
+          .description { color: #6b7280; margin-bottom: 12px; }
+          .meta { display: flex; gap: 24px; font-size: 14px; color: #6b7280; }
+          .impact { color: #16a34a; }
+          @media print { body { padding: 0; } }
+        </style>
+      </head>
+      <body>
+        <h1>🎯 Plano de Ação com IA</h1>
+        <p>Gerado em: ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR')}</p>
+        ${actionPlan.map(a => `
+          <div class="action">
+            <div class="header">
+              <span class="badge ${a.priority}">${getPriorityLabel(a.priority)}</span>
+              <span class="badge category">${a.category}</span>
+            </div>
+            <div class="title">${a.title}</div>
+            <div class="description">${a.description}</div>
+            <div class="meta">
+              <span>⏱️ ${a.timeline}</span>
+              <span>👥 ${a.responsible}</span>
+              <span class="impact">📈 ${a.expectedImpact}</span>
+            </div>
+          </div>
+        `).join('')}
+      </body>
+      </html>
+    `;
+
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(printContent);
+      printWindow.document.close();
+      printWindow.print();
+    }
   };
 
   return (
@@ -250,10 +341,24 @@ export function ActionPlanTab({
                     <Copy className="w-4 h-4 mr-2" />
                     Copiar
                   </Button>
-                  <Button variant="outline" size="sm">
-                    <Download className="w-4 h-4 mr-2" />
-                    Exportar
-                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" size="sm">
+                        <Download className="w-4 h-4 mr-2" />
+                        Exportar
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={handleExportCSV}>
+                        <FileSpreadsheet className="w-4 h-4 mr-2" />
+                        Exportar CSV (Excel)
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={handleExportPDF}>
+                        <FileText className="w-4 h-4 mr-2" />
+                        Exportar PDF (Imprimir)
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                   <Button asChild size="sm" className="bg-pm-terracotta hover:bg-pm-terracotta/90">
                     <Link href="/dashboard/action-plan">
                       <Plus className="w-4 h-4 mr-2" />
