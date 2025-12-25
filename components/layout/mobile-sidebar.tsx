@@ -5,11 +5,12 @@ import { X } from "lucide-react";
 
 interface MobileSidebarProps {
   userRole: string;
+  isSuperAdmin?: boolean;
   isOpen: boolean;
   onClose: () => void;
 }
 
-export function MobileSidebar({ userRole, isOpen, onClose }: MobileSidebarProps) {
+export function MobileSidebar({ userRole, isSuperAdmin = false, isOpen, onClose }: MobileSidebarProps) {
   if (!isOpen) return null;
 
   return (
@@ -32,7 +33,7 @@ export function MobileSidebar({ userRole, isOpen, onClose }: MobileSidebarProps)
           </button>
 
           {/* Sidebar content */}
-          <Sidebar userRole={userRole} />
+          <Sidebar userRole={userRole} isSuperAdmin={isSuperAdmin} />
         </div>
       </div>
     </>

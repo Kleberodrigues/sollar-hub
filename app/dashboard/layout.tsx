@@ -41,6 +41,7 @@ export default async function DashboardLayout({
       userRole={profileData.role}
       userName={profileData.full_name || "Usuário"}
       organizationName={organizationName}
+      isSuperAdmin={profileData.is_super_admin || false}
     >
       {children}
     </DashboardLayoutClient>
