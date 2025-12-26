@@ -1,4 +1,11 @@
 {
+  "_documentation": {
+    "description": "Workflow para processar formulário de contato usando Resend API",
+    "webhook_url": "https://sollar-n8n.7wxwzr.easypanel.host/webhook/contact",
+    "resend_domain": "mail.psicomapa.cloud",
+    "workflow_id": "AnahWJOikB5HxhrC",
+    "last_updated": "2025-12-26"
+  },
   "name": "PsicoMapa - Formulario de Contato",
   "nodes": [
     {
