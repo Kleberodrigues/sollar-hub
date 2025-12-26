@@ -15,13 +15,34 @@ export default function ContatoPage() {
   const [enviando, setEnviando] = useState(false)
   const [enviado, setEnviado] = useState(false)
 
+  const [erro, setErro] = useState<string | null>(null)
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setEnviando(true)
-    // Simular envio
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    setEnviado(true)
-    setEnviando(false)
+    setErro(null)
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Erro ao enviar mensagem')
+      }
+
+      setEnviado(true)
+    } catch (error) {
+      setErro(error instanceof Error ? error.message : 'Erro ao enviar mensagem. Tente novamente.')
+    } finally {
+      setEnviando(false)
+    }
   }
 
   return (
@@ -168,6 +189,12 @@ export default function ContatoPage() {
                       className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-pm-green focus:border-transparent resize-none"
                     />
                   </div>
+
+                  {erro && (
+                    <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                      {erro}
+                    </div>
+                  )}
 
                   <button
                     type="submit"
