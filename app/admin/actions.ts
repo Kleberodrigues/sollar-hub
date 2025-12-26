@@ -16,6 +16,7 @@ import type {
   OrganizationListFilters,
   OrganizationListResponse,
 } from "@/types/admin.types";
+import { PLAN_PRICES_MONTHLY_CENTS } from "@/types/admin.types";
 import type { PlanType, SubscriptionStatus } from "@/types";
 
 // ============================================
@@ -235,13 +236,6 @@ export async function getMRRTimeSeries(months: number = 12): Promise<{
 
     if (error) throw error;
 
-    // Plan prices (monthly, in cents)
-    const planPrices: Record<PlanType, number> = {
-      base: 3308, // R$ 33,08
-      intermediario: 4142, // R$ 41,42
-      avancado: 4975, // R$ 49,75
-    };
-
     // Generate month series
     const result: MRRTimeSeries = [];
     const now = new Date();
@@ -264,9 +258,9 @@ export async function getMRRTimeSeries(months: number = 12): Promise<{
         return wasCreated && wasNotCanceled;
       });
 
-      // Calculate MRR for this month
+      // Calculate MRR for this month using centralized monthly prices
       const mrr = activeInMonth.reduce((sum, sub) => {
-        return sum + (planPrices[sub.plan] || 0);
+        return sum + (PLAN_PRICES_MONTHLY_CENTS[sub.plan] || 0);
       }, 0);
 
       result.push({
@@ -320,15 +314,9 @@ export async function getChurnMetrics(): Promise<{
     const totalAtStart = monthStartSubs?.count || 1; // Avoid division by zero
     const canceled = canceledCount || 0;
 
-    // Calculate churned MRR
-    const planPrices: Record<string, number> = {
-      base: 3308,
-      intermediario: 4142,
-      avancado: 4975,
-    };
-
+    // Calculate churned MRR using centralized monthly prices
     const churnedMRR = (canceledSubs || []).reduce(
-      (sum: number, sub: { plan: string }) => sum + (planPrices[sub.plan] || 0),
+      (sum: number, sub: { plan: PlanType }) => sum + (PLAN_PRICES_MONTHLY_CENTS[sub.plan] || 0),
       0
     );
 
@@ -1009,15 +997,11 @@ export async function getDetailedMetrics(): Promise<{
     // Calculate revenue by month
     const revenueByMonth = calculateRevenueByMonth(paymentsResult.data || []);
 
-    // Calculate revenue by plan (estimated from active subscriptions)
-    const planPrices: Record<string, number> = {
-      base: 39700,
-      intermediario: 49700,
-      avancado: 59700,
-    };
+    // Calculate MRR by plan (monthly recurring revenue from active subscriptions)
     const revenueByPlan: Record<string, number> = {};
     Object.entries(orgsByPlan).forEach(([plan, count]) => {
-      revenueByPlan[plan] = (count as number) * (planPrices[plan] || 0);
+      const planKey = plan as PlanType;
+      revenueByPlan[plan] = (count as number) * (PLAN_PRICES_MONTHLY_CENTS[planKey] || 0);
     });
 
     const totalAssessments = assessmentsResult.data?.length || 0;
