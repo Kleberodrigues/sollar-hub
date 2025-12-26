@@ -160,20 +160,21 @@ export interface PlanDistributionChartData {
 
 /**
  * Plan prices in cents (annual prices)
+ * Source: lib/stripe/config.ts - PLANS configuration
  */
 export const PLAN_PRICES_ANNUAL_CENTS = {
-  base: 39700, // R$ 397,00/ano
-  intermediario: 49700, // R$ 497,00/ano
-  avancado: 59700, // R$ 597,00/ano
+  base: 397000, // R$ 3.970,00/ano
+  intermediario: 497000, // R$ 4.970,00/ano
+  avancado: 597000, // R$ 5.970,00/ano
 } as const;
 
 /**
  * Plan prices monthly (annual / 12)
  */
 export const PLAN_PRICES_MONTHLY_CENTS = {
-  base: Math.round(PLAN_PRICES_ANNUAL_CENTS.base / 12), // ~R$ 33,08/mes
-  intermediario: Math.round(PLAN_PRICES_ANNUAL_CENTS.intermediario / 12), // ~R$ 41,42/mes
-  avancado: Math.round(PLAN_PRICES_ANNUAL_CENTS.avancado / 12), // ~R$ 49,75/mes
+  base: Math.round(PLAN_PRICES_ANNUAL_CENTS.base / 12), // R$ 330,83/mes
+  intermediario: Math.round(PLAN_PRICES_ANNUAL_CENTS.intermediario / 12), // R$ 414,17/mes
+  avancado: Math.round(PLAN_PRICES_ANNUAL_CENTS.avancado / 12), // R$ 497,50/mes
 } as const;
 
 /**
