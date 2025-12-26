@@ -1,0 +1,205 @@
+{
+  "name": "PsicoMapa - Formulario de Contato",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "contact",
+        "options": {}
+      },
+      "id": "webhook-contact",
+      "name": "Webhook Contato",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-400, 300],
+      "webhookId": "contact"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "filter-contact",
+              "leftValue": "={{ $json.body.type }}",
+              "rightValue": "contact_form",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "filter-contact",
+      "name": "Filtrar Tipo",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [-160, 300]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "set-nome",
+              "name": "nome",
+              "value": "={{ $json.body.data.nome }}",
+              "type": "string"
+            },
+            {
+              "id": "set-email",
+              "name": "email",
+              "value": "={{ $json.body.data.email }}",
+              "type": "string"
+            },
+            {
+              "id": "set-empresa",
+              "name": "empresa",
+              "value": "={{ $json.body.data.empresa }}",
+              "type": "string"
+            },
+            {
+              "id": "set-assunto",
+              "name": "assunto",
+              "value": "={{ $json.body.data.assunto }}",
+              "type": "string"
+            },
+            {
+              "id": "set-mensagem",
+              "name": "mensagem",
+              "value": "={{ $json.body.data.mensagem }}",
+              "type": "string"
+            },
+            {
+              "id": "set-timestamp",
+              "name": "timestamp",
+              "value": "={{ $json.body.data.timestamp }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "extract-data",
+      "name": "Extrair Dados",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [80, 300]
+    },
+    {
+      "parameters": {
+        "sendTo": "contato@psicomapa.cloud",
+        "subject": "=[PsicoMapa] Novo Contato: {{ $json.assunto }} - {{ $json.nome }}",
+        "message": "=<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><style>body{font-family:Arial,sans-serif;background:#f5f5f5;margin:0;padding:20px}.container{max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1)}.header{background:linear-gradient(135deg,#5D764A,#7A9E68);padding:32px;text-align:center}.header h1{color:#fff;margin:0;font-size:24px}.content{padding:32px}.info-row{display:flex;margin-bottom:16px;border-bottom:1px solid #eee;padding-bottom:12px}.info-label{font-weight:600;color:#5D764A;width:100px}.info-value{color:#333}.message-box{background:#f9f9f9;padding:20px;border-radius:8px;margin-top:20px;border-left:4px solid #5D764A}.footer{background:#f9f9f9;padding:20px;text-align:center;color:#666;font-size:12px}</style></head><body><div class=\"container\"><div class=\"header\"><h1>PsicoMapa - Novo Contato</h1></div><div class=\"content\"><div class=\"info-row\"><span class=\"info-label\">Nome:</span><span class=\"info-value\">{{ $json.nome }}</span></div><div class=\"info-row\"><span class=\"info-label\">Email:</span><span class=\"info-value\"><a href=\"mailto:{{ $json.email }}\">{{ $json.email }}</a></span></div><div class=\"info-row\"><span class=\"info-label\">Empresa:</span><span class=\"info-value\">{{ $json.empresa }}</span></div><div class=\"info-row\"><span class=\"info-label\">Assunto:</span><span class=\"info-value\">{{ $json.assunto }}</span></div><div class=\"message-box\"><strong>Mensagem:</strong><p>{{ $json.mensagem }}</p></div></div><div class=\"footer\"><p>Recebido em: {{ $json.timestamp }}</p><p>Fonte: psicomapa.cloud</p></div></div></body></html>",
+        "options": {}
+      },
+      "id": "send-notification",
+      "name": "Notificar Equipe",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [320, 300],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "qUO4rhqI3RcVhau8",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "Recebemos sua mensagem - PsicoMapa",
+        "message": "=<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><style>body{font-family:Arial,sans-serif;background:#f5f5f5;margin:0;padding:20px}.container{max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1)}.header{background:linear-gradient(135deg,#5D764A,#7A9E68);padding:32px;text-align:center}.header h1{color:#fff;margin:0;font-size:24px}.content{padding:32px}.footer{background:#f9f9f9;padding:20px;text-align:center;color:#666;font-size:12px}</style></head><body><div class=\"container\"><div class=\"header\"><h1>PsicoMapa</h1></div><div class=\"content\"><p>Ola <strong>{{ $json.nome }}</strong>,</p><p>Recebemos sua mensagem sobre <strong>{{ $json.assunto }}</strong>.</p><p>Nossa equipe analisara sua solicitacao e retornara em ate <strong>24 horas uteis</strong>.</p><p style=\"margin-top:30px\">Atenciosamente,<br><strong>Equipe PsicoMapa</strong></p></div><div class=\"footer\"><p>Este e um email automatico. Por favor, nao responda.</p><p>www.psicomapa.cloud</p></div></div></body></html>",
+        "options": {}
+      },
+      "id": "send-confirmation",
+      "name": "Confirmar Recebimento",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [560, 300],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "qUO4rhqI3RcVhau8",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "no-op",
+      "name": "Concluido",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [800, 300]
+    }
+  ],
+  "connections": {
+    "Webhook Contato": {
+      "main": [[{"node": "Filtrar Tipo", "type": "main", "index": 0}]]
+    },
+    "Filtrar Tipo": {
+      "main": [[{"node": "Extrair Dados", "type": "main", "index": 0}]]
+    },
+    "Extrair Dados": {
+      "main": [[{"node": "Notificar Equipe", "type": "main", "index": 0}]]
+    },
+    "Notificar Equipe": {
+      "main": [[{"node": "Confirmar Recebimento", "type": "main", "index": 0}]]
+    },
+    "Confirmar Recebimento": {
+      "main": [[{"node": "Concluido", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "PsicoMapa",
+      "createdAt": "2025-12-25T00:00:00.000Z",
+      "updatedAt": "2025-12-25T00:00:00.000Z"
+    },
+    {
+      "name": "Contact",
+      "createdAt": "2025-12-25T00:00:00.000Z",
+      "updatedAt": "2025-12-25T00:00:00.000Z"
+    }
+  ],
+  "_notes": {
+    "description": "Workflow para processar formulario de contato do site psicomapa.cloud",
+    "webhook_path": "/contact",
+    "expected_payload": {
+      "type": "contact_form",
+      "data": {
+        "nome": "string",
+        "email": "string",
+        "empresa": "string (opcional)",
+        "assunto": "comercial|suporte|parceria|imprensa|outro",
+        "mensagem": "string",
+        "timestamp": "ISO date string",
+        "source": "psicomapa.cloud"
+      }
+    },
+    "actions": [
+      "1. Recebe dados do formulario via webhook",
+      "2. Filtra para garantir que e do tipo contact_form",
+      "3. Extrai dados do payload",
+      "4. Envia notificacao para equipe (contato@psicomapa.cloud)",
+      "5. Envia confirmacao de recebimento para o usuario"
+    ],
+    "setup_steps": [
+      "1. Importar este workflow no n8n",
+      "2. Configurar credenciais Gmail ou substituir por Resend",
+      "3. Ativar o workflow",
+      "4. Configurar N8N_WEBHOOK_URL no .env.local"
+    ]
+  }
+}
