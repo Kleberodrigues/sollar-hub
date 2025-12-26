@@ -76,7 +76,7 @@ export function TargetAudience() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="para-quem" className="py-24 bg-white" ref={ref}>
+    <section id="para-quem" className="py-12 lg:py-16 bg-white" ref={ref}>
       <div className="container mx-auto px-6">
         {/* Pain Points Section */}
         <motion.div
