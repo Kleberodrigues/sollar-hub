@@ -2,9 +2,18 @@
  * Script para atualizar workflow de contato para usar Resend
  */
 
-const N8N_API_URL = 'https://sollar-n8n.7wxwzr.easypanel.host/api/v1';
-const N8N_API_KEY = process.env.N8N_API_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NmIzOTJhNC0yYzA4LTRhZDEtYmZjOS1jOWViODU4YjkwNGMiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzY2NTE1OTMwfQ.KyfwXyadRDTrmvVU-JO1E3xl2wEAvQ675nXdqcQoZbM';
-const RESEND_API_KEY = process.env.RESEND_API_KEY || 're_f68RWhZV_JUCmn63h1omtZzB1j6xVgg52';
+const N8N_API_URL = process.env.N8N_API_URL || 'https://sollar-n8n.7wxwzr.easypanel.host/api/v1';
+const N8N_API_KEY = process.env.N8N_API_KEY;
+const RESEND_API_KEY = process.env.RESEND_API_KEY;
+
+if (!N8N_API_KEY) {
+  console.error('❌ N8N_API_KEY environment variable is required');
+  process.exit(1);
+}
+if (!RESEND_API_KEY) {
+  console.error('❌ RESEND_API_KEY environment variable is required');
+  process.exit(1);
+}
 
 // ID do workflow antigo
 const OLD_WORKFLOW_ID = '86TZrwpj8AWACPvK';
