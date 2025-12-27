@@ -7,3 +7,5 @@ export { Footer } from "./Footer";
 export { TargetAudience } from "./TargetAudience";
 export { WhatItMeasures } from "./WhatItMeasures";
 export { FAQ } from "./FAQ";
+export { Pricing } from "./Pricing";
+export { WhatsAppButton } from "./WhatsAppButton";

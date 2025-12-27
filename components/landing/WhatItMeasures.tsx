@@ -63,7 +63,7 @@ export function WhatItMeasures() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="o-que-mede" className="py-24 bg-bg-sage" ref={ref}>
+    <section id="o-que-mede" className="py-24 bg-bg-sage scroll-mt-20" ref={ref}>
       <div className="container mx-auto px-6">
         {/* Section Header */}
         <motion.div
