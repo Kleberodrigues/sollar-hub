@@ -337,7 +337,7 @@ export async function updateAIGeneration(
   }
 
   // Check role
-  if (!["admin", "manager"].includes(profile.role)) {
+  if (!["admin", "manager", "Responsável", "responsavel"].includes(profile.role)) {
     return { success: false, error: "Sem permissão para editar" };
   }
 

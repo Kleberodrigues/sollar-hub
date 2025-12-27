@@ -106,7 +106,7 @@ export async function createDepartment(input: DepartmentInput): Promise<{
     return { success: false, error: "Organization not found" };
   }
 
-  if (!["admin", "manager"].includes(profile.role)) {
+  if (!["admin", "manager", "Responsável", "responsavel"].includes(profile.role)) {
     return { success: false, error: "Permission denied" };
   }
 
@@ -156,7 +156,7 @@ export async function updateDepartment(
     return { success: false, error: "Organization not found" };
   }
 
-  if (!["admin", "manager"].includes(profile.role)) {
+  if (!["admin", "manager", "Responsável", "responsavel"].includes(profile.role)) {
     return { success: false, error: "Permission denied" };
   }
 
@@ -207,7 +207,7 @@ export async function seedDepartments(): Promise<{
     return { success: false, created: 0, error: "Organization not found" };
   }
 
-  if (!["admin", "manager"].includes(profile.role)) {
+  if (!["admin", "manager", "Responsável", "responsavel"].includes(profile.role)) {
     return { success: false, created: 0, error: "Permission denied" };
   }
 
@@ -282,7 +282,7 @@ export async function deleteDepartment(id: string): Promise<{
     return { success: false, error: "Organization not found" };
   }
 
-  if (!["admin", "manager"].includes(profile.role)) {
+  if (!["admin", "manager", "Responsável", "responsavel"].includes(profile.role)) {
     return { success: false, error: "Permission denied" };
   }
 

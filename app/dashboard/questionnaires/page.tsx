@@ -26,9 +26,9 @@ export default async function QuestionnairesPage() {
     redirect("/login");
   }
 
-  // Verificar se usuário pode gerenciar questionários (admin ou manager)
+  // Verificar se usuário pode gerenciar questionários (admin ou manager ou Responsável)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const canManage = ["admin", "manager"].includes((profile as any).role);
+  const canManage = ["admin", "manager", "Responsável", "responsavel"].includes((profile as any).role);
 
   // Buscar questionários: templates padrão NR-1/NR-17 OU da organização do usuário
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
