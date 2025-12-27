@@ -91,14 +91,14 @@ export function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section className="py-12 lg:py-16 bg-white" ref={ref}>
+    <section className="py-6 lg:py-8 bg-white" ref={ref}>
       <div className="container mx-auto px-6">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5 }}
-          className="text-center max-w-3xl mx-auto mb-12"
+          className="text-center max-w-3xl mx-auto mb-6"
         >
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-pm-terracotta/10 mb-4">
             <HelpCircle className="w-7 h-7 text-pm-terracotta" />
@@ -133,7 +133,7 @@ export function FAQ() {
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, delay: 0.6 }}
-          className="text-center mt-10"
+          className="text-center mt-4"
         >
           <p className="text-text-secondary">
             Ainda tem dúvidas?{" "}

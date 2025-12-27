@@ -12,7 +12,7 @@ export function CTA() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section className="py-12 lg:py-16 relative overflow-hidden" ref={ref}>
+    <section className="py-6 lg:py-8 relative overflow-hidden" ref={ref}>
       {/* Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-pm-terracotta to-pm-terracotta-active">
         {/* Decorative elements */}

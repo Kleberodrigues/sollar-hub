@@ -33,14 +33,14 @@ export function HowItWorks() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="como-funciona" className="py-12 lg:py-16 bg-white scroll-mt-20" ref={ref}>
+    <section id="como-funciona" className="py-6 lg:py-8 bg-white scroll-mt-20" ref={ref}>
       <div className="container mx-auto px-6">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5 }}
-          className="text-center max-w-3xl mx-auto mb-10"
+          className="text-center max-w-3xl mx-auto mb-6"
         >
           <h2 className="font-display text-3xl md:text-4xl font-bold text-text-heading mb-4">
             Como funciona
