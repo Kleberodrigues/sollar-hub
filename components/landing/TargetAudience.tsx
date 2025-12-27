@@ -76,14 +76,14 @@ export function TargetAudience() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="para-quem" className="py-12 lg:py-16 bg-white scroll-mt-20" ref={ref}>
+    <section id="para-quem" className="py-6 lg:py-8 bg-white scroll-mt-20" ref={ref}>
       <div className="container mx-auto px-6">
         {/* Pain Points Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5 }}
-          className="text-center max-w-4xl mx-auto mb-16"
+          className="text-center max-w-4xl mx-auto mb-8"
         >
           <h2 className="font-display text-3xl md:text-4xl font-bold text-text-heading mb-6">
             Se você cuida de <span className="text-pm-terracotta">pessoas e resultados</span>,
@@ -92,7 +92,7 @@ export function TargetAudience() {
         </motion.div>
 
         {/* Pain Points Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-16">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
           {painPoints.map((point, index) => {
             const Icon = point.icon;
             return (
@@ -122,7 +122,7 @@ export function TargetAudience() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={isInView ? { opacity: 1, scale: 1 } : {}}
           transition={{ duration: 0.5, delay: 0.6 }}
-          className="text-center mb-20"
+          className="text-center mb-8"
         >
           <blockquote className="text-xl md:text-2xl font-display font-semibold text-pm-olive italic">
             &ldquo;Um único desligamento pode custar mais do que meses de prevenção.&rdquo;

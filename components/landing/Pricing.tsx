@@ -58,14 +58,14 @@ export function Pricing() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="planos" className="py-12 lg:py-16 bg-white scroll-mt-20" ref={ref}>
+    <section id="planos" className="py-6 lg:py-8 bg-white scroll-mt-20" ref={ref}>
       <div className="container mx-auto px-6">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5 }}
-          className="text-center max-w-3xl mx-auto mb-10"
+          className="text-center max-w-3xl mx-auto mb-6"
         >
           <h2 className="font-display text-3xl md:text-4xl font-bold text-text-heading mb-4">
             Planos e <span className="text-pm-terracotta">Preços</span>
@@ -79,7 +79,7 @@ export function Pricing() {
         </motion.div>
 
         {/* Pricing Cards */}
-        <div className="grid md:grid-cols-3 gap-6 mb-12">
+        <div className="grid md:grid-cols-3 gap-6 mb-6">
           {plans.map((plan, index) => (
             <motion.div
               key={plan.name}
