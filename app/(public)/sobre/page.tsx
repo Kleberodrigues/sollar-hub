@@ -1,168 +1,282 @@
-import { SlideUp, StaggerContainer, StaggerItem } from '@/components/animated'
-import { Shield, Users, Brain, Target, Award, Heart } from 'lucide-react'
-import Link from 'next/link'
+'use client';
 
-export const metadata = {
-  title: 'Sobre | PsicoMapa',
-  description: 'Conheça o PsicoMapa - Plataforma de diagnóstico de riscos psicossociais para organizações conforme NR-1',
-}
+import { motion } from 'framer-motion';
+import Image from 'next/image';
+import Link from 'next/link';
+import { Award, GraduationCap, Heart, Sparkles } from 'lucide-react';
+import { Header } from '@/components/landing/Header';
+import { Footer } from '@/components/landing/Footer';
 
-const values = [
+const teamMembers = [
   {
-    icon: Shield,
-    title: 'Conformidade',
-    description: 'Garantimos que sua organização esteja em total conformidade com a NR-1 e demais regulamentações.',
+    name: 'Julia Kalil',
+    role: 'Co-fundadora',
+    tagline: 'Conectando Pessoas e Propósitos por meio do PsicoMapa',
+    image: '/images/julia.jpg',
+    bio: [
+      'Com mais de 6 anos de experiência em Gestão de Pessoas em multinacionais, minha paixão sempre foi ir além dos processos. Eu uni estratégia e sensibilidade ao longo da construção do PsicoMapa — uma plataforma que transforma percepções do dia a dia em dados claros, com método, linguagem humana e conexão com a realidade do negócio.',
+      'Meu propósito é claro: ajudar a criar ambientes mais leves, engajados e com propósito, onde cada colaborador se sinta valorizado e possa prosperar.',
+      'Tenho experiência em traduzir temas complexos de cultura, liderança e bem-estar em perguntas objetivas, indicadores e leituras acionáveis, gerando clareza, escuta e evolução contínua dentro das organizações.',
+    ],
+    certifications: [
+      'Formação em Relações Públicas pela UNESP',
+      'Certificação em Oratória',
+      'Certificação em Comunicação Não Violenta',
+      'Certificação em Treinamento & Desenvolvimento em Saúde Mental',
+    ],
+    color: 'pm-terracotta',
   },
   {
-    icon: Brain,
-    title: 'Inteligência',
-    description: 'IA especializada em riscos psicossociais para análises precisas e recomendações assertivas.',
+    name: 'Laura',
+    role: 'Co-fundadora',
+    tagline: 'PsicoMapa e o meu olhar',
+    image: '/images/laura.jpg',
+    bio: [
+      'Psicóloga com mais de 6 anos de experiência em Saúde Mental e Recursos Humanos, o que me permite integrar o olhar clínico à prática organizacional.',
+      'No PsicoMapa, ajudei a construir a base do produto com sensibilidade e rigor técnico — porque, por trás de cada resposta, existe uma pessoa e a forma como o trabalho atravessa sua vida.',
+      'Acredito que empresas se transformam quando enxergam suas pessoas com verdade. Meu compromisso, dentro da plataforma, é garantir que ela ajude líderes e equipes a construírem ambientes mais seguros, leves e emocionalmente saudáveis — com linguagem humana, leitura clara e foco em ações reais.',
+    ],
+    certifications: [
+      'Formação em Psicologia pela PUC Campinas',
+      'Especialização em Gestalt Terapia',
+      'Certificação em Saúde Mental nas Organizações e a Nova NR 01',
+      'Certificação em IA aplicada a negócios',
+    ],
+    color: 'pm-olive',
   },
-  {
-    icon: Users,
-    title: 'Cuidado',
-    description: 'Foco no bem-estar dos colaboradores como base para organizações mais saudáveis e produtivas.',
-  },
-  {
-    icon: Target,
-    title: 'Precisão',
-    description: 'Metodologia validada cientificamente para diagnósticos confiáveis e acionáveis.',
-  },
-  {
-    icon: Award,
-    title: 'Excelência',
-    description: 'Comprometimento com a qualidade em cada etapa do processo de diagnóstico.',
-  },
-  {
-    icon: Heart,
-    title: 'Empatia',
-    description: 'Entendemos as necessidades únicas de cada organização e seus colaboradores.',
-  },
-]
+];
 
 export default function SobrePage() {
   return (
-    <div className="min-h-screen bg-bg-tertiary">
-      <div className="max-w-5xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
-        {/* Header */}
-        <SlideUp className="mb-16 text-center">
-          <h1 className="font-display text-4xl md:text-5xl font-bold text-pm-green-dark mb-4">
-            Sobre o PsicoMapa
-          </h1>
-          <p className="font-serif text-lg text-text-secondary max-w-2xl mx-auto">
-            Transformando a gestão de riscos psicossociais em organizações brasileiras através de tecnologia e expertise.
-          </p>
-        </SlideUp>
+    <div className="min-h-screen flex flex-col">
+      <Header />
 
-        {/* Mission Section */}
-        <StaggerContainer staggerDelay={0.15} delayChildren={0.2}>
-          <StaggerItem
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-2xl p-8 shadow-sm mb-12"
-          >
-            <h2 className="font-display text-2xl font-semibold text-pm-green-dark mb-4">
-              Nossa Missão
-            </h2>
-            <p className="font-serif text-base leading-relaxed text-text-primary mb-4">
-              O PsicoMapa nasceu da necessidade de oferecer às organizações brasileiras uma ferramenta completa e acessível para diagnóstico e gestão de riscos psicossociais, em conformidade com a NR-1.
-            </p>
-            <p className="font-serif text-base leading-relaxed text-text-primary mb-4">
-              Nossa plataforma combina inteligência artificial especializada com metodologias validadas cientificamente para identificar, analisar e propor ações preventivas relacionadas aos fatores de risco psicossocial no ambiente de trabalho.
-            </p>
-            <p className="font-serif text-base leading-relaxed text-text-primary">
-              Acreditamos que ambientes de trabalho saudáveis são a base para organizações mais produtivas, inovadoras e sustentáveis.
-            </p>
-          </StaggerItem>
+      <main className="flex-1">
+        {/* Hero Section */}
+        <section className="bg-gradient-to-br from-pm-olive/10 to-white py-16 lg:py-20">
+          <div className="container mx-auto px-6">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-center max-w-3xl mx-auto"
+            >
+              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-pm-green-dark mb-6">
+                Quem <span className="text-pm-terracotta">Somos</span>
+              </h1>
+              <p className="text-lg md:text-xl text-text-secondary">
+                Conheça as pessoas por trás do PsicoMapa — profissionais que uniram
+                experiência, sensibilidade e tecnologia para transformar a forma como
+                as organizações cuidam de suas pessoas.
+              </p>
+            </motion.div>
+          </div>
+        </section>
 
-          {/* Values Grid */}
-          <StaggerItem
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-12"
-          >
-            <h2 className="font-display text-2xl font-semibold text-pm-green-dark mb-8 text-center">
-              Nossos Valores
-            </h2>
-            <div className="grid md:grid-cols-3 gap-6">
-              {values.map((value) => (
-                <div
-                  key={value.title}
-                  className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow"
+        {/* Team Members */}
+        <section className="py-12 lg:py-16">
+          <div className="container mx-auto px-6">
+            <div className="space-y-16 lg:space-y-24">
+              {teamMembers.map((member, index) => (
+                <motion.div
+                  key={member.name}
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-100px' }}
+                  transition={{ duration: 0.6, delay: index * 0.2 }}
+                  className={`flex flex-col ${
+                    index % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'
+                  } gap-8 lg:gap-12 items-center`}
                 >
-                  <div className="w-12 h-12 bg-pm-green/10 rounded-lg flex items-center justify-center mb-4">
-                    <value.icon className="w-6 h-6 text-pm-green" />
+                  {/* Photo */}
+                  <div className="w-full lg:w-2/5 flex-shrink-0">
+                    <div className={`relative aspect-[3/4] rounded-2xl overflow-hidden shadow-xl border-4 ${
+                      member.color === 'pm-terracotta'
+                        ? 'border-pm-terracotta/20'
+                        : 'border-pm-olive/20'
+                    }`}>
+                      <Image
+                        src={member.image}
+                        alt={member.name}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, 40vw"
+                      />
+                      {/* Name overlay */}
+                      <div className={`absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t ${
+                        member.color === 'pm-terracotta'
+                          ? 'from-pm-terracotta to-transparent'
+                          : 'from-pm-olive to-transparent'
+                      }`}>
+                        <h2 className="font-display text-2xl md:text-3xl font-bold text-white">
+                          {member.name}
+                        </h2>
+                        <p className="text-white/90 text-sm font-medium">
+                          {member.role}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                  <h3 className="font-display text-lg font-semibold text-pm-green-dark mb-2">
-                    {value.title}
-                  </h3>
-                  <p className="font-serif text-sm text-text-secondary">
-                    {value.description}
-                  </p>
-                </div>
+
+                  {/* Content */}
+                  <div className="w-full lg:w-3/5 space-y-6">
+                    {/* Tagline */}
+                    <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full ${
+                      member.color === 'pm-terracotta'
+                        ? 'bg-pm-terracotta/10 text-pm-terracotta'
+                        : 'bg-pm-olive/10 text-pm-olive'
+                    }`}>
+                      <Sparkles className="w-4 h-4" />
+                      <span className="font-medium text-sm">{member.tagline}</span>
+                    </div>
+
+                    {/* Bio */}
+                    <div className="space-y-4">
+                      {member.bio.map((paragraph, i) => (
+                        <p key={i} className="text-text-secondary leading-relaxed">
+                          {paragraph}
+                        </p>
+                      ))}
+                    </div>
+
+                    {/* Certifications */}
+                    <div className={`p-6 rounded-xl ${
+                      member.color === 'pm-terracotta'
+                        ? 'bg-pm-terracotta/5 border border-pm-terracotta/10'
+                        : 'bg-pm-olive/5 border border-pm-olive/10'
+                    }`}>
+                      <div className="flex items-center gap-2 mb-4">
+                        <GraduationCap className={`w-5 h-5 ${
+                          member.color === 'pm-terracotta' ? 'text-pm-terracotta' : 'text-pm-olive'
+                        }`} />
+                        <h3 className="font-display font-semibold text-text-heading">
+                          Formação e certificações
+                        </h3>
+                      </div>
+                      <ul className="space-y-2">
+                        {member.certifications.map((cert, i) => (
+                          <li key={i} className="flex items-start gap-2 text-sm text-text-secondary">
+                            <Award className={`w-4 h-4 flex-shrink-0 mt-0.5 ${
+                              member.color === 'pm-terracotta' ? 'text-pm-terracotta' : 'text-pm-olive'
+                            }`} />
+                            {cert}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </motion.div>
               ))}
             </div>
-          </StaggerItem>
+          </div>
+        </section>
 
-          {/* NR-1 Section */}
-          <StaggerItem
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-pm-green-dark text-white rounded-2xl p-8 shadow-sm mb-12"
-          >
-            <h2 className="font-display text-2xl font-semibold mb-4">
-              Conformidade com a NR-1
-            </h2>
-            <p className="font-serif text-base leading-relaxed opacity-90 mb-4">
-              A Norma Regulamentadora nº 1 (NR-1) estabelece disposições gerais sobre segurança e saúde no trabalho, incluindo a obrigatoriedade de identificação e gestão de riscos psicossociais.
-            </p>
-            <p className="font-serif text-base leading-relaxed opacity-90">
-              O PsicoMapa foi desenvolvido especificamente para atender a esses requisitos, oferecendo uma metodologia estruturada em 8 blocos de avaliação que cobrem todos os aspectos relevantes para o diagnóstico de riscos psicossociais.
-            </p>
-          </StaggerItem>
-
-          {/* CTA Section */}
-          <StaggerItem
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center"
-          >
-            <h2 className="font-display text-2xl font-semibold text-pm-green-dark mb-4">
-              Pronto para começar?
-            </h2>
-            <p className="font-serif text-text-secondary mb-6">
-              Conheça nossos planos e comece a transformar a gestão de riscos psicossociais na sua organização.
-            </p>
-            <div className="flex justify-center gap-4">
-              <Link
-                href="/precos"
-                className="inline-block bg-pm-terracotta text-white px-6 py-3 rounded-lg font-medium hover:bg-pm-terracotta-hover transition-colors"
-              >
-                Ver Planos
-              </Link>
-              <Link
-                href="/register"
-                className="inline-block bg-pm-green text-white px-6 py-3 rounded-lg font-medium hover:bg-pm-green-dark transition-colors"
-              >
-                Criar Conta
-              </Link>
-            </div>
-          </StaggerItem>
-        </StaggerContainer>
-
-        {/* Contact */}
-        <SlideUp delay={0.6} className="mt-16 text-center">
-          <p className="font-serif text-sm text-text-muted">
-            Dúvidas? Entre em contato:{' '}
-            <a
-              href="mailto:contato@psicomapa.com.br"
-              className="text-pm-terracotta hover:text-pm-terracotta-hover underline transition-colors"
+        {/* Values Section */}
+        <section className="py-12 lg:py-16 bg-bg-sage">
+          <div className="container mx-auto px-6">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="text-center max-w-3xl mx-auto mb-10"
             >
-              contato@psicomapa.com.br
-            </a>
-          </p>
-        </SlideUp>
-      </div>
+              <h2 className="font-display text-3xl md:text-4xl font-bold text-text-heading mb-4">
+                O que nos <span className="text-pm-terracotta">move</span>
+              </h2>
+              <p className="text-text-secondary">
+                Acreditamos que ambientes de trabalho saudáveis são a base para
+                organizações mais produtivas, inovadoras e humanas.
+              </p>
+            </motion.div>
+
+            <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+              {[
+                {
+                  icon: Heart,
+                  title: 'Cuidado com Pessoas',
+                  description: 'Por trás de cada dado, existe uma pessoa. Nossa missão é garantir que ela seja ouvida e cuidada.',
+                  color: 'pm-terracotta',
+                },
+                {
+                  icon: Sparkles,
+                  title: 'Clareza e Ação',
+                  description: 'Transformamos complexidade em clareza, e clareza em ações concretas que fazem diferença.',
+                  color: 'pm-olive',
+                },
+                {
+                  icon: Award,
+                  title: 'Rigor Técnico',
+                  description: 'Metodologia validada cientificamente, combinada com sensibilidade e experiência prática.',
+                  color: 'pm-green-dark',
+                },
+              ].map((value, index) => (
+                <motion.div
+                  key={value.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: index * 0.1 }}
+                  className="bg-white rounded-xl p-6 shadow-sm text-center"
+                >
+                  <div className={`w-12 h-12 rounded-xl mx-auto mb-4 flex items-center justify-center ${
+                    value.color === 'pm-terracotta' ? 'bg-pm-terracotta/10' :
+                    value.color === 'pm-olive' ? 'bg-pm-olive/10' : 'bg-pm-green-dark/10'
+                  }`}>
+                    <value.icon className={`w-6 h-6 ${
+                      value.color === 'pm-terracotta' ? 'text-pm-terracotta' :
+                      value.color === 'pm-olive' ? 'text-pm-olive' : 'text-pm-green-dark'
+                    }`} />
+                  </div>
+                  <h3 className="font-display font-semibold text-text-heading mb-2">
+                    {value.title}
+                  </h3>
+                  <p className="text-sm text-text-secondary">
+                    {value.description}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="py-12 lg:py-16 bg-pm-brown text-white">
+          <div className="container mx-auto px-6 text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="max-w-2xl mx-auto"
+            >
+              <h2 className="font-display text-2xl md:text-3xl font-bold mb-4">
+                Quer conhecer mais sobre o PsicoMapa?
+              </h2>
+              <p className="text-white/80 mb-8">
+                Agende uma conversa com nossa equipe e descubra como podemos ajudar
+                sua organização a cuidar melhor das pessoas.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link
+                  href="/contato"
+                  className="inline-flex items-center justify-center bg-pm-olive-light text-pm-brown font-medium px-6 py-3 rounded-lg hover:bg-white transition-colors"
+                >
+                  Agendar Conversa
+                </Link>
+                <Link
+                  href="/#planos"
+                  className="inline-flex items-center justify-center border-2 border-white text-white font-medium px-6 py-3 rounded-lg hover:bg-white hover:text-pm-brown transition-colors"
+                >
+                  Ver Planos
+                </Link>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+      </main>
+
+      <Footer />
     </div>
-  )
+  );
 }
