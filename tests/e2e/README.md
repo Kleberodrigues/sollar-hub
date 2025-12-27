@@ -38,7 +38,7 @@ Este diretório contém os testes end-to-end (E2E) usando Playwright para verifi
 
 ### 🚧 Próximos Testes (Fases 3-6)
 
-- Questionário Pulso Mensal
+- Questionário Pesquisa de Clima
 - Questionário Completo (8 blocos)
 - Autenticação magic link
 - Dashboard de analytics

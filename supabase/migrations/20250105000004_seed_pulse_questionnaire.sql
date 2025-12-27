@@ -20,7 +20,7 @@ INSERT INTO questionnaires (
 ) VALUES (
   'b2222222-2222-2222-2222-222222222222'::uuid,
   (SELECT id FROM organizations LIMIT 1), -- Will be cloned per organization
-  'Pulso Geral Mensal',
+  'Pesquisa de Clima',
   'Pesquisa rápida (1 minuto) para entender como você está se sentindo no trabalho neste mês.',
   'pulse_monthly',
   E'# Olá!\n\nParticipe da nossa pesquisa rápida (1 minuto) para entender como você está se sentindo no trabalho neste mês.\n\nAs respostas são **anônimas** e analisadas de forma **agrupada**.\n\nObrigado(a) por compartilhar como você está! 💙',

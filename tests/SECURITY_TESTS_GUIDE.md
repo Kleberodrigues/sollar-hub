@@ -403,7 +403,7 @@ test.describe('Compliance LGPD/GDPR', () => {
   test('deve registrar consentimento em banco de dados', async ({ page }) => {
     // TODO: Implementar quando componentes LGPD estiverem integrados
 
-    await page.goto('/questionario/pulso-mensal');
+    await page.goto('/questionario/pesquisa-clima');
 
     // Aceitar consentimento
     await page.click('button:has-text("Aceito os termos")');
