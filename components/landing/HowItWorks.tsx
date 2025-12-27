@@ -33,14 +33,14 @@ export function HowItWorks() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="como-funciona" className="py-24 bg-white scroll-mt-20" ref={ref}>
+    <section id="como-funciona" className="py-12 lg:py-16 bg-white scroll-mt-20" ref={ref}>
       <div className="container mx-auto px-6">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5 }}
-          className="text-center max-w-3xl mx-auto mb-16"
+          className="text-center max-w-3xl mx-auto mb-10"
         >
           <h2 className="font-display text-3xl md:text-4xl font-bold text-text-heading mb-4">
             Como funciona
@@ -75,7 +75,7 @@ export function HowItWorks() {
                   <div className="w-20 h-20 bg-white border-4 border-pm-olive rounded-full flex items-center justify-center shadow-lg relative z-10">
                     <Icon className="w-8 h-8 text-pm-olive" />
                   </div>
-                  <span className="absolute -top-2 -right-2 w-8 h-8 bg-pm-terracotta text-white rounded-full flex items-center justify-center text-sm font-bold">
+                  <span className="absolute -top-3 -right-3 w-10 h-10 bg-pm-terracotta text-white rounded-full flex items-center justify-center text-base font-bold shadow-md">
                     {step.number}
                   </span>
                 </div>
