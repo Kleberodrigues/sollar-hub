@@ -116,14 +116,14 @@ export default function PrecosPage() {
                     </p>
                   </div>
 
-                  {/* Price - Monthly first */}
+                  {/* Price - Yearly first */}
                   <div className="mb-4">
                     <span className="font-display text-4xl font-bold text-pm-green-dark">
-                      {plan.monthlyPrice}
+                      {plan.yearlyPrice.replace('/ano', '')}
                     </span>
-                    <span className="text-text-secondary">/mês</span>
+                    <span className="text-text-secondary">/ano</span>
                     <p className="text-sm text-text-muted mt-1">
-                      {plan.yearlyPrice}
+                      Equivalente a {plan.monthlyPrice}/mês
                     </p>
                   </div>
 

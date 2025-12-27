@@ -7,9 +7,11 @@ import {
   HowItWorks,
   WhatItMeasures,
   Features,
+  Pricing,
   FAQ,
   CTA,
   Footer,
+  WhatsAppButton,
 } from "@/components/landing";
 
 export default function Home() {
@@ -22,10 +24,12 @@ export default function Home() {
         <HowItWorks />
         <WhatItMeasures />
         <Features />
+        <Pricing />
         <FAQ />
         <CTA />
       </main>
       <Footer />
+      <WhatsAppButton />
     </div>
   );
 }
