@@ -77,6 +77,10 @@ const ClimaTrendTab = dynamic(() => import("./tabs/ClimaTrendTab").then(m => ({ 
   loading: () => <TabSkeleton />,
   ssr: false,
 });
+const ClimaSurveyDashboard = dynamic(() => import("./clima/ClimaSurveyDashboard").then(m => ({ default: m.ClimaSurveyDashboard })), {
+  loading: () => <TabSkeleton />,
+  ssr: false,
+});
 
 interface CategoryResponse {
   category: string;
@@ -294,6 +298,7 @@ export function AnalyticsDashboardContent({
 }: AnalyticsDashboardContentProps) {
   const isPulse = assessmentType === 'pulse';
   const [fullscreenSection, setFullscreenSection] = useState<string | null>(null);
+  const [showClimaView, setShowClimaView] = useState(isPulse); // Default to clima view for pulse
   const hasResponses = analytics.totalParticipants > 0;
 
   // Calcular distribuição de risco
@@ -451,15 +456,41 @@ export function AnalyticsDashboardContent({
       {/* Header com Ações */}
       <motion.div variants={sollarMotion.fadeUp} className="flex items-center justify-between">
         <div>
-          <h1 className="font-display text-2xl font-bold text-text-heading">Análise de Resultados</h1>
+          <h1 className="font-display text-2xl font-bold text-text-heading">
+            {isPulse && showClimaView ? 'Pesquisa de Clima' : 'Análise de Resultados'}
+          </h1>
           <p className="text-sm text-text-muted mt-1">{assessmentTitle}</p>
         </div>
         <div className="flex gap-2">
+          {isPulse && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowClimaView(!showClimaView)}
+              className={cn(
+                "gap-2",
+                showClimaView ? "bg-pm-olive/10 border-pm-olive text-pm-olive" : ""
+              )}
+            >
+              <Activity className="w-4 h-4" />
+              {showClimaView ? 'Visão Geral' : 'Visão Clima'}
+            </Button>
+          )}
           <ImportDialog assessmentId={assessmentId} currentPlan={currentPlan} onImportComplete={onDataChange} />
           <ExportButtons assessmentId={assessmentId} currentPlan={currentPlan} />
         </div>
       </motion.div>
 
+      {/* Dashboard Pesquisa de Clima (quando selecionado) */}
+      {isPulse && showClimaView && (
+        <motion.div variants={sollarMotion.fadeUp}>
+          <ClimaSurveyDashboard assessmentId={assessmentId} />
+        </motion.div>
+      )}
+
+      {/* Conteúdo padrão (esconde quando clima view está ativo) */}
+      {(!isPulse || !showClimaView) && (
+        <>
       {/* KPIs Principais - Design Limpo */}
       <motion.div variants={sollarMotion.fadeUp} className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
         {/* Participantes */}
@@ -653,6 +684,8 @@ export function AnalyticsDashboardContent({
         </SectionCard>
 
       </motion.div>
+        </>
+      )}
 
       {/* Fullscreen Modals */}
       <FullscreenModal
