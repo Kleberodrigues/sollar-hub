@@ -38,7 +38,7 @@ export default async function AssessmentPage({
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const canManage = ["admin", "manager"].includes((profile as any).role);
+  const canManage = ["admin", "manager", "Responsável", "responsavel"].includes((profile as any).role);
 
   // Buscar assessment com dados relacionados
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
