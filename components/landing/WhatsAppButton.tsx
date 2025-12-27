@@ -1,7 +1,6 @@
 'use client';
 
 import { motion } from "framer-motion";
-import { MessageCircle } from "lucide-react";
 
 const WHATSAPP_NUMBER = "5511999999999"; // Substituir pelo número real
 const WHATSAPP_MESSAGE = "Olá! Gostaria de saber mais sobre o PsicoMapa.";
