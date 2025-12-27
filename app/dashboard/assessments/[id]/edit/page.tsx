@@ -33,7 +33,7 @@ export default async function EditAssessmentPage({
 
   // Verificar se usuário pode editar assessments
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const canManage = ["admin", "manager"].includes((profile as any).role);
+  const canManage = ["admin", "manager", "Responsável", "responsavel"].includes((profile as any).role);
 
   if (!canManage) {
     redirect("/dashboard/assessments");
