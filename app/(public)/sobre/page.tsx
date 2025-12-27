@@ -4,8 +4,6 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Award, GraduationCap, Heart, Sparkles } from 'lucide-react';
-import { Header } from '@/components/landing/Header';
-import { Footer } from '@/components/landing/Footer';
 
 const teamMembers = [
   {
@@ -48,10 +46,7 @@ const teamMembers = [
 
 export default function SobrePage() {
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-
-      <main className="flex-1">
+    <>
         {/* Hero Section */}
         <section className="bg-gradient-to-br from-pm-olive/10 to-white py-16 lg:py-20">
           <div className="container mx-auto px-6">
@@ -274,9 +269,6 @@ export default function SobrePage() {
             </motion.div>
           </div>
         </section>
-      </main>
-
-      <Footer />
-    </div>
+    </>
   );
 }
