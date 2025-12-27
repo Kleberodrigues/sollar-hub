@@ -91,7 +91,7 @@ export function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section className="py-6 lg:py-8 bg-white" ref={ref}>
+    <section className="py-12 lg:py-16 bg-white" ref={ref}>
       <div className="container mx-auto px-6">
         {/* Section Header */}
         <motion.div

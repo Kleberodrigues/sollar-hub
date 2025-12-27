@@ -58,7 +58,7 @@ export function Pricing() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="planos" className="py-6 lg:py-8 bg-white scroll-mt-20" ref={ref}>
+    <section id="planos" className="py-12 lg:py-16 bg-white scroll-mt-20" ref={ref}>
       <div className="container mx-auto px-6">
         {/* Section Header */}
         <motion.div
