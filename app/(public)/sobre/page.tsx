@@ -12,7 +12,7 @@ const teamMembers = [
     name: 'Julia Kalil',
     role: 'Co-fundadora',
     tagline: 'Conectando Pessoas e Propósitos por meio do PsicoMapa',
-    image: '/images/julia.jpg',
+    image: '/images/julia.jpeg',
     bio: [
       'Com mais de 6 anos de experiência em Gestão de Pessoas em multinacionais, minha paixão sempre foi ir além dos processos. Eu uni estratégia e sensibilidade ao longo da construção do PsicoMapa — uma plataforma que transforma percepções do dia a dia em dados claros, com método, linguagem humana e conexão com a realidade do negócio.',
       'Meu propósito é claro: ajudar a criar ambientes mais leves, engajados e com propósito, onde cada colaborador se sinta valorizado e possa prosperar.',
@@ -30,7 +30,7 @@ const teamMembers = [
     name: 'Laura',
     role: 'Co-fundadora',
     tagline: 'PsicoMapa e o meu olhar',
-    image: '/images/laura.jpg',
+    image: '/images/laura.jpeg',
     bio: [
       'Psicóloga com mais de 6 anos de experiência em Saúde Mental e Recursos Humanos, o que me permite integrar o olhar clínico à prática organizacional.',
       'No PsicoMapa, ajudei a construir a base do produto com sensibilidade e rigor técnico — porque, por trás de cada resposta, existe uma pessoa e a forma como o trabalho atravessa sua vida.',
