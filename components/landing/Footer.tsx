@@ -81,7 +81,18 @@ export function Footer() {
         </div>
 
         {/* Bottom Footer */}
-        <div className="pt-4 border-t border-white/10 text-center">
+        <div className="pt-4 border-t border-white/10 text-center space-y-2">
+          <p className="text-white/70 text-sm">
+            PsicoMapa. Um produto da{" "}
+            <a
+              href="https://www.sollartreinamentos.com.br/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-pm-olive-light hover:text-white transition-colors underline"
+            >
+              Sollar
+            </a>
+          </p>
           <p className="text-white/60 text-sm">
             &copy; {new Date().getFullYear()} PsicoMapa. Todos os direitos reservados.
           </p>

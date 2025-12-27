@@ -14,6 +14,7 @@ import {
   Gauge,
   Lock,
   UserCheck,
+  TrendingDown,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -56,6 +57,7 @@ const climateFactors = [
   { icon: Gauge, title: "Carga de Trabalho", description: "Volume e distribuição" },
   { icon: Lock, title: "Segurança Psicológica", description: "Liberdade para se expressar" },
   { icon: UserCheck, title: "Liderança", description: "Qualidade da gestão" },
+  { icon: TrendingDown, title: "Turnover", description: "Previsibilidade de desligamentos" },
 ];
 
 export function WhatItMeasures() {
@@ -63,14 +65,14 @@ export function WhatItMeasures() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="o-que-mede" className="py-24 bg-bg-sage scroll-mt-20" ref={ref}>
+    <section id="o-que-mede" className="py-12 lg:py-16 bg-bg-sage scroll-mt-20" ref={ref}>
       <div className="container mx-auto px-6">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5 }}
-          className="text-center max-w-3xl mx-auto mb-16"
+          className="text-center max-w-3xl mx-auto mb-10"
         >
           <h2 className="font-display text-3xl md:text-4xl font-bold text-text-heading mb-4">
             O que o <span className="text-pm-terracotta">PsicoMapa</span> mede?
@@ -144,7 +146,7 @@ export function WhatItMeasures() {
                 </p>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3 mb-6">
+                <div className="space-y-3">
                   {climateFactors.map((item, index) => {
                     const Icon = item.icon;
                     return (
@@ -170,14 +172,6 @@ export function WhatItMeasures() {
                     );
                   })}
                 </div>
-
-                {/* Highlight Box */}
-                <div className="p-4 rounded-xl bg-gradient-to-r from-pm-olive/10 to-pm-olive/5 border border-pm-olive/20">
-                  <p className="text-sm text-text-primary">
-                    <span className="font-semibold text-pm-olive">Relatórios bimestrais</span> que
-                    acompanham a evolução do clima e identificam tendências antes que se tornem problemas.
-                  </p>
-                </div>
               </CardContent>
             </Card>
           </motion.div>
@@ -188,7 +182,7 @@ export function WhatItMeasures() {
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, delay: 0.6 }}
-          className="text-center mt-12"
+          className="text-center mt-8"
         >
           <p className="text-text-secondary">
             Todos os diagnósticos geram{" "}
