@@ -75,7 +75,7 @@ export function HowItWorks() {
                   <div className="w-20 h-20 bg-white border-4 border-pm-olive rounded-full flex items-center justify-center shadow-lg relative z-10">
                     <Icon className="w-8 h-8 text-pm-olive" />
                   </div>
-                  <span className="absolute -top-2 -right-2 w-12 h-12 bg-pm-terracotta text-white rounded-full flex items-center justify-center text-xl font-bold shadow-lg border-2 border-white">
+                  <span className="absolute -top-1 -right-1 w-14 h-14 bg-pm-terracotta text-white rounded-full flex items-center justify-center text-2xl font-bold shadow-xl border-3 border-white z-20">
                     {step.number}
                   </span>
                 </div>
