@@ -14,7 +14,7 @@ Este documento descreve a implementação completa do **Modelo Sollar de Riscos 
 Adequar o sistema ao modelo Sollar de questionários psicossociais conforme especificação fornecida, incluindo:
 
 1. **Questionário Sollar de Riscos Psicossociais** (30 perguntas, 8 blocos)
-2. **Pulso Geral Mensal** (5 perguntas, 1 minuto)
+2. **Pesquisa de Clima** (5 perguntas, 1 minuto)
 3. Suporte a escalas customizadas, lógica de risco invertida e anonimato
 
 ---
@@ -320,7 +320,7 @@ npx supabase db push
 
 #### Dados
 - [ ] Questionário "Sollar de Riscos Psicossociais" inserido (30 questões)
-- [ ] Questionário "Pulso Geral Mensal" inserido (5 questões)
+- [ ] Questionário "Pesquisa de Clima" inserido (5 questões)
 - [ ] Escalas customizadas aplicadas corretamente
 - [ ] Flags `risk_inverted` configuradas corretamente
 - [ ] Flags `allow_skip` ativas no Bloco 6

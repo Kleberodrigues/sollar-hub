@@ -4,7 +4,7 @@ Plataforma de gestão de pesquisas e avaliações de clima organizacional desenv
 
 ## Sobre o Projeto
 
-O Sollar Insight Hub é uma aplicação web moderna que permite às organizações criar, gerenciar e analisar pesquisas de clima organizacional, pulso mensal e avaliações customizadas. Com foco em privacidade e análise de dados, a plataforma oferece recursos avançados de segmentação por departamento, gestão de usuários multi-nível e anonimato nas respostas.
+O Sollar Insight Hub é uma aplicação web moderna que permite às organizações criar, gerenciar e analisar pesquisas de clima organizacional e avaliações customizadas. Com foco em privacidade e análise de dados, a plataforma oferece recursos avançados de segmentação por departamento, gestão de usuários multi-nível e anonimato nas respostas.
 
 ## Tecnologias Principais
 

@@ -9,9 +9,11 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Check, Building, Building2, Factory, Loader2, Users } from "lucide-react";
 import { toast } from "sonner";
 import { PLANS, type PlanType } from "@/lib/stripe/config";
+import Link from "next/link";
 
 interface PricingCardsProps {
   organizationId: string;
@@ -123,9 +125,15 @@ const colorMap = {
 
 export function PricingCards({ organizationId, currentPlan }: PricingCardsProps) {
   const [isLoading, setIsLoading] = useState<string | null>(null);
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   const handleCheckout = async (plan: PlanType) => {
     if (plan === currentPlan) return;
+
+    if (!termsAccepted) {
+      toast.error("Você precisa aceitar os termos para continuar");
+      return;
+    }
 
     setIsLoading(plan);
     try {
@@ -260,10 +268,12 @@ export function PricingCards({ organizationId, currentPlan }: PricingCardsProps)
 
               {/* CTA Button - always at bottom */}
               <Button
-                className={`w-full ${colors.button} transition-all mt-auto`}
+                className={`w-full ${colors.button} transition-all mt-auto ${
+                  !termsAccepted && !isCurrent ? "opacity-60" : ""
+                }`}
                 size="sm"
                 onClick={() => handleCheckout(plan.id)}
-                disabled={isLoading !== null || isCurrent}
+                disabled={isLoading !== null || isCurrent || !termsAccepted}
               >
                 {isLoading === plan.id ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -277,6 +287,41 @@ export function PricingCards({ organizationId, currentPlan }: PricingCardsProps)
           );
         })}
       </div>
+
+      {/* Terms Acceptance */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="bg-bg-secondary rounded-lg p-4"
+      >
+        <div className="flex items-start gap-3">
+          <Checkbox
+            id="terms"
+            checked={termsAccepted}
+            onCheckedChange={(checked) => setTermsAccepted(checked === true)}
+            className="mt-0.5"
+          />
+          <label
+            htmlFor="terms"
+            className="text-sm text-text-secondary leading-relaxed cursor-pointer"
+          >
+            Li e aceito os{" "}
+            <Link href="/termos" className="text-pm-terracotta hover:underline">
+              Termos de Uso
+            </Link>
+            ,{" "}
+            <Link href="/termos" className="text-pm-terracotta hover:underline">
+              Termos Comerciais
+            </Link>
+            {" "}e{" "}
+            <Link href="/privacidade" className="text-pm-terracotta hover:underline">
+              Política de Privacidade
+            </Link>
+            {" "}e declaro que tenho poderes para contratar em nome da empresa.
+          </label>
+        </div>
+      </motion.div>
 
       {/* Footer Info */}
       <div className="text-center space-y-2">

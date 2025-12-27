@@ -472,7 +472,7 @@ async function main() {
     .upsert({
       id: PULSE_QUESTIONNAIRE_ID,
       organization_id: null, // GLOBAL - visível para todas as organizações
-      title: 'Pulso Geral Mensal',
+      title: 'Pesquisa de Clima',
       description: 'Pesquisa rápida mensal (1 minuto) para acompanhamento contínuo do clima organizacional.',
       is_active: true,
       created_at: new Date().toISOString(),
