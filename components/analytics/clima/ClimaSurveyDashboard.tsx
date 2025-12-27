@@ -14,11 +14,9 @@
 import { useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   BarChart,
-  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -26,7 +24,6 @@ import {
   ResponsiveContainer,
   LineChart,
   Line,
-  Cell,
 } from 'recharts';
 import {
   Heart,
@@ -39,7 +36,6 @@ import {
   Target,
   MessageSquare,
   Calendar,
-  ChevronRight,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
@@ -83,8 +79,8 @@ interface ClimaSurveyDashboardProps {
   textResponses?: Array<{ text: string; theme?: string }>;
 }
 
-// Constantes de pontuação
-const SENTIMENT_SCALE: Record<string, number> = {
+// Constantes de pontuação (usadas na legenda - linhas 697-702)
+const _SENTIMENT_SCALE: Record<string, number> = {
   'Muito mal': 1,
   'Mal': 2,
   'Mais ou menos': 3,
@@ -92,7 +88,7 @@ const SENTIMENT_SCALE: Record<string, number> = {
   'Muito bem': 5,
 };
 
-const FREQUENCY_SCALE: Record<string, number> = {
+const _FREQUENCY_SCALE: Record<string, number> = {
   'Nunca': 1,
   'Raramente': 2,
   'Às vezes': 3,
@@ -295,7 +291,7 @@ function ClimaHeatmap({ monthlyData }: { monthlyData: MonthlyData[] }) {
             return (
               <tr key={q.key} className="border-t border-border-light">
                 <td className="py-2 px-3 font-medium text-text-heading">{q.label}</td>
-                {monthlyData.map((m, i) => {
+                {monthlyData.map((m) => {
                   const value = m[q.key as keyof MonthlyData] as number || 0;
                   return (
                     <td key={m.month} className="text-center py-2 px-2">
@@ -510,7 +506,7 @@ function OpenQuestionSection({
                     {t.theme}
                   </Badge>
                   <p className="text-sm text-text-secondary italic">
-                    "{t.texts[0]}"
+                    &ldquo;{t.texts[0]}&rdquo;
                   </p>
                 </div>
               </div>
@@ -532,11 +528,11 @@ function OpenQuestionSection({
 
 // Componente Principal
 export function ClimaSurveyDashboard({
-  assessmentId,
-  currentMonth,
-  previousMonth,
+  assessmentId: _assessmentId,
+  currentMonth: _currentMonth,
+  previousMonth: _previousMonth,
   monthlyData: propMonthlyData,
-  questionDistributions,
+  questionDistributions: _questionDistributions,
   textResponses: propTextResponses,
 }: ClimaSurveyDashboardProps) {
   const [selectedMonth, setSelectedMonth] = useState<string>('latest');
