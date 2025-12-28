@@ -45,12 +45,9 @@ export function HowItWorks() {
           <h2 className="font-display text-3xl md:text-4xl font-bold text-text-heading mb-4">
             Como funciona
           </h2>
-          <p className="text-lg text-text-secondary mb-4">
+          <p className="text-lg text-text-secondary">
             Em três passos simples, você terá um diagnóstico completo da saúde
             organizacional da sua empresa.
-          </p>
-          <p className="text-pm-terracotta font-medium">
-            Nada de planilhas. Nada de análise manual. Nada de esperar semanas.
           </p>
         </motion.div>
 
@@ -98,6 +95,16 @@ export function HowItWorks() {
             );
           })}
         </div>
+
+        {/* Tagline */}
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.5, delay: 0.8 }}
+          className="text-center text-pm-terracotta font-medium mt-10"
+        >
+          Nada de planilhas. Nada de análise manual. Nada de esperar semanas.
+        </motion.p>
       </div>
     </section>
   );

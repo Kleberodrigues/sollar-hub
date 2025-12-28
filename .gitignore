@@ -72,3 +72,5 @@ verify-*.mjs
 *.png
 !public/**/*.png
 !app/**/*.png
+
+.vercel
