@@ -27,7 +27,7 @@ export default async function AssessmentsPage() {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   // Roles válidas: "admin", "manager", "Responsável" (português)
-  const canManage = ["admin", "manager", "Responsável", "responsavel"].includes((profile as any).role);
+  const canManage = ["admin", "manager", "Responsável", "responsavel", "responsavel_empresa"].includes((profile as any).role);
 
   // Buscar assessments da organização
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

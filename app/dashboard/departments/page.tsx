@@ -24,7 +24,7 @@ export default async function DepartmentsPage() {
     .single() as any);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if (!profile || !["admin", "manager", "Responsável", "responsavel"].includes((profile as any).role)) {
+  if (!profile || !["admin", "manager", "Responsável", "responsavel", "responsavel_empresa"].includes((profile as any).role)) {
     redirect("/dashboard");
   }
 

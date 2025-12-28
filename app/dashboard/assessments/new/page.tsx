@@ -28,7 +28,7 @@ export default async function NewAssessmentPage() {
 
   // Verificar se usuário pode criar assessments
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const canManage = ["admin", "manager", "Responsável", "responsavel"].includes((profile as any).role);
+  const canManage = ["admin", "manager", "Responsável", "responsavel", "responsavel_empresa"].includes((profile as any).role);
 
   if (!canManage) {
     redirect("/dashboard/assessments");
