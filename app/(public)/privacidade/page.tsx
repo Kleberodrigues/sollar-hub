@@ -88,7 +88,7 @@ export default function PrivacidadePage() {
                 Os dados são armazenados em ambiente seguro, com tecnologia SSL (Secure Socket Layer), que garante a criptografia das informações transmitidas entre o seu navegador e o nosso site.
               </p>
               <p className="text-base leading-relaxed">
-                A plataforma Wix, onde o site está hospedado, segue rigorosos padrões de segurança e conformidade com a Lei Geral de Proteção de Dados (LGPD).
+                A plataforma PsicoMapa segue rigorosos padrões de segurança e conformidade com a Lei Geral de Proteção de Dados (LGPD).
               </p>
             </StaggerItem>
 
@@ -129,10 +129,10 @@ export default function PrivacidadePage() {
               <p className="text-base leading-relaxed">
                 Para exercer qualquer um desses direitos, entre em contato conosco pelo e-mail:{' '}
                 <a
-                  href="mailto:juliakalil@sollartreinamentos.com.br"
+                  href="mailto:contato@psicomapa.cloud"
                   className="text-pm-terracotta hover:text-pm-terracotta-hover underline transition-colors"
                 >
-                  juliakalil@sollartreinamentos.com.br
+                  contato@psicomapa.cloud
                 </a>
               </p>
             </StaggerItem>
@@ -166,10 +166,10 @@ export default function PrivacidadePage() {
               <p className="text-base leading-relaxed">
                 Se tiver dúvidas sobre esta Política de Privacidade ou sobre o uso dos seus dados, entre em contato com nossa equipe através do e-mail:{' '}
                 <a
-                  href="mailto:juliakalil@sollartreinamentos.com.br"
+                  href="mailto:contato@psicomapa.cloud"
                   className="text-pm-terracotta hover:text-pm-terracotta-hover underline transition-colors"
                 >
-                  juliakalil@sollartreinamentos.com.br
+                  contato@psicomapa.cloud
                 </a>
               </p>
             </StaggerItem>
