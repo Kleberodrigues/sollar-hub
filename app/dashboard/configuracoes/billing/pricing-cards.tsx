@@ -305,19 +305,15 @@ export function PricingCards({ organizationId, currentPlan }: PricingCardsProps)
             htmlFor="terms"
             className="text-sm text-text-secondary leading-relaxed cursor-pointer"
           >
-            Li e aceito os{" "}
+            Li e aceito o{" "}
             <Link href="/termos" className="text-pm-terracotta hover:underline">
-              Termos de Uso
+              Termo de Aceite e Condições de Uso
             </Link>
-            ,{" "}
-            <Link href="/termos" className="text-pm-terracotta hover:underline">
-              Termos Comerciais
-            </Link>
-            {" "}e{" "}
+            {" "}e a{" "}
             <Link href="/privacidade" className="text-pm-terracotta hover:underline">
               Política de Privacidade
             </Link>
-            {" "}e declaro que tenho poderes para contratar em nome da empresa.
+            , e declaro que tenho poderes para contratar em nome da empresa.
           </label>
         </div>
       </motion.div>
