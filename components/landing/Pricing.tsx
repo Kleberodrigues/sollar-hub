@@ -10,59 +10,34 @@ const plans = [
   {
     name: 'Base',
     description: '50 a 120 colaboradores',
-    objective: 'Cumprir a NR-1 com clareza',
+    objective: '14 Relatórios anuais',
     icon: Building,
     color: 'terracotta' as const,
     yearlyPrice: 'R$ 3.970',
     monthlyEquivalent: 'Equivalente a R$ 330,83/mês',
-    features: [
-      'IA vertical em riscos psicossociais',
-      'Dashboards automáticos',
-      'Relatório técnico personalizado',
-      'Plano de ação orientado à prevenção',
-      'Análise por clusters de risco',
-      'Assessments ilimitados',
-      'Export PDF e CSV',
-    ],
+    features: ['6 Relatórios de Clima (bimestrais)', '4 Relatórios Técnicos de Riscos Psicossociais (trimestrais)', '4 Relatórios de Plano de Ação (trimestrais)', 'Dashboards automáticos', 'Análise de dados completa', 'Relatório técnico personalizado', 'Plano de ação orientado à prevenção'],
     highlighted: false,
   },
   {
     name: 'Intermediário',
     description: '121 a 250 colaboradores',
-    objective: 'Apoiar decisões gerenciais',
+    objective: '24 Relatórios anuais',
     icon: Building2,
     color: 'olive' as const,
     yearlyPrice: 'R$ 4.970',
     monthlyEquivalent: 'Equivalente a R$ 414,17/mês',
-    features: [
-      'Tudo do plano Base',
-      'Análise comparativa entre ciclos',
-      'Priorização por impacto organizacional',
-      'Dashboards comparativos (tempo/áreas)',
-      'Relatório executivo para liderança',
-      'Branding personalizado',
-      'Suporte prioritário',
-    ],
+    features: ['Tudo do plano Base', '4 Relatórios Comparativos entre ciclos (trimestrais)', '6 Relatórios Executivos para liderança (bimestrais)'],
     highlighted: true,
   },
   {
     name: 'Avançado',
     description: '251 a 400 colaboradores',
-    objective: 'Atender maior complexidade',
+    objective: '28 Relatórios anuais',
     icon: Factory,
     color: 'sage' as const,
     yearlyPrice: 'R$ 5.970',
     monthlyEquivalent: 'Equivalente a R$ 497,50/mês',
-    features: [
-      'Tudo do plano Intermediário',
-      'Análise sistêmica dos riscos',
-      'Correlação entre fatores organizacionais',
-      'Alertas de atenção elevada',
-      'Relatório técnico para gestão de riscos',
-      'Acesso à API',
-      'Export XLSX',
-      'Suporte dedicado',
-    ],
+    features: ['Tudo do plano Intermediário', '4 Relatórios de Correlação entre fatores organizacionais (trimestrais)', 'Apresentação de 2 relatórios pela equipe PsicoMapa', 'Condição exclusiva para Plano de Ação Completo pela Consultoria'],
     highlighted: false,
   },
 ];
@@ -264,7 +239,7 @@ export function Pricing() {
                     Enterprise
                   </h3>
                   <p className="text-white/80 text-sm">
-                    Para empresas com mais de 400 colaboradores. Plano personalizado.
+                    Sua empresa tem mais de 400 colaboradores? Fale conosco e feche um plano personalizado.
                   </p>
                 </div>
               </div>
