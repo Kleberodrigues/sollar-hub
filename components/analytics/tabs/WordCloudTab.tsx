@@ -200,50 +200,53 @@ export function WordCloudTab({ textResponses }: WordCloudTabProps) {
         </Card>
       </motion.div>
 
-      {/* Word Cloud Only */}
+      {/* Word Cloud Only - Organic spread layout */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.1 }}
+        className="flex-1"
       >
-        <div className="relative flex flex-wrap gap-x-2 gap-y-1 justify-center items-center py-4 min-h-[250px] px-4">
-          {words.map((word, index) => {
+        <div className="relative flex flex-wrap content-around gap-x-4 gap-y-3 justify-center items-center py-6 min-h-[320px] px-6">
+          {words.slice(0, 30).map((word, index) => {
             const rotation = getWordRotation(index);
+            // Create organic vertical offset based on index
+            const verticalOffset = Math.sin(index * 0.8) * 8;
+            const horizontalOffset = Math.cos(index * 0.6) * 4;
+
             return (
               <motion.span
                 key={word.text}
                 initial={{
                   opacity: 0,
                   scale: 0,
-                  rotate: rotation - 20,
-                  y: 30
+                  y: 20
                 }}
                 animate={{
                   opacity: 1,
                   scale: 1,
-                  rotate: rotation,
                   y: 0
                 }}
                 transition={{
-                  duration: 0.5,
-                  delay: index * 0.03,
+                  duration: 0.4,
+                  delay: index * 0.02,
                   type: "spring",
-                  stiffness: 100,
-                  damping: 15
+                  stiffness: 120,
+                  damping: 12
                 }}
                 whileHover={{
-                  scale: 1.15,
-                  transition: { duration: 0.2 }
+                  scale: 1.12,
+                  transition: { duration: 0.15 }
                 }}
                 className={cn(
-                  "cursor-default transition-all inline-block leading-tight",
+                  "cursor-default transition-all inline-block",
                   getWordSize(word.value),
                   getWordColor(index, word.value)
                 )}
                 style={{
-                  transform: `rotate(${rotation}deg)`,
-                  marginLeft: index % 3 === 0 ? '-0.25rem' : undefined,
-                  marginRight: index % 4 === 0 ? '-0.25rem' : undefined,
+                  transform: `rotate(${rotation}deg) translateY(${verticalOffset}px)`,
+                  marginLeft: `${horizontalOffset}px`,
+                  lineHeight: 1.4,
                 }}
                 title={`${word.text}: ${word.value} ocorrências`}
               >
