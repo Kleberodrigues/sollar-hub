@@ -125,7 +125,7 @@ export function Pricing() {
         </motion.div>
 
         {/* Pricing Cards */}
-        <div className="grid md:grid-cols-3 gap-4 mb-8">
+        <div className="grid md:grid-cols-3 gap-4 mb-6">
           {plans.map((plan, index) => {
             const Icon = plan.icon;
             const colors = colorMap[plan.color];
@@ -202,6 +202,30 @@ export function Pricing() {
             );
           })}
         </div>
+
+        {/* Terms Notice */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.5, delay: 0.35 }}
+          className="text-center mb-8"
+        >
+          <p className="text-sm text-text-muted">
+            Ao clicar em &quot;Começar Agora&quot;, você concorda com os{" "}
+            <Link href="/termos" className="text-pm-terracotta hover:underline">
+              Termos de Uso
+            </Link>
+            ,{" "}
+            <Link href="/termos" className="text-pm-terracotta hover:underline">
+              Termos Comerciais
+            </Link>
+            {" "}e{" "}
+            <Link href="/privacidade" className="text-pm-terracotta hover:underline">
+              Política de Privacidade
+            </Link>
+            .
+          </p>
+        </motion.div>
 
         {/* Enterprise Plan */}
         <motion.div
