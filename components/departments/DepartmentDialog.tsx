@@ -11,13 +11,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { createDepartment, updateDepartment } from "@/app/dashboard/departments/actions";
 
 interface Department {
@@ -40,11 +33,9 @@ export function DepartmentDialog({
   open,
   onClose,
   department,
-  departments,
 }: DepartmentDialogProps) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [parentId, setParentId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -56,37 +47,13 @@ export function DepartmentDialog({
       if (department) {
         setName(department.name);
         setDescription(department.description || "");
-        setParentId(department.parent_id);
       } else {
         setName("");
         setDescription("");
-        setParentId(null);
       }
       setError(null);
     }
   }, [open, department]);
-
-  // Filter out current department and its children from parent options
-  const getAvailableParents = () => {
-    if (!department) return departments;
-
-    const childIds = new Set<string>();
-    const findChildren = (parentId: string) => {
-      departments.forEach((d) => {
-        if (d.parent_id === parentId) {
-          childIds.add(d.id);
-          findChildren(d.id);
-        }
-      });
-    };
-
-    childIds.add(department.id);
-    findChildren(department.id);
-
-    return departments.filter((d) => !childIds.has(d.id));
-  };
-
-  const availableParents = getAvailableParents();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -103,7 +70,6 @@ export function DepartmentDialog({
       const input = {
         name: name.trim(),
         description: description.trim() || undefined,
-        parent_id: parentId,
       };
 
       const result = isEditing
@@ -153,30 +119,6 @@ export function DepartmentDialog({
               rows={3}
               disabled={isLoading}
             />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="parent">Departamento Pai</Label>
-            <Select
-              value={parentId || "none"}
-              onValueChange={(value) => setParentId(value === "none" ? null : value)}
-              disabled={isLoading}
-            >
-              <SelectTrigger id="parent">
-                <SelectValue placeholder="Selecione (opcional)" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="none">Nenhum (Departamento Raiz)</SelectItem>
-                {availableParents.map((dept) => (
-                  <SelectItem key={dept.id} value={dept.id}>
-                    {dept.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <p className="text-xs text-text-muted">
-              Deixe vazio para criar um departamento de primeiro nivel
-            </p>
           </div>
 
           {error && (

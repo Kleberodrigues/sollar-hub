@@ -106,7 +106,7 @@ export function AssessmentForm({
       router.refresh();
     } catch (err) {
       console.error('Error saving assessment:', err);
-      setError(err instanceof Error ? err.message : 'Erro ao salvar assessment');
+      setError(err instanceof Error ? err.message : 'Erro ao salvar avaliação');
     } finally {
       setLoading(false);
     }
@@ -116,7 +116,7 @@ export function AssessmentForm({
     <form onSubmit={handleSubmit}>
       <Card>
         <CardHeader>
-          <CardTitle>{isEditing ? 'Editar Assessment' : 'Novo Assessment'}</CardTitle>
+          <CardTitle>{isEditing ? 'Editar Avaliação' : 'Nova Avaliação'}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           {error && (
@@ -229,7 +229,7 @@ export function AssessmentForm({
               ) : (
                 <Save className="w-4 h-4 mr-2" />
               )}
-              {isEditing ? 'Salvar Alterações' : 'Criar Assessment'}
+              {isEditing ? 'Salvar Alterações' : 'Criar Avaliação'}
             </Button>
           </div>
         </CardContent>

@@ -4,7 +4,6 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Edit, BarChart3, Users } from "lucide-react";
 import Link from "next/link";
-import { AIInsightsCard } from "@/components/assessments/AIInsightsCard";
 import { ParticipantImportDialog } from "@/components/assessments/ParticipantImportDialog";
 import { getParticipants } from "../participant-import-actions";
 
@@ -295,13 +294,6 @@ export default async function AssessmentPage({
           </CardContent>
         </Card>
       )}
-
-      {/* AI Insights Card */}
-      <AIInsightsCard
-        assessmentId={assessment.id}
-        responseCount={responseCount}
-        highRiskCategories={[]}
-      />
 
       {/* Ações rápidas */}
       {responseCount > 0 && (
