@@ -19,7 +19,7 @@ const N8N_WEBHOOK_SECRET = process.env.N8N_WEBHOOK_SECRET;
 // Event type to webhook path mapping
 const WEBHOOK_ROUTES: Record<string, string> = {
   "member.invited": "/webhook/sollar-member-invite",
-  "participant.batch_imported": "/webhook/sollar-participants-imported",
+  "participants.imported": "/webhook/sollar-participants",
   // Default route handled separately
 };
 
