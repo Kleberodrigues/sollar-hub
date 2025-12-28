@@ -1,7 +1,8 @@
 'use client';
 
 import Link from "next/link";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -18,23 +19,46 @@ const navLinks = [
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const scrollToElement = useCallback((targetId: string) => {
+    const element = document.getElementById(targetId);
+    if (element) {
+      const headerHeight = 80;
+      const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({
+        top: elementPosition - headerHeight,
+        behavior: 'smooth'
+      });
+    }
+  }, []);
 
   const handleAnchorClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     if (href.startsWith('#')) {
       e.preventDefault();
       const targetId = href.substring(1);
-      const element = document.getElementById(targetId);
-      if (element) {
-        const headerHeight = 80; // altura do header fixo
-        const elementPosition = element.getBoundingClientRect().top + window.scrollY;
-        window.scrollTo({
-          top: elementPosition - headerHeight,
-          behavior: 'smooth'
-        });
+
+      // Se não estiver na home, navegar primeiro para a home
+      if (pathname !== '/') {
+        router.push('/' + href);
+      } else {
+        scrollToElement(targetId);
       }
       setIsMenuOpen(false);
     }
-  }, []);
+  }, [pathname, router, scrollToElement]);
+
+  // Scroll para a seção quando a página carregar com hash na URL
+  useEffect(() => {
+    if (pathname === '/' && window.location.hash) {
+      const targetId = window.location.hash.substring(1);
+      // Pequeno delay para garantir que os componentes carregaram
+      setTimeout(() => {
+        scrollToElement(targetId);
+      }, 100);
+    }
+  }, [pathname, scrollToElement]);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-border-light">
