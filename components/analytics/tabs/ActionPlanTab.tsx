@@ -45,7 +45,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import type { PlanType } from "@/lib/stripe/config";
 import { generateAIActionPlan, type ActionItem } from "@/app/dashboard/analytics/ai-action-plan-actions";
-import { createActionPlan, getActionPlans, deleteActionPlan, updateActionPlan } from "@/app/dashboard/action-plan/actions";
+import { createActionPlan, getActionPlans, deleteActionPlan } from "@/app/dashboard/action-plan/actions";
 import { RISK_BLOCK_LABELS, type RiskBlock, type ActionPlan } from "@/app/dashboard/action-plan/types";
 
 interface ActionPlanTabProps {
@@ -144,7 +144,7 @@ export function ActionPlanTab({
       } else {
         toast.error(result.error || 'Erro ao salvar ação');
       }
-    } catch (err) {
+    } catch {
       toast.error('Erro ao salvar ação');
     } finally {
       setIsSaving(false);
@@ -202,7 +202,7 @@ export function ActionPlanTab({
       } else {
         toast.error(result.error || 'Erro ao criar ação');
       }
-    } catch (err) {
+    } catch {
       toast.error('Erro ao criar ação');
     } finally {
       setIsSaving(false);

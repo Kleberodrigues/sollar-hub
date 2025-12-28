@@ -19,11 +19,7 @@ import {
   Sparkles,
   Maximize2,
   X,
-  Shield,
-  AlertTriangle,
-  AlertCircle,
   ChevronRight,
-  Target,
   Activity,
   MessageSquare,
 } from "lucide-react";
@@ -311,7 +307,7 @@ export function AnalyticsDashboardContent({
   const hasResponses = analytics.totalParticipants > 0;
 
   // Calcular distribuição de risco
-  const riskDistribution = useMemo(() => {
+  const _riskDistribution = useMemo(() => {
     const categories = analytics.responsesByCategory;
     const low = categories.filter(c => c.riskLevel === "low").length;
     const medium = categories.filter(c => c.riskLevel === "medium").length;
@@ -328,7 +324,7 @@ export function AnalyticsDashboardContent({
   }, [analytics.responsesByCategory]);
 
   // Score médio geral
-  const overallScore = useMemo(() => {
+  const _overallScore = useMemo(() => {
     if (analytics.responsesByCategory.length === 0) return 0;
     const sum = analytics.responsesByCategory.reduce((acc, c) => acc + c.averageScore, 0);
     return (sum / analytics.responsesByCategory.length).toFixed(1);
