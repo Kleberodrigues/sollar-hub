@@ -57,3 +57,18 @@ supabase/fix-*.sql
 *.txt
 !requirements.txt
 !package.txt
+
+# test scripts with potential secrets (keep only config mjs files)
+test-*.mjs
+check-*.mjs
+create-*.mjs
+fix-*.mjs
+change-*.mjs
+simulate-*.mjs
+debug-*.mjs
+verify-*.mjs
+
+# screenshots from tests
+*.png
+!public/**/*.png
+!app/**/*.png
