@@ -1,8 +1,8 @@
 'use client';
 
 import { motion } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Cloud, MessageSquare, Filter } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Cloud, Filter } from "lucide-react";
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import {

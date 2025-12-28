@@ -17,7 +17,6 @@ import {
   Shield,
   Calendar,
   BarChart3,
-  ArrowRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ProfessionalHeatMap } from "./tabs/ProfessionalHeatMap";
@@ -86,7 +85,7 @@ const getRiskConfig = (score: number) => {
 
 export function NR1ExecutiveDashboard({
   analytics,
-  assessmentTitle = "Avaliação NR-1"
+  assessmentTitle: _assessmentTitle = "Avaliação NR-1"
 }: NR1ExecutiveDashboardProps) {
   // Filter risk categories (exclude anchors and suggestions)
   const riskCategories = useMemo(() => {
