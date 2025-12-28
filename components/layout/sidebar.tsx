@@ -13,7 +13,6 @@ import {
   Building2,
   Settings,
   CreditCard,
-  Target,
   Shield,
 } from "lucide-react";
 
@@ -52,12 +51,6 @@ const navigationItems = [
     title: "Análise de Riscos",
     href: "/dashboard/analytics",
     icon: BarChart3,
-    roles: ["admin", "responsavel_empresa", "membro"],
-  },
-  {
-    title: "Plano de Ação",
-    href: "/dashboard/action-plan",
-    icon: Target,
     roles: ["admin", "responsavel_empresa", "membro"],
   },
   {
