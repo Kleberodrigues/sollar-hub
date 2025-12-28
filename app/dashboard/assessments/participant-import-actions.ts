@@ -194,8 +194,16 @@ export async function importParticipants(
         .eq('id', user.id)
         .single() as any);
 
+      // Get organization name for email template
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: organization } = await (supabase
+        .from('organizations')
+        .select('name')
+        .eq('id', profile.organization_id)
+        .single() as any);
+
       const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://app.sollarsaude.com.br';
-      const publicUrl = `${baseUrl}/assessments/${assessmentId}/respond`;
+      const publicUrl = `${baseUrl}/assess/${assessmentId}`;
 
       await dispatchEvent({
         organizationId: profile.organization_id,
@@ -204,6 +212,7 @@ export async function importParticipants(
           assessment_id: assessmentId,
           assessment_title: assessment.title,
           organization_id: profile.organization_id,
+          organization_name: organization?.name || 'sua empresa',
           participants: (inserted || []).map((p: { id: string; email: string; name: string; department?: string; role?: string }) => ({
             id: p.id,
             email: p.email,

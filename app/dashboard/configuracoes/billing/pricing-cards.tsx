@@ -1,7 +1,7 @@
 /**
  * Pricing Cards Component - NR-1 Focused Plans
  * Displays all 3 plans (Base, Intermediario, Avancado) with employee ranges
- * Updated: 2025-12-14 - New plan structure focused on NR-1 compliance
+ * Updated: 2025-12-28 - Simplified design matching landing page style
  */
 
 "use client";
@@ -10,7 +10,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Check, Building, Building2, Factory, Loader2, Users } from "lucide-react";
+import { Check, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { PLANS, type PlanType } from "@/lib/stripe/config";
 import Link from "next/link";
@@ -24,104 +24,57 @@ const plans: Array<{
   id: PlanType;
   name: string;
   description: string;
-  objective: string;
-  icon: typeof Building;
-  color: "terracotta" | "olive" | "sage";
-  popular?: boolean;
-  employeeRange: string;
   yearlyPrice: number;
+  reportsCount: string;
   features: string[];
+  highlighted?: boolean;
 }> = [
   {
     id: "base",
     name: "Base",
     description: "50 a 120 colaboradores",
-    objective: "Cumprir a NR-1 com clareza",
-    icon: Building,
-    color: "terracotta",
-    employeeRange: "50-120",
     yearlyPrice: PLANS.base.priceAmount.yearly,
+    reportsCount: "14 Relatórios anuais",
     features: [
-      "IA vertical em riscos psicossociais",
-      "Dashboards automaticos",
-      "Relatorio tecnico personalizado",
-      "Plano de acao orientado a prevencao",
-      "Analise por clusters de risco",
-      "Assessments ilimitados",
+      "Dashboards automáticos",
+      "Relatório técnico personalizado",
+      "Plano de ação orientado à prevenção",
       "Export PDF e CSV",
+      "Suporte por email",
     ],
+    highlighted: false,
   },
   {
     id: "intermediario",
-    name: "Intermediario",
+    name: "Intermediário",
     description: "121 a 250 colaboradores",
-    objective: "Apoiar decisoes gerenciais",
-    icon: Building2,
-    color: "olive",
-    popular: true,
-    employeeRange: "121-250",
     yearlyPrice: PLANS.intermediario.priceAmount.yearly,
+    reportsCount: "24 Relatórios anuais",
     features: [
       "Tudo do plano Base",
-      "Analise comparativa entre ciclos",
-      "Priorizacao por impacto organizacional",
-      "Dashboards comparativos (tempo/areas)",
-      "Relatorio executivo para lideranca",
+      "Dashboards comparativos",
+      "Priorização de riscos por impacto",
       "Branding personalizado",
-      "Suporte prioritario",
+      "Suporte prioritário",
     ],
+    highlighted: true,
   },
   {
     id: "avancado",
-    name: "Avancado",
+    name: "Avançado",
     description: "251 a 400 colaboradores",
-    objective: "Atender maior complexidade",
-    icon: Factory,
-    color: "sage",
-    employeeRange: "251-400",
     yearlyPrice: PLANS.avancado.priceAmount.yearly,
+    reportsCount: "28 Relatórios anuais",
     features: [
-      "Tudo do plano Intermediario",
-      "Analise sistemica dos riscos",
-      "Correlacao entre fatores organizacionais",
-      "Alertas de atencao elevada",
-      "Relatorio tecnico para gestao de riscos",
-      "Acesso a API",
+      "Tudo do plano Intermediário",
+      "Análise sistêmica dos riscos",
+      "Acesso à API",
       "Export XLSX",
       "Suporte dedicado",
     ],
+    highlighted: false,
   },
 ];
-
-const colorMap = {
-  terracotta: {
-    border: "border-pm-terracotta/30 hover:border-pm-terracotta/60",
-    borderActive: "border-pm-terracotta",
-    bg: "bg-pm-terracotta/5",
-    icon: "bg-pm-terracotta/10 text-pm-terracotta",
-    button: "bg-pm-terracotta hover:bg-pm-terracotta-hover text-white",
-    check: "text-pm-terracotta",
-    badge: "bg-pm-terracotta/10 text-pm-terracotta",
-  },
-  olive: {
-    border: "border-pm-olive/30 hover:border-pm-olive/60",
-    borderActive: "border-pm-olive",
-    bg: "bg-pm-olive/5",
-    icon: "bg-pm-olive/10 text-pm-olive",
-    button: "bg-pm-olive hover:bg-pm-olive-dark text-white",
-    check: "text-pm-olive",
-    badge: "bg-pm-olive/10 text-pm-olive",
-  },
-  sage: {
-    border: "border-bg-sage/50 hover:border-bg-sage",
-    borderActive: "border-bg-sage",
-    bg: "bg-bg-sage/30",
-    icon: "bg-bg-sage/50 text-text-heading",
-    button: "bg-text-heading hover:bg-text-heading/90 text-white",
-    check: "text-text-heading",
-    badge: "bg-bg-sage/50 text-text-heading",
-  },
-};
 
 export function PricingCards({ organizationId, currentPlan }: PricingCardsProps) {
   const [isLoading, setIsLoading] = useState<string | null>(null);
@@ -184,17 +137,14 @@ export function PricingCards({ organizationId, currentPlan }: PricingCardsProps)
         className="text-center"
       >
         <p className="text-sm text-text-muted">
-          Planos anuais com foco em conformidade NR-1 e gestao de riscos psicossociais
+          Pagamento anual • Sem taxas ocultas • Cancele quando quiser
         </p>
       </motion.div>
 
       {/* Plans Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
         {plans.map((plan, index) => {
-          const Icon = plan.icon;
           const isCurrent = currentPlan === plan.id;
-          const isPopular = plan.popular;
-          const colors = colorMap[plan.color];
 
           return (
             <motion.div
@@ -202,87 +152,82 @@ export function PricingCards({ organizationId, currentPlan }: PricingCardsProps)
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              className={`relative flex flex-col rounded-xl border-2 ${
-                isCurrent ? colors.borderActive : colors.border
-              } ${colors.bg} p-5 transition-all duration-300 ${
-                isPopular ? "md:-mt-2 md:pb-7 shadow-lg" : ""
+              className={`relative flex flex-col bg-white rounded-2xl shadow-sm overflow-hidden border-2 ${
+                plan.highlighted ? "border-pm-terracotta" : "border-border-light"
               }`}
             >
-              {/* Popular Badge */}
-              {isPopular && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <span className="px-3 py-1 text-xs font-semibold bg-pm-olive text-white rounded-full shadow-sm">
-                    Mais Popular
-                  </span>
+              {/* Mais Popular Banner */}
+              {plan.highlighted && (
+                <div className="bg-pm-terracotta text-white text-center py-2 text-sm font-medium">
+                  Mais Popular
                 </div>
               )}
 
               {/* Current Plan Badge */}
               {isCurrent && (
-                <div className="absolute -top-3 right-3">
-                  <span className="px-2 py-1 text-xs font-medium bg-white border-2 border-gray-300 rounded-full shadow-sm">
-                    Atual
+                <div className="absolute top-2 right-2 z-10">
+                  <span className="px-2 py-1 text-xs font-medium bg-pm-green text-white rounded-full shadow-sm">
+                    Plano Atual
                   </span>
                 </div>
               )}
 
-              {/* Header */}
-              <div className="flex items-center gap-3 mb-3">
-                <div className={`w-10 h-10 rounded-lg ${colors.icon} flex items-center justify-center`}>
-                  <Icon className="w-5 h-5" />
+              <div className={`p-6 flex flex-col flex-grow ${plan.highlighted ? "" : ""}`}>
+                {/* Plan Header */}
+                <div className="mb-4">
+                  <h3 className="font-display text-xl font-semibold text-pm-green-dark">
+                    {plan.name}
+                  </h3>
+                  <p className="text-sm text-text-secondary mt-1">
+                    {plan.description}
+                  </p>
                 </div>
-                <div>
-                  <h3 className="font-semibold text-text-heading">{plan.name}</h3>
-                  <p className="text-xs text-text-muted">{plan.objective}</p>
-                </div>
-              </div>
 
-              {/* Employee Range Badge */}
-              <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full ${colors.badge} text-xs font-medium w-fit mb-3`}>
-                <Users className="w-3.5 h-3.5" />
-                <span>{plan.description}</span>
-              </div>
-
-              {/* Price */}
-              <div className="mb-4">
-                <div className="flex items-baseline gap-1">
-                  <span className="text-3xl font-bold text-text-heading">
+                {/* Price */}
+                <div className="mb-4">
+                  <span className="font-display text-3xl font-bold text-pm-green-dark">
                     {formatPrice(plan.yearlyPrice)}
                   </span>
-                  <span className="text-sm text-text-muted">/ano</span>
+                  <span className="text-text-secondary">/ano</span>
+                  <p className="text-xs text-text-muted mt-1">
+                    Equivalente a {formatMonthlyEquivalent(plan.yearlyPrice)}/mês
+                  </p>
                 </div>
-                <p className="text-xs text-text-muted mt-1">
-                  Equivalente a {formatMonthlyEquivalent(plan.yearlyPrice)}/mes
-                </p>
+
+                {/* Reports Count Badge */}
+                <div className="mb-4 inline-block bg-pm-olive/10 text-pm-olive text-sm font-medium px-3 py-1 rounded-full w-fit">
+                  {plan.reportsCount}
+                </div>
+
+                {/* CTA Button */}
+                <Button
+                  className={`w-full transition-all ${
+                    plan.highlighted
+                      ? "bg-pm-terracotta hover:bg-pm-terracotta-hover text-white"
+                      : "bg-pm-green hover:bg-pm-green-dark text-white"
+                  } ${!termsAccepted && !isCurrent ? "opacity-60" : ""}`}
+                  onClick={() => handleCheckout(plan.id)}
+                  disabled={isLoading !== null || isCurrent || !termsAccepted}
+                >
+                  {isLoading === plan.id ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : isCurrent ? (
+                    "Plano Atual"
+                  ) : (
+                    "Começar Agora"
+                  )}
+                </Button>
+
+                {/* Features */}
+                <ul className="mt-6 space-y-2 flex-grow">
+                  {plan.features.map((feature, i) => (
+                    <li key={i} className="flex items-start gap-2">
+                      <Check className="h-4 w-4 text-pm-green flex-shrink-0 mt-0.5" />
+                      <span className="text-sm text-text-secondary">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-
-              {/* Features - flex-grow to push button to bottom */}
-              <ul className="space-y-2 mb-5 flex-grow">
-                {plan.features.map((feature, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm">
-                    <Check className={`w-4 h-4 mt-0.5 flex-shrink-0 ${colors.check}`} />
-                    <span className="text-text-secondary">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-
-              {/* CTA Button - always at bottom */}
-              <Button
-                className={`w-full ${colors.button} transition-all mt-auto ${
-                  !termsAccepted && !isCurrent ? "opacity-60" : ""
-                }`}
-                size="sm"
-                onClick={() => handleCheckout(plan.id)}
-                disabled={isLoading !== null || isCurrent || !termsAccepted}
-              >
-                {isLoading === plan.id ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : isCurrent ? (
-                  "Plano Atual"
-                ) : (
-                  `Assinar ${plan.name}`
-                )}
-              </Button>
             </motion.div>
           );
         })}
@@ -326,11 +271,11 @@ export function PricingCards({ organizationId, currentPlan }: PricingCardsProps)
       {/* Footer Info */}
       <div className="text-center space-y-2">
         <p className="text-xs text-text-muted">
-          Garantia de 7 dias - Contrato anual (12 meses) - Sem taxas ocultas
+          Garantia de 7 dias • Contrato anual (12 meses) • Sem taxas ocultas
         </p>
         <p className="text-xs text-text-muted">
-          Para organizacoes com mais de 400 colaboradores,{" "}
-          <a href="mailto:contato@sollar.com" className="text-pm-terracotta hover:underline">
+          Para organizações com mais de 400 colaboradores,{" "}
+          <a href="mailto:contato@psicomapa.cloud" className="text-pm-terracotta hover:underline">
             entre em contato
           </a>
         </p>

@@ -25,7 +25,7 @@ const teamMembers = [
     color: 'pm-terracotta',
   },
   {
-    name: 'Laura',
+    name: 'Laura Nogueira',
     role: 'Co-fundadora',
     tagline: 'PsicoMapa e o meu olhar',
     image: '/images/laura.jpeg',
@@ -81,7 +81,7 @@ export default function SobrePage() {
                   transition={{ duration: 0.6, delay: index * 0.2 }}
                   className={`flex flex-col ${
                     index % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'
-                  } gap-8 lg:gap-12 items-center`}
+                  } gap-8 lg:gap-12`}
                 >
                   {/* Photo */}
                   <div className="w-full lg:w-2/5 flex-shrink-0">
@@ -114,28 +114,31 @@ export default function SobrePage() {
                   </div>
 
                   {/* Content */}
-                  <div className="w-full lg:w-3/5 space-y-6">
-                    {/* Tagline */}
-                    <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full ${
-                      member.color === 'pm-terracotta'
-                        ? 'bg-pm-terracotta/10 text-pm-terracotta'
-                        : 'bg-pm-olive/10 text-pm-olive'
-                    }`}>
-                      <Sparkles className="w-4 h-4" />
-                      <span className="font-medium text-sm">{member.tagline}</span>
-                    </div>
-
-                    {/* Bio */}
+                  <div className="w-full lg:w-3/5 flex flex-col justify-between">
+                    {/* Top section: Tagline + Bio */}
                     <div className="space-y-4">
-                      {member.bio.map((paragraph, i) => (
-                        <p key={i} className="text-text-secondary leading-relaxed">
-                          {paragraph}
-                        </p>
-                      ))}
+                      {/* Tagline */}
+                      <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full ${
+                        member.color === 'pm-terracotta'
+                          ? 'bg-pm-terracotta/10 text-pm-terracotta'
+                          : 'bg-pm-olive/10 text-pm-olive'
+                      }`}>
+                        <Sparkles className="w-4 h-4" />
+                        <span className="font-medium text-sm">{member.tagline}</span>
+                      </div>
+
+                      {/* Bio */}
+                      <div className="space-y-4">
+                        {member.bio.map((paragraph, i) => (
+                          <p key={i} className="text-text-secondary leading-relaxed">
+                            {paragraph}
+                          </p>
+                        ))}
+                      </div>
                     </div>
 
-                    {/* Certifications */}
-                    <div className={`p-6 rounded-xl ${
+                    {/* Bottom section: Certifications */}
+                    <div className={`p-6 rounded-xl mt-6 ${
                       member.color === 'pm-terracotta'
                         ? 'bg-pm-terracotta/5 border border-pm-terracotta/10'
                         : 'bg-pm-olive/5 border border-pm-olive/10'
