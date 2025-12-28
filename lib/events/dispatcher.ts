@@ -29,8 +29,9 @@ const WEBHOOK_ROUTES: Record<string, string> = {
 function getWebhookUrl(eventType: string): string | undefined {
   if (!N8N_WEBHOOK_URL) return undefined;
 
-  // Extract base URL (remove any path)
-  const baseUrl = N8N_WEBHOOK_URL.replace(/\/webhook\/.*$/, "");
+  // Extract base URL (protocol + host only)
+  const urlObj = new URL(N8N_WEBHOOK_URL);
+  const baseUrl = `${urlObj.protocol}//${urlObj.host}`;
 
   // Check if event type has a specific route
   const route = WEBHOOK_ROUTES[eventType];
