@@ -138,23 +138,23 @@ export default function SobrePage() {
                     </div>
 
                     {/* Bottom section: Certifications */}
-                    <div className={`p-6 rounded-xl mt-6 ${
+                    <div className={`p-6 lg:p-8 rounded-xl mt-6 ${
                       member.color === 'pm-terracotta'
                         ? 'bg-pm-terracotta/5 border border-pm-terracotta/10'
                         : 'bg-pm-olive/5 border border-pm-olive/10'
                     }`}>
-                      <div className="flex items-center gap-2 mb-4">
-                        <GraduationCap className={`w-5 h-5 ${
+                      <div className="flex items-center gap-2 mb-5">
+                        <GraduationCap className={`w-6 h-6 ${
                           member.color === 'pm-terracotta' ? 'text-pm-terracotta' : 'text-pm-olive'
                         }`} />
-                        <h3 className="font-display font-semibold text-text-heading">
+                        <h3 className="font-display text-lg font-semibold text-text-heading">
                           Formação e certificações
                         </h3>
                       </div>
-                      <ul className="space-y-2">
+                      <ul className="space-y-3">
                         {member.certifications.map((cert, i) => (
-                          <li key={i} className="flex items-start gap-2 text-sm text-text-secondary">
-                            <Award className={`w-4 h-4 flex-shrink-0 mt-0.5 ${
+                          <li key={i} className="flex items-start gap-3 text-base text-text-secondary">
+                            <Award className={`w-5 h-5 flex-shrink-0 mt-0.5 ${
                               member.color === 'pm-terracotta' ? 'text-pm-terracotta' : 'text-pm-olive'
                             }`} />
                             {cert}
