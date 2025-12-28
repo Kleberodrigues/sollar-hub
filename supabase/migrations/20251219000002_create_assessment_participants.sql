@@ -45,7 +45,7 @@ CREATE POLICY "Admins and managers can insert participants"
   WITH CHECK (
     organization_id IN (
       SELECT organization_id FROM user_profiles
-      WHERE id = auth.uid() AND role IN ('admin', 'manager')
+      WHERE id = auth.uid() AND role IN ('admin', 'responsavel_empresa')
     )
   );
 
@@ -56,7 +56,7 @@ CREATE POLICY "Admins and managers can update participants"
   USING (
     organization_id IN (
       SELECT organization_id FROM user_profiles
-      WHERE id = auth.uid() AND role IN ('admin', 'manager')
+      WHERE id = auth.uid() AND role IN ('admin', 'responsavel_empresa')
     )
   );
 

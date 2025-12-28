@@ -99,7 +99,7 @@ export async function importParticipants(
     .eq('id', user.id)
     .single() as any);
 
-  if (!profile || !['admin', 'manager'].includes(profile.role)) {
+  if (!profile || !['admin', 'responsavel_empresa'].includes(profile.role)) {
     return {
       success: false,
       error: 'Você não tem permissão para importar participantes',
