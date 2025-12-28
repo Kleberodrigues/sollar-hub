@@ -108,11 +108,11 @@ export function PlanDistributionChart({
 
   return (
     <div className={className}>
-      <div className="bg-white rounded-lg border border-border-light p-6 shadow-sm h-full">
+      <div className="bg-white rounded-lg border border-border-light p-6 shadow-sm h-full relative">
         <h3 className="text-lg font-semibold text-pm-brown mb-4">
           Distribuição de Planos
         </h3>
-        <div className="h-[300px]">
+        <div className="h-[300px] relative">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
@@ -136,12 +136,12 @@ export function PlanDistributionChart({
               />
             </PieChart>
           </ResponsiveContainer>
-        </div>
-        {/* Total in center */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="text-center mt-[-60px]">
-            <p className="text-2xl font-bold text-pm-brown">{total}</p>
-            <p className="text-xs text-text-muted">Total</p>
+          {/* Total in center of donut */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ marginTop: '-30px' }}>
+            <div className="text-center">
+              <p className="text-2xl font-bold text-pm-brown">{total}</p>
+              <p className="text-xs text-text-muted">Total</p>
+            </div>
           </div>
         </div>
       </div>
