@@ -81,6 +81,10 @@ const ClimaSurveyDashboard = dynamic(() => import("./clima/ClimaSurveyDashboard"
   loading: () => <TabSkeleton />,
   ssr: false,
 });
+const NR1ExecutiveDashboard = dynamic(() => import("./NR1ExecutiveDashboard").then(m => ({ default: m.NR1ExecutiveDashboard })), {
+  loading: () => <TabSkeleton />,
+  ssr: false,
+});
 
 interface CategoryResponse {
   category: string;
@@ -488,202 +492,98 @@ export function AnalyticsDashboardContent({
         </motion.div>
       )}
 
-      {/* Conteúdo padrão (esconde quando clima view está ativo) */}
+      {/* Conteúdo padrão - Dashboard NR-1 Executivo Unificado */}
       {(!isPulse || !showClimaView) && (
         <>
-      {/* KPIs Principais - Design Limpo */}
-      <motion.div variants={sollarMotion.fadeUp} className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        {/* Participantes */}
-        <Card className="bg-white border border-gray-200 hover:border-pm-terracotta/40 transition-colors">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Users className="w-4 h-4 text-pm-terracotta" />
-              <span className="text-xs font-medium text-text-muted">Participantes</span>
-            </div>
-            <p className="text-3xl font-display font-bold text-text-heading">{analytics.totalParticipants}</p>
-            <div className="flex items-center gap-1 mt-2">
-              <TrendingUp className="w-3 h-3 text-pm-olive" />
-              <span className="text-xs text-pm-olive font-medium">Ativos</span>
-            </div>
-          </CardContent>
-        </Card>
+          {/* Dashboard NR-1 Executivo com Mapa de Calor Profissional */}
+          <motion.div variants={sollarMotion.fadeUp}>
+            <NR1ExecutiveDashboard
+              analytics={analytics}
+              assessmentTitle={assessmentTitle}
+            />
+          </motion.div>
 
-        {/* Taxa de Conclusão */}
-        <Card className="bg-white border border-gray-200 hover:border-pm-olive/40 transition-colors">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Target className="w-4 h-4 text-pm-olive" />
-              <span className="text-xs font-medium text-text-muted">Conclusão</span>
-            </div>
-            <p className="text-3xl font-display font-bold text-text-heading">{analytics.completionRate}%</p>
-            <div className="w-full h-1.5 bg-gray-100 rounded-full mt-2">
-              <div className="h-full bg-pm-olive rounded-full transition-all" style={{ width: `${analytics.completionRate}%` }} />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Score Médio */}
-        <Card className="bg-white border border-gray-200 hover:border-gray-300 transition-colors">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Activity className="w-4 h-4 text-pm-olive" />
-              <span className="text-xs font-medium text-text-muted">Score Médio</span>
-            </div>
-            <p className="text-3xl font-display font-bold text-text-heading">{overallScore}</p>
-            <p className="text-xs text-text-muted mt-2">de 5.0 pontos</p>
-          </CardContent>
-        </Card>
-
-        {/* Baixo Risco */}
-        <Card className="bg-white border border-green-200 hover:border-green-300 transition-colors">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Shield className="w-4 h-4 text-green-600" />
-              <span className="text-xs font-medium text-green-700">Baixo Risco</span>
-            </div>
-            <p className="text-3xl font-display font-bold text-green-700">{riskDistribution.low}%</p>
-            <p className="text-xs text-green-600 mt-2">{riskDistribution.lowCount} categorias</p>
-          </CardContent>
-        </Card>
-
-        {/* Médio Risco */}
-        <Card className="bg-white border border-amber-200 hover:border-amber-300 transition-colors">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <AlertTriangle className="w-4 h-4 text-amber-600" />
-              <span className="text-xs font-medium text-amber-700">Médio Risco</span>
-            </div>
-            <p className="text-3xl font-display font-bold text-amber-700">{riskDistribution.medium}%</p>
-            <p className="text-xs text-amber-600 mt-2">{riskDistribution.mediumCount} categorias</p>
-          </CardContent>
-        </Card>
-
-        {/* Alto Risco */}
-        <Card className="bg-white border border-red-200 hover:border-red-300 transition-colors">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <AlertCircle className="w-4 h-4 text-red-600" />
-              <span className="text-xs font-medium text-red-700">Alto Risco</span>
-            </div>
-            <p className="text-3xl font-display font-bold text-red-700">{riskDistribution.high}%</p>
-            <p className="text-xs text-red-600 mt-2">{riskDistribution.highCount} categorias</p>
-          </CardContent>
-        </Card>
-      </motion.div>
-
-      {/* Cards de Ação - Relatório e IA */}
-      <motion.div variants={sollarMotion.fadeUp} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Relatório Executivo */}
-        <Card className="bg-white border border-gray-200 border-l-4 border-l-pm-terracotta hover:shadow-md hover:border-gray-300 transition-all cursor-pointer group"
-          onClick={() => setFullscreenSection("report")}
-        >
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-pm-terracotta/10 flex items-center justify-center">
-                  <FileOutput className="w-6 h-6 text-pm-terracotta" />
+          {/* Cards de Ação - Relatório e IA */}
+          <motion.div variants={sollarMotion.fadeUp} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Relatório Executivo */}
+            <Card className="bg-white border border-gray-200 border-l-4 border-l-pm-terracotta hover:shadow-md hover:border-gray-300 transition-all cursor-pointer group"
+              onClick={() => setFullscreenSection("report")}
+            >
+              <CardContent className="p-5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-pm-terracotta/10 flex items-center justify-center">
+                      <FileOutput className="w-6 h-6 text-pm-terracotta" />
+                    </div>
+                    <div>
+                      <h3 className="font-display text-lg font-semibold text-text-heading">Relatório Executivo</h3>
+                      <p className="text-sm text-text-muted">Gere relatório PDF/CSV completo</p>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-text-muted group-hover:text-pm-terracotta transition-colors" />
                 </div>
-                <div>
-                  <h3 className="font-display text-lg font-semibold text-text-heading">Relatório Executivo</h3>
-                  <p className="text-sm text-text-muted">Gere relatório PDF/CSV completo</p>
+              </CardContent>
+            </Card>
+
+            {/* Plano de Ação com IA */}
+            <Card className="bg-white border border-gray-200 border-l-4 border-l-purple-500 hover:shadow-md hover:border-gray-300 transition-all cursor-pointer group"
+              onClick={() => setFullscreenSection("action")}
+            >
+              <CardContent className="p-5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center">
+                      <Sparkles className="w-6 h-6 text-purple-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-display text-lg font-semibold text-text-heading">Plano de Ação com IA</h3>
+                      <p className="text-sm text-text-muted">Recomendações personalizadas</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge className="bg-purple-100 text-purple-700 text-xs border-0">IA</Badge>
+                    <ChevronRight className="w-5 h-5 text-text-muted group-hover:text-purple-500 transition-colors" />
+                  </div>
                 </div>
-              </div>
-              <ChevronRight className="w-5 h-5 text-text-muted group-hover:text-pm-terracotta transition-colors" />
-            </div>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
+          </motion.div>
 
-        {/* Plano de Ação com IA */}
-        <Card className="bg-white border border-gray-200 border-l-4 border-l-purple-500 hover:shadow-md hover:border-gray-300 transition-all cursor-pointer group"
-          onClick={() => setFullscreenSection("action")}
-        >
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center">
-                  <Sparkles className="w-6 h-6 text-purple-600" />
-                </div>
-                <div>
-                  <h3 className="font-display text-lg font-semibold text-text-heading">Plano de Ação com IA</h3>
-                  <p className="text-sm text-text-muted">Recomendações personalizadas</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <Badge className="bg-purple-100 text-purple-700 text-xs border-0">IA</Badge>
-                <ChevronRight className="w-5 h-5 text-text-muted group-hover:text-purple-500 transition-colors" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </motion.div>
+          {/* Grid de Análises Complementares */}
+          <motion.div variants={sollarMotion.fadeUp} className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            {/* Departamentos */}
+            <SectionCard
+              title="Departamentos"
+              icon={Building2}
+              onExpand={() => setFullscreenSection("departments")}
+              accentColor="olive"
+            >
+              <DepartmentAnalysisTab departments={departments} totalParticipants={analytics.totalParticipants} compact />
+            </SectionCard>
 
-      {/* Seção Especial: Tendências de Clima (apenas para Pesquisa de Clima) */}
-      {isPulse && (
-        <motion.div variants={sollarMotion.fadeUp}>
-          <SectionCard
-            title="Tendência de Clima"
-            icon={TrendingUp}
-            onExpand={() => setFullscreenSection("climatrend")}
-            accentColor="olive"
-          >
-            <ClimaTrendTab assessmentType={assessmentType} />
-          </SectionCard>
-        </motion.div>
-      )}
+            {/* Âncoras */}
+            <SectionCard
+              title="Âncoras de Satisfação"
+              icon={Anchor}
+              onExpand={() => setFullscreenSection("anchors")}
+              accentColor="olive"
+            >
+              <AnchorsTab anchors={anchorsData.anchors} overallAnchorScore={anchorsData.overallScore} compact />
+            </SectionCard>
 
-      {/* Grid de Gráficos - Layout Balanceado */}
-      <motion.div variants={sollarMotion.fadeUp} className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        {/* Análise por Blocos NR-1 */}
-        <SectionCard
-          title={isPulse ? "Indicadores de Clima" : "Blocos NR-1"}
-          icon={BarChart3}
-          onExpand={() => setFullscreenSection("blocks")}
-          accentColor="terracotta"
-        >
-          <BlockAnalysisTab categories={analytics.responsesByCategory} compact />
-        </SectionCard>
+            {/* Nuvem de Palavras */}
+            <SectionCard
+              title="Nuvem de Palavras"
+              icon={Cloud}
+              onExpand={() => setFullscreenSection("wordcloud")}
+              accentColor="terracotta"
+            >
+              <WordCloudTab textResponses={textResponses} />
+            </SectionCard>
 
-        {/* Departamentos */}
-        <SectionCard
-          title="Departamentos"
-          icon={Building2}
-          onExpand={() => setFullscreenSection("departments")}
-          accentColor="olive"
-        >
-          <DepartmentAnalysisTab departments={departments} totalParticipants={analytics.totalParticipants} compact />
-        </SectionCard>
+            {/* REMOVIDO: Antigo bloco "Blocos NR-1" por bloco - agora está no NR1ExecutiveDashboard */}
 
-        {/* Âncoras */}
-        <SectionCard
-          title="Âncoras de Satisfação"
-          icon={Anchor}
-          onExpand={() => setFullscreenSection("anchors")}
-          accentColor="olive"
-        >
-          <AnchorsTab anchors={anchorsData.anchors} overallAnchorScore={anchorsData.overallScore} compact />
-        </SectionCard>
-
-        {/* Nuvem de Palavras */}
-        <SectionCard
-          title="Nuvem de Palavras"
-          icon={Cloud}
-          onExpand={() => setFullscreenSection("wordcloud")}
-          accentColor="terracotta"
-        >
-          <WordCloudTab textResponses={textResponses} />
-        </SectionCard>
-
-        {/* Mapa de Calor */}
-        <SectionCard
-          title="Mapa de Calor"
-          icon={Grid3X3}
-          onExpand={() => setFullscreenSection("heatmap")}
-          accentColor="amber"
-        >
-          <HeatMapTab heatMapData={heatMapData} categories={categories} />
-        </SectionCard>
-
-      </motion.div>
+          </motion.div>
         </>
       )}
 
