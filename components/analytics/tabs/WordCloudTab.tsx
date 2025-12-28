@@ -140,32 +140,51 @@ export function WordCloudTab({ textResponses }: WordCloudTabProps) {
     return "text-base";
   };
 
-  // Rotation angles for organic cloud effect - more variety including some vertical
-  const getWordRotation = (index: number, isLarge: boolean) => {
-    if (isLarge) {
-      // Large words: mostly horizontal with slight angles
-      const rotations = [0, -5, 5, -3, 3, 0, -8, 8];
+  // Rotation angles - subtle for readability
+  const getWordRotation = (index: number, ratio: number) => {
+    if (ratio > 0.6) return 0; // Large words stay horizontal
+    if (ratio > 0.3) {
+      const rotations = [-8, 0, 5, 0, -5, 0, 8, 0];
       return rotations[index % rotations.length];
     }
-    // Smaller words: more varied rotations including vertical
-    const rotations = [-90, -45, -20, -10, 0, 0, 0, 10, 20, 45, 90, -15, 15, -30, 30];
+    // Smaller words: subtle rotations only
+    const rotations = [-15, -8, 0, 0, 0, 8, 15, -12, 12, 0];
     return rotations[index % rotations.length];
   };
 
-  // Calculate spiral-like positions for cloud effect
-  const getWordPosition = (index: number, total: number) => {
-    // Golden angle for spiral distribution
-    const goldenAngle = 137.5 * (Math.PI / 180);
-    const angle = index * goldenAngle;
+  // Pre-calculated positions for cloud layout - handcrafted for better distribution
+  const cloudPositions = useMemo(() => {
+    const positions = [
+      // Center - largest word
+      { x: 50, y: 50 },
+      // Inner ring - 2nd-5th words
+      { x: 30, y: 40 }, { x: 70, y: 45 }, { x: 45, y: 30 }, { x: 55, y: 68 },
+      // Second ring - 6th-12th words
+      { x: 20, y: 55 }, { x: 80, y: 55 }, { x: 35, y: 20 }, { x: 65, y: 75 },
+      { x: 15, y: 35 }, { x: 85, y: 40 }, { x: 50, y: 15 },
+      // Outer ring - 13th-20th words
+      { x: 25, y: 70 }, { x: 75, y: 25 }, { x: 10, y: 50 }, { x: 90, y: 60 },
+      { x: 40, y: 85 }, { x: 60, y: 12 }, { x: 18, y: 22 }, { x: 82, y: 78 },
+      // Far outer - 21st-35th words
+      { x: 12, y: 68 }, { x: 88, y: 32 }, { x: 30, y: 88 }, { x: 70, y: 8 },
+      { x: 8, y: 42 }, { x: 92, y: 48 }, { x: 22, y: 12 }, { x: 78, y: 88 },
+      { x: 45, y: 92 }, { x: 55, y: 8 }, { x: 5, y: 58 }, { x: 95, y: 42 },
+      { x: 35, y: 5 }, { x: 65, y: 95 }, { x: 50, y: 82 },
+    ];
+    return positions;
+  }, []);
 
-    // Distance from center increases with index (outer words are less important)
-    const normalizedIndex = index / total;
-    const radius = 15 + normalizedIndex * 35; // 15-50% from center
-
-    const x = 50 + Math.cos(angle) * radius;
-    const y = 50 + Math.sin(angle) * radius;
-
-    return { x: Math.max(10, Math.min(90, x)), y: Math.max(15, Math.min(85, y)) };
+  const getWordPosition = (index: number) => {
+    if (index < cloudPositions.length) {
+      return cloudPositions[index];
+    }
+    // Fallback for extra words
+    const angle = index * 2.4; // Golden angle approximation
+    const radius = 35 + (index - cloudPositions.length) * 3;
+    return {
+      x: Math.max(8, Math.min(92, 50 + Math.cos(angle) * radius)),
+      y: Math.max(8, Math.min(92, 50 + Math.sin(angle) * radius))
+    };
   };
 
   if (textResponses.length === 0 || filteredTexts.length === 0) {
@@ -222,19 +241,18 @@ export function WordCloudTab({ textResponses }: WordCloudTabProps) {
         </Card>
       </motion.div>
 
-      {/* Word Cloud - Spiral/cluster layout with absolute positioning */}
+      {/* Word Cloud - Optimized cloud layout with pre-calculated positions */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.1 }}
         className="flex-1"
       >
-        <div className="relative min-h-[380px] w-full">
+        <div className="relative min-h-[400px] w-full overflow-hidden">
           {words.slice(0, 35).map((word, index) => {
             const ratio = word.value / maxValue;
-            const isLarge = ratio > 0.5;
-            const rotation = getWordRotation(index, isLarge);
-            const position = getWordPosition(index, Math.min(words.length, 35));
+            const rotation = getWordRotation(index, ratio);
+            const position = getWordPosition(index);
 
             return (
               <motion.span
@@ -248,19 +266,19 @@ export function WordCloudTab({ textResponses }: WordCloudTabProps) {
                   scale: 1,
                 }}
                 transition={{
-                  duration: 0.5,
-                  delay: index * 0.03,
+                  duration: 0.4,
+                  delay: index * 0.025,
                   type: "spring",
-                  stiffness: 100,
-                  damping: 15
+                  stiffness: 120,
+                  damping: 12
                 }}
                 whileHover={{
-                  scale: 1.15,
-                  zIndex: 50,
+                  scale: 1.2,
+                  zIndex: 100,
                   transition: { duration: 0.15 }
                 }}
                 className={cn(
-                  "absolute cursor-default transition-all whitespace-nowrap",
+                  "absolute cursor-default transition-all whitespace-nowrap select-none",
                   getWordSize(word.value),
                   getWordColor(index, word.value)
                 )}
@@ -268,7 +286,7 @@ export function WordCloudTab({ textResponses }: WordCloudTabProps) {
                   left: `${position.x}%`,
                   top: `${position.y}%`,
                   transform: `translate(-50%, -50%) rotate(${rotation}deg)`,
-                  zIndex: Math.round(ratio * 30),
+                  zIndex: 40 - index, // Most frequent words on top
                 }}
                 title={`${word.text}: ${word.value} ocorrências`}
               >
