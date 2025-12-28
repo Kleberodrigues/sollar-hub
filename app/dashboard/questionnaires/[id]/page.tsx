@@ -48,7 +48,7 @@ export default async function QuestionnairePage({
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const _canManage = ["admin", "manager", "Responsável", "responsavel"].includes((profile as any).role);
+  const _canManage = ["admin", "manager", "Responsável", "responsavel", "responsavel_empresa"].includes((profile as any).role);
 
   // Buscar questionário com perguntas (templates globais OU da organização)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
