@@ -12,7 +12,7 @@ import {
 import { AssessmentSelector } from "@/components/analytics/AssessmentSelector";
 
 interface AnalyticsPageProps {
-  searchParams: Promise<{ assessment?: string }>;
+  searchParams: Promise<{ assessment?: string; section?: string }>;
 }
 
 export default async function AnalyticsPage({
@@ -155,7 +155,7 @@ export default async function AnalyticsPage({
       showBackButton
     >
       <Suspense fallback={<AnalyticsLoading />}>
-        <AnalyticsDashboard assessmentId={assessmentId} />
+        <AnalyticsDashboard assessmentId={assessmentId} initialSection={params.section} />
       </Suspense>
     </AnalyticsPageContent>
   );

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -138,6 +138,7 @@ interface AnalyticsDashboardContentProps {
   currentPlan?: PlanType;
   onDataChange?: () => void;
   departments?: DepartmentData[];
+  initialSection?: string;
 }
 
 // Framer Motion Variants seguindo o Design System Sollar
@@ -300,11 +301,19 @@ export function AnalyticsDashboardContent({
   currentPlan = 'base',
   onDataChange,
   departments = [],
+  initialSection,
 }: AnalyticsDashboardContentProps) {
   const isPulse = assessmentType === 'pulse';
   const [fullscreenSection, setFullscreenSection] = useState<string | null>(null);
   const [showClimaView, setShowClimaView] = useState(isPulse); // Default to clima view for pulse
   const hasResponses = analytics.totalParticipants > 0;
+
+  // Abrir seção automaticamente quando initialSection for passado
+  useEffect(() => {
+    if (initialSection && hasResponses) {
+      setFullscreenSection(initialSection);
+    }
+  }, [initialSection, hasResponses]);
 
   // Calcular distribuição de risco
   const _riskDistribution = useMemo(() => {

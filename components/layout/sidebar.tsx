@@ -56,7 +56,7 @@ const navigationItems = [
   },
   {
     title: "Plano de Ação",
-    href: "/dashboard/action-plan",
+    href: "/dashboard/analytics?section=action",
     icon: Target,
     roles: ["admin", "responsavel_empresa", "membro"],
   },
