@@ -245,7 +245,7 @@ export function WordCloudTab({ textResponses }: WordCloudTabProps) {
           transition={{ duration: 0.5, delay: 0.2 }}
         >
           <Card className="border-l-4 border-l-pm-terracotta h-full">
-            <CardHeader className="flex flex-row items-center gap-3">
+            <CardHeader className="flex flex-row items-center gap-3 pb-2">
               <div className="w-10 h-10 rounded-xl bg-pm-terracotta/10 flex items-center justify-center">
                 <MessageSquare className="w-5 h-5 text-pm-terracotta" />
               </div>
@@ -253,21 +253,20 @@ export function WordCloudTab({ textResponses }: WordCloudTabProps) {
                 Palavras Mais Frequentes
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 xl:grid-cols-3 gap-2">
-                {words.slice(0, 20).map((word, index) => (
+            <CardContent className="pt-0">
+              <div className="space-y-1.5">
+                {words.slice(0, 15).map((word, index) => (
                   <motion.div
                     key={word.text}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.2, delay: index * 0.03 }}
-                    className="flex items-center gap-2 p-2 rounded-lg bg-bg-secondary overflow-hidden"
-                    title={word.text}
+                    initial={{ opacity: 0, x: 10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.2, delay: index * 0.02 }}
+                    className="flex items-center justify-between p-2 rounded-lg bg-bg-secondary hover:bg-bg-tertiary transition-colors"
                   >
-                    <span className="font-medium text-text-heading capitalize truncate flex-1 min-w-0">
+                    <span className="font-medium text-text-heading capitalize">
                       {word.text}
                     </span>
-                    <span className="text-sm text-text-muted bg-white px-2 py-0.5 rounded flex-shrink-0">
+                    <span className="text-sm text-text-muted bg-white px-2.5 py-0.5 rounded-full font-medium">
                       {word.value}
                     </span>
                   </motion.div>
