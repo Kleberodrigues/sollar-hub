@@ -122,9 +122,8 @@ export function UserList({ users }: UserListProps) {
                   <TableCell className="font-medium">
                     {user.full_name || "Sem nome"}
                   </TableCell>
-                  <TableCell className="text-text-secondary">
-                    {/* Email não está no user_profiles, precisaria vir do auth */}
-                    -
+                  <TableCell className="text-text-secondary text-sm">
+                    {user.id.substring(0, 8)}...
                   </TableCell>
                   <TableCell>
                     <Select
@@ -135,7 +134,9 @@ export function UserList({ users }: UserListProps) {
                       disabled={loadingUserId === user.id}
                     >
                       <SelectTrigger className="w-[150px]">
-                        <SelectValue />
+                        <SelectValue>
+                          {ROLE_LABELS[user.role as UserRole] || ROLE_LABELS.membro}
+                        </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="responsavel_empresa">

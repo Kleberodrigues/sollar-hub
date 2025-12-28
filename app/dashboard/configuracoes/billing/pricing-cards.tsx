@@ -326,7 +326,7 @@ export function PricingCards({ organizationId, currentPlan }: PricingCardsProps)
       {/* Footer Info */}
       <div className="text-center space-y-2">
         <p className="text-xs text-text-muted">
-          Garantia de 30 dias - Cancele quando quiser - Sem taxas ocultas
+          Garantia de 7 dias - Contrato anual (12 meses) - Sem taxas ocultas
         </p>
         <p className="text-xs text-text-muted">
           Para organizacoes com mais de 400 colaboradores,{" "}
