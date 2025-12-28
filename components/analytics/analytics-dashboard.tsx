@@ -10,10 +10,12 @@ import type { PlanType } from "@/lib/stripe/config";
 
 interface AnalyticsDashboardProps {
   assessmentId: string;
+  initialSection?: string;
 }
 
 export async function AnalyticsDashboard({
   assessmentId,
+  initialSection,
 }: AnalyticsDashboardProps) {
   // Fetch analytics data
   const analytics = await getAssessmentAnalytics(assessmentId);
@@ -72,6 +74,7 @@ export async function AnalyticsDashboard({
       questionDistributions={questionDistributions}
       assessmentId={assessmentId}
       currentPlan={currentPlan}
+      initialSection={initialSection}
     />
   );
 }

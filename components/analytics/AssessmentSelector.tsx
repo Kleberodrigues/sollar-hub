@@ -9,6 +9,7 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -147,6 +148,11 @@ interface AssessmentCardProps {
 
 function AssessmentCard({ assessment, disabled }: AssessmentCardProps) {
   const status = statusConfig[assessment.status] || statusConfig.draft;
+  const searchParams = useSearchParams();
+  const section = searchParams.get('section');
+  const href = section
+    ? `/dashboard/analytics?assessment=${assessment.id}&section=${section}`
+    : `/dashboard/analytics?assessment=${assessment.id}`;
 
   const content = (
     <motion.div variants={item}>
@@ -230,7 +236,7 @@ function AssessmentCard({ assessment, disabled }: AssessmentCardProps) {
   }
 
   return (
-    <Link href={`/dashboard/analytics?assessment=${assessment.id}`}>
+    <Link href={href}>
       {content}
     </Link>
   );
