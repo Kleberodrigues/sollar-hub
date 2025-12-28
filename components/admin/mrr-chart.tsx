@@ -64,6 +64,19 @@ function CustomTooltip({
   );
 }
 
+// Format currency for Y axis - compact format for large values
+function formatYAxisCurrency(valueInCents: number): string {
+  const valueInReais = valueInCents / 100;
+
+  if (valueInReais >= 1000000) {
+    return `R$ ${(valueInReais / 1000000).toFixed(1)}M`;
+  }
+  if (valueInReais >= 1000) {
+    return `R$ ${(valueInReais / 1000).toFixed(valueInReais >= 10000 ? 0 : 1)}k`;
+  }
+  return `R$ ${valueInReais.toFixed(0)}`;
+}
+
 export function MRRChart({ data, className }: MRRChartProps) {
   // Format data for chart
   const chartData = data.map((item) => ({
@@ -74,6 +87,10 @@ export function MRRChart({ data, className }: MRRChartProps) {
     }),
   }));
 
+  // Calculate max value to determine Y axis width
+  const maxValue = Math.max(...data.map(d => d.mrr), 0);
+  const yAxisWidth = maxValue >= 100000000 ? 70 : maxValue >= 10000000 ? 60 : 55;
+
   return (
     <div className={className}>
       <div className="bg-white rounded-lg border border-border-light p-6 shadow-sm h-full">
@@ -82,7 +99,7 @@ export function MRRChart({ data, className }: MRRChartProps) {
         </h3>
         <div className="h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData}>
+            <LineChart data={chartData} margin={{ left: 10, right: 10 }}>
               <CartesianGrid
                 strokeDasharray="3 3"
                 stroke="#E8E8E8"
@@ -98,12 +115,9 @@ export function MRRChart({ data, className }: MRRChartProps) {
                 yAxisId="mrr"
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: "#8A8A8A", fontSize: 12 }}
-                tickFormatter={(value) =>
-                  `R$ ${(value / 100).toLocaleString("pt-BR", {
-                    maximumFractionDigits: 0,
-                  })}`
-                }
+                tick={{ fill: "#8A8A8A", fontSize: 11 }}
+                width={yAxisWidth}
+                tickFormatter={formatYAxisCurrency}
               />
               <Tooltip content={<CustomTooltip />} />
               <Line
