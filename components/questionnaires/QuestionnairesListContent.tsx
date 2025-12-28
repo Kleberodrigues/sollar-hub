@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { FileText, Eye, MessageSquare, Calendar, Shield } from "lucide-react";
+import { FileText, Eye, MessageSquare, Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { isTemplateQuestionnaire, getLockedQuestionnaireInfo } from "@/lib/constants/questionnaire-templates";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -98,12 +98,6 @@ function QuestionnaireCard({ questionnaire, canManage: _canManage }: { questionn
                 <span>{questionCount === 1 ? "pergunta" : "perguntas"}</span>
               </div>
 
-              <div className="flex items-center gap-2 bg-bg-sage px-3 py-1.5 rounded-lg">
-                <Calendar className="w-4 h-4 text-pm-olive" />
-                <span>
-                  Criado em {new Date(questionnaire.created_at).toLocaleDateString("pt-BR")}
-                </span>
-              </div>
             </div>
           </div>
 

@@ -29,6 +29,7 @@ export interface AdminDashboardMetrics {
   revenueLastMonthCents: number;
   totalAssessments: number;
   assessments30d: number;
+  totalResponses: number;
 }
 
 /**

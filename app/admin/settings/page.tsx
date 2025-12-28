@@ -9,57 +9,8 @@ import {
   Database,
   Server,
   Globe,
-  CheckCircle,
-  XCircle,
   Info,
 } from "lucide-react";
-import { PLAN_PRICES_ANNUAL_CENTS, PLAN_PRICES_MONTHLY_CENTS, formatCurrency } from "@/types/admin.types";
-
-// Plan features configuration
-const PLAN_FEATURES = {
-  base: {
-    name: "Base",
-    price: PLAN_PRICES_ANNUAL_CENTS.base,
-    monthlyPrice: PLAN_PRICES_MONTHLY_CENTS.base,
-    features: [
-      { name: "Até 50 colaboradores", included: true },
-      { name: "1 avaliação por vez", included: true },
-      { name: "Relatório básico", included: true },
-      { name: "Suporte por email", included: true },
-      { name: "Múltiplos departamentos", included: false },
-      { name: "Relatório detalhado", included: false },
-      { name: "API de integração", included: false },
-    ],
-  },
-  intermediario: {
-    name: "Intermediário",
-    price: PLAN_PRICES_ANNUAL_CENTS.intermediario,
-    monthlyPrice: PLAN_PRICES_MONTHLY_CENTS.intermediario,
-    features: [
-      { name: "Até 200 colaboradores", included: true },
-      { name: "3 avaliações simultâneas", included: true },
-      { name: "Relatório detalhado", included: true },
-      { name: "Suporte prioritário", included: true },
-      { name: "Múltiplos departamentos", included: true },
-      { name: "Exportação PDF/Excel", included: true },
-      { name: "API de integração", included: false },
-    ],
-  },
-  avancado: {
-    name: "Avançado",
-    price: PLAN_PRICES_ANNUAL_CENTS.avancado,
-    monthlyPrice: PLAN_PRICES_MONTHLY_CENTS.avancado,
-    features: [
-      { name: "Colaboradores ilimitados", included: true },
-      { name: "Avaliações ilimitadas", included: true },
-      { name: "Relatório executivo", included: true },
-      { name: "Suporte dedicado", included: true },
-      { name: "Múltiplos departamentos", included: true },
-      { name: "Exportação completa", included: true },
-      { name: "API de integração", included: true },
-    ],
-  },
-};
 
 // Platform info
 const PLATFORM_INFO = {
@@ -190,61 +141,6 @@ export default function AdminSettingsPage() {
               </div>
               <Badge variant="success">Ativo</Badge>
             </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Pricing Plans */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <DollarSign className="h-5 w-5" />
-            Planos e Preços
-          </CardTitle>
-          <CardDescription>
-            Configuração dos planos disponíveis na plataforma
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {Object.entries(PLAN_FEATURES).map(([key, plan]) => (
-              <div
-                key={key}
-                className={`rounded-xl border-2 p-5 ${
-                  key === "avancado"
-                    ? "border-pm-terracotta bg-pm-terracotta/5"
-                    : "border-border-light"
-                }`}
-              >
-                <div className="text-center mb-4">
-                  <h3 className="text-lg font-bold text-pm-brown">{plan.name}</h3>
-                  <div className="mt-2">
-                    <span className="text-3xl font-bold text-pm-brown">
-                      {formatCurrency(plan.price)}
-                    </span>
-                    <span className="text-text-muted">/ano</span>
-                  </div>
-                  <p className="text-sm text-text-muted mt-1">
-                    ou {formatCurrency(plan.monthlyPrice)}/mês
-                  </p>
-                </div>
-
-                <ul className="space-y-2">
-                  {plan.features.map((feature, index) => (
-                    <li key={index} className="flex items-center gap-2 text-sm">
-                      {feature.included ? (
-                        <CheckCircle className="h-4 w-4 text-green-500 shrink-0" />
-                      ) : (
-                        <XCircle className="h-4 w-4 text-gray-300 shrink-0" />
-                      )}
-                      <span className={feature.included ? "text-pm-brown" : "text-text-muted"}>
-                        {feature.name}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
           </div>
         </CardContent>
       </Card>

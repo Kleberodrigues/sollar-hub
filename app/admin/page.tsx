@@ -127,8 +127,8 @@ async function DashboardContent() {
           trend={metrics.assessments30d > 0 ? "up" : "neutral"}
         />
         <KPICard
-          title="Assinaturas em Trial"
-          value={metrics.trialingSubscriptions}
+          title="Total de Respondentes"
+          value={metrics.totalResponses}
           icon="chart"
         />
         <KPICard

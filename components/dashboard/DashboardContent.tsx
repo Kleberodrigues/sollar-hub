@@ -170,10 +170,9 @@ export function DashboardContent({ metrics, profile, userEmail }: DashboardConte
               <ol className="space-y-3">
                 {[
                   "Escolha qual pesquisa você gostaria de ativar: Fatores de Riscos Psicossociais ou Clima Mensal",
-                  "Gere um link do questionário",
                   "Selecione os participantes que irão receber o e-mail",
                   "Envie o convite do questionário automaticamente",
-                  "Acompanhe as respostas e análises no relatório de riscos",
+                  "Acompanhe as respostas e análises de riscos",
                   "Crie e edite as ações do Plano de Ação",
                 ].map((step, i) => (
                   <li key={i} className="flex items-start gap-3 text-sm text-text-secondary">

@@ -2,9 +2,8 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect, notFound } from "next/navigation";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Edit, ExternalLink, CheckCircle, BarChart3, Users } from "lucide-react";
+import { ArrowLeft, Edit, BarChart3, Users } from "lucide-react";
 import Link from "next/link";
-import { CopyLinkButton } from "@/components/assessments/copy-link-button";
 import { AIInsightsCard } from "@/components/assessments/AIInsightsCard";
 import { ParticipantImportDialog } from "@/components/assessments/ParticipantImportDialog";
 import { getParticipants } from "../participant-import-actions";
@@ -81,9 +80,6 @@ export default async function AssessmentPage({
   const today = new Date().toISOString().split("T")[0];
   const isExpired = assessment.end_date && assessment.end_date < today;
 
-  // URL pública
-  const publicUrl = `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3006"}/assess/${assessment.id}`;
-
   // Buscar participantes importados
   const participantsResult = await getParticipants(id);
   const participants = participantsResult.participants || [];
@@ -150,41 +146,6 @@ export default async function AssessmentPage({
         )}
       </div>
 
-      {/* Link Público */}
-      {isActive && !isExpired && (
-        <Card className="border-pm-green-dark bg-pm-green-light">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-pm-green-dark" />
-              Avaliação Ativa - Link Público
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <p className="text-sm text-text-secondary">
-              Compartilhe este link para que as pessoas possam responder ao
-              questionário de forma anônima:
-            </p>
-
-            <div className="flex items-center gap-2">
-              <code className="flex-1 text-sm text-text-primary bg-white px-4 py-2 rounded border border-border-light">
-                {publicUrl}
-              </code>
-              <CopyLinkButton url={publicUrl} />
-              <Link href={`/assess/${assessment.id}`} target="_blank">
-                <Button variant="outline" size="sm" className="gap-2">
-                  <ExternalLink className="w-4 h-4" />
-                  Abrir
-                </Button>
-              </Link>
-            </div>
-
-            <p className="text-xs text-text-muted">
-              💡 As respostas são completamente anônimas e não podem ser
-              associadas a indivíduos específicos.
-            </p>
-          </CardContent>
-        </Card>
-      )}
 
       {/* Informações da Avaliação */}
       <div className="grid md:grid-cols-2 gap-6">
