@@ -52,18 +52,19 @@ const CATEGORY_LABELS: Record<string, string> = {
   violence_harassment: "Violência/Assédio",
 };
 
-// Risk thresholds
+// Risk thresholds - aligned with backend (actions.ts)
+// Higher score = higher risk (after normalization)
 const getRiskConfig = (score: number) => {
-  if (score <= 2.5) return {
-    level: 'low',
-    label: 'Baixo Risco',
-    color: 'text-emerald-600',
-    bg: 'bg-emerald-50',
-    border: 'border-emerald-200',
-    icon: CheckCircle,
-    description: 'Ambiente saudável',
+  if (score >= 3.5) return {
+    level: 'high',
+    label: 'Alto Risco',
+    color: 'text-red-600',
+    bg: 'bg-red-50',
+    border: 'border-red-200',
+    icon: AlertCircle,
+    description: 'Ação imediata',
   };
-  if (score <= 4.0) return {
+  if (score >= 2.5) return {
     level: 'medium',
     label: 'Médio Risco',
     color: 'text-amber-600',
@@ -73,13 +74,13 @@ const getRiskConfig = (score: number) => {
     description: 'Requer atenção',
   };
   return {
-    level: 'high',
-    label: 'Alto Risco',
-    color: 'text-red-600',
-    bg: 'bg-red-50',
-    border: 'border-red-200',
-    icon: AlertCircle,
-    description: 'Ação imediata',
+    level: 'low',
+    label: 'Baixo Risco',
+    color: 'text-emerald-600',
+    bg: 'bg-emerald-50',
+    border: 'border-emerald-200',
+    icon: CheckCircle,
+    description: 'Ambiente saudável',
   };
 };
 
@@ -416,7 +417,7 @@ export function NR1ExecutiveDashboard({
             </div>
             <div>
               <p className="font-semibold text-emerald-700">Baixo Risco</p>
-              <p className="text-xs text-emerald-600">Score ≤ 2.5 - Ambiente saudável</p>
+              <p className="text-xs text-emerald-600">Score &lt; 2.5 - Ambiente saudável</p>
             </div>
           </CardContent>
         </Card>
@@ -427,7 +428,7 @@ export function NR1ExecutiveDashboard({
             </div>
             <div>
               <p className="font-semibold text-amber-700">Médio Risco</p>
-              <p className="text-xs text-amber-600">Score 2.5-4.0 - Monitoramento</p>
+              <p className="text-xs text-amber-600">Score 2.5-3.5 - Monitoramento</p>
             </div>
           </CardContent>
         </Card>
@@ -438,7 +439,7 @@ export function NR1ExecutiveDashboard({
             </div>
             <div>
               <p className="font-semibold text-red-700">Alto Risco</p>
-              <p className="text-xs text-red-600">Score ≥ 4.0 - Ação imediata</p>
+              <p className="text-xs text-red-600">Score ≥ 3.5 - Ação imediata</p>
             </div>
           </CardContent>
         </Card>

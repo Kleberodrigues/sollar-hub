@@ -37,12 +37,13 @@ const CATEGORY_LABELS: Record<string, string> = {
   violence_harassment: "Violência/Assédio",
 };
 
-// Risk level calculation
+// Risk level calculation - aligned with backend thresholds (actions.ts)
+// Higher score = higher risk (after normalization)
 function getRiskLevel(score: number | null): 'low' | 'medium' | 'high' | 'na' {
   if (score === null) return 'na';
-  if (score <= 2.5) return 'low';
-  if (score <= 4.0) return 'medium';
-  return 'high';
+  if (score >= 3.5) return 'high';
+  if (score >= 2.5) return 'medium';
+  return 'low';
 }
 
 // Risk colors following enterprise design
@@ -252,15 +253,15 @@ export function ProfessionalHeatMap({
             <div className="flex flex-wrap items-center justify-center gap-6">
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 rounded bg-emerald-500" />
-                <span className="text-sm text-slate-600">Baixo Risco (≤2.5)</span>
+                <span className="text-sm text-slate-600">Baixo Risco (&lt;2.5)</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 rounded bg-amber-500" />
-                <span className="text-sm text-slate-600">Médio Risco (2.5-4.0)</span>
+                <span className="text-sm text-slate-600">Médio Risco (2.5-3.5)</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 rounded bg-red-500" />
-                <span className="text-sm text-slate-600">Alto Risco (≥4.0)</span>
+                <span className="text-sm text-slate-600">Alto Risco (≥3.5)</span>
               </div>
             </div>
           </div>
