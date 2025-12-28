@@ -140,11 +140,11 @@ export function NR1ExecutiveDashboard({
     return (
       <Card className="border-dashed border-2">
         <CardContent className="py-16 text-center">
-          <BarChart3 className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-          <h3 className="text-xl font-semibold text-gray-700 mb-2">
+          <BarChart3 className="w-12 h-12 mx-auto text-text-muted mb-4" />
+          <h3 className="text-xl font-semibold text-text-heading mb-2">
             Aguardando Dados
           </h3>
-          <p className="text-gray-500">
+          <p className="text-text-muted">
             O dashboard será exibido quando houver respostas suficientes.
           </p>
         </CardContent>
@@ -162,7 +162,7 @@ export function NR1ExecutiveDashboard({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
-        <Card className="border-0 shadow-lg bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white overflow-hidden">
+        <Card className="border-0 shadow-lg bg-gradient-to-br from-pm-brown via-pm-green-dark to-pm-brown text-white overflow-hidden">
           <CardContent className="p-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Main Risk Score */}
@@ -303,15 +303,15 @@ export function NR1ExecutiveDashboard({
         transition={{ duration: 0.4, delay: 0.2 }}
       >
         <Card className="border-0 shadow-lg">
-          <CardHeader className="border-b bg-slate-50">
+          <CardHeader className="border-b bg-bg-sage">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-slate-200 flex items-center justify-center">
-                  <Shield className="w-5 h-5 text-slate-600" />
+                <div className="w-10 h-10 rounded-xl bg-pm-olive/20 flex items-center justify-center">
+                  <Shield className="w-5 h-5 text-pm-olive" />
                 </div>
                 <div>
-                  <CardTitle className="text-lg">Detalhamento por Categoria</CardTitle>
-                  <p className="text-sm text-slate-500">
+                  <CardTitle className="text-lg text-text-heading">Detalhamento por Categoria</CardTitle>
+                  <p className="text-sm text-text-muted">
                     {sortedCategories.length} blocos NR-1 avaliados
                   </p>
                 </div>
@@ -338,7 +338,7 @@ export function NR1ExecutiveDashboard({
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.3, delay: index * 0.05 }}
-                    className="p-4 hover:bg-slate-50 transition-colors"
+                    className="p-4 hover:bg-bg-sage transition-colors"
                   >
                     <div className="flex items-center gap-4">
                       {/* Risk indicator */}
@@ -351,15 +351,10 @@ export function NR1ExecutiveDashboard({
 
                       {/* Category info */}
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h4 className="font-semibold text-slate-800 truncate">
-                            {CATEGORY_LABELS[category.category] || category.category}
-                          </h4>
-                          <Badge className={cn("text-xs", config.bg, config.color, config.border)}>
-                            {config.label}
-                          </Badge>
-                        </div>
-                        <div className="flex items-center gap-4 text-sm text-slate-500">
+                        <h4 className="font-semibold text-text-heading truncate mb-1">
+                          {CATEGORY_LABELS[category.category] || category.category}
+                        </h4>
+                        <div className="flex items-center gap-4 text-sm text-text-muted">
                           <span className="flex items-center gap-1">
                             <Users className="w-3.5 h-3.5" />
                             {category.responseCount} respostas
@@ -381,7 +376,7 @@ export function NR1ExecutiveDashboard({
                           {trend === 'down' && <TrendingDown className="w-5 h-5 text-red-500" />}
                         </div>
                         <div className="w-24 mt-1">
-                          <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
+                          <div className="h-2 bg-border-light rounded-full overflow-hidden">
                             <div
                               className={cn(
                                 "h-full rounded-full transition-all",
