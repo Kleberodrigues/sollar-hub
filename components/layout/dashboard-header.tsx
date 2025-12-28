@@ -39,9 +39,12 @@ const routeLabels: Record<string, string> = {
   "/dashboard/questionnaires": "Questionários",
   "/dashboard/assessments": "Avaliações",
   "/dashboard/analytics": "Análise de Riscos",
+  "/dashboard/action-plan": "Plano de Ação",
   "/dashboard/departments": "Departamentos",
   "/dashboard/team": "Equipe",
   "/dashboard/settings": "Configurações",
+  "/dashboard/subscription": "Assinatura",
+  "/dashboard/notifications": "Notificações",
 };
 
 export function DashboardHeader({
