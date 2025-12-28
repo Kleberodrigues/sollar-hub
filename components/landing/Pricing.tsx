@@ -210,20 +210,16 @@ export function Pricing() {
           transition={{ duration: 0.5, delay: 0.35 }}
           className="text-center mb-8"
         >
-          <p className="text-sm text-text-muted">
-            Ao clicar em &quot;Começar Agora&quot;, você concorda com os{" "}
+          <p className="text-sm text-text-muted max-w-2xl mx-auto">
+            Ao clicar em &quot;Começar Agora&quot;, você declara que leu, compreendeu e concorda com o{" "}
             <Link href="/termos" className="text-pm-terracotta hover:underline">
-              Termos de Uso
+              Termo de Aceite e Condições de Uso
             </Link>
-            ,{" "}
-            <Link href="/termos" className="text-pm-terracotta hover:underline">
-              Termos Comerciais
-            </Link>
-            {" "}e{" "}
+            {" "}e a{" "}
             <Link href="/privacidade" className="text-pm-terracotta hover:underline">
               Política de Privacidade
             </Link>
-            .
+            , e que possui poderes para contratar em nome da empresa.
           </p>
         </motion.div>
 
