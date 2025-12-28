@@ -122,7 +122,7 @@ export function TargetAudience() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={isInView ? { opacity: 1, scale: 1 } : {}}
           transition={{ duration: 0.5, delay: 0.6 }}
-          className="text-center mb-8"
+          className="text-center py-12 lg:py-16"
         >
           <blockquote className="text-xl md:text-2xl font-display font-semibold text-pm-olive italic">
             &ldquo;Um único desligamento pode custar mais do que meses de prevenção.&rdquo;
@@ -134,7 +134,7 @@ export function TargetAudience() {
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, delay: 0.7 }}
-          className="text-center mb-12"
+          className="text-center mb-10"
         >
           <h3 className="font-display text-2xl md:text-3xl font-bold text-text-heading">
             Para quem é o <span className="text-pm-terracotta">PsicoMapa</span>?
