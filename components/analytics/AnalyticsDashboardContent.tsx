@@ -495,15 +495,7 @@ export function AnalyticsDashboardContent({
       {/* Conteúdo padrão - Dashboard NR-1 Executivo Unificado */}
       {(!isPulse || !showClimaView) && (
         <>
-          {/* Dashboard NR-1 Executivo com Mapa de Calor Profissional */}
-          <motion.div variants={sollarMotion.fadeUp}>
-            <NR1ExecutiveDashboard
-              analytics={analytics}
-              assessmentTitle={assessmentTitle}
-            />
-          </motion.div>
-
-          {/* Cards de Ação - Relatório e IA */}
+          {/* Cards de Ação - Relatório e IA (ACIMA do Dashboard) */}
           <motion.div variants={sollarMotion.fadeUp} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Relatório Executivo */}
             <Card className="bg-white border border-gray-200 border-l-4 border-l-pm-terracotta hover:shadow-md hover:border-gray-300 transition-all cursor-pointer group"
@@ -547,6 +539,14 @@ export function AnalyticsDashboardContent({
                 </div>
               </CardContent>
             </Card>
+          </motion.div>
+
+          {/* Dashboard NR-1 Executivo com Mapa de Calor Profissional */}
+          <motion.div variants={sollarMotion.fadeUp}>
+            <NR1ExecutiveDashboard
+              analytics={analytics}
+              assessmentTitle={assessmentTitle}
+            />
           </motion.div>
 
           {/* Grid de Análises Complementares */}
