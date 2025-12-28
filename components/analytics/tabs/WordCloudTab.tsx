@@ -140,10 +140,32 @@ export function WordCloudTab({ textResponses }: WordCloudTabProps) {
     return "text-base";
   };
 
-  // Rotation angles for organic cloud effect
-  const getWordRotation = (index: number) => {
-    const rotations = [-15, -10, -5, 0, 0, 0, 5, 10, 15, -8, 8, -3, 3];
+  // Rotation angles for organic cloud effect - more variety including some vertical
+  const getWordRotation = (index: number, isLarge: boolean) => {
+    if (isLarge) {
+      // Large words: mostly horizontal with slight angles
+      const rotations = [0, -5, 5, -3, 3, 0, -8, 8];
+      return rotations[index % rotations.length];
+    }
+    // Smaller words: more varied rotations including vertical
+    const rotations = [-90, -45, -20, -10, 0, 0, 0, 10, 20, 45, 90, -15, 15, -30, 30];
     return rotations[index % rotations.length];
+  };
+
+  // Calculate spiral-like positions for cloud effect
+  const getWordPosition = (index: number, total: number) => {
+    // Golden angle for spiral distribution
+    const goldenAngle = 137.5 * (Math.PI / 180);
+    const angle = index * goldenAngle;
+
+    // Distance from center increases with index (outer words are less important)
+    const normalizedIndex = index / total;
+    const radius = 15 + normalizedIndex * 35; // 15-50% from center
+
+    const x = 50 + Math.cos(angle) * radius;
+    const y = 50 + Math.sin(angle) * radius;
+
+    return { x: Math.max(10, Math.min(90, x)), y: Math.max(15, Math.min(85, y)) };
   };
 
   if (textResponses.length === 0 || filteredTexts.length === 0) {
@@ -200,19 +222,19 @@ export function WordCloudTab({ textResponses }: WordCloudTabProps) {
         </Card>
       </motion.div>
 
-      {/* Word Cloud Only - Organic spread layout */}
+      {/* Word Cloud - Spiral/cluster layout with absolute positioning */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.1 }}
         className="flex-1"
       >
-        <div className="relative flex flex-wrap content-around gap-x-4 gap-y-3 justify-center items-center py-6 min-h-[320px] px-6">
-          {words.slice(0, 30).map((word, index) => {
-            const rotation = getWordRotation(index);
-            // Create organic vertical offset based on index
-            const verticalOffset = Math.sin(index * 0.8) * 8;
-            const horizontalOffset = Math.cos(index * 0.6) * 4;
+        <div className="relative min-h-[380px] w-full">
+          {words.slice(0, 35).map((word, index) => {
+            const ratio = word.value / maxValue;
+            const isLarge = ratio > 0.5;
+            const rotation = getWordRotation(index, isLarge);
+            const position = getWordPosition(index, Math.min(words.length, 35));
 
             return (
               <motion.span
@@ -220,33 +242,33 @@ export function WordCloudTab({ textResponses }: WordCloudTabProps) {
                 initial={{
                   opacity: 0,
                   scale: 0,
-                  y: 20
                 }}
                 animate={{
                   opacity: 1,
                   scale: 1,
-                  y: 0
                 }}
                 transition={{
-                  duration: 0.4,
-                  delay: index * 0.02,
+                  duration: 0.5,
+                  delay: index * 0.03,
                   type: "spring",
-                  stiffness: 120,
-                  damping: 12
+                  stiffness: 100,
+                  damping: 15
                 }}
                 whileHover={{
-                  scale: 1.12,
+                  scale: 1.15,
+                  zIndex: 50,
                   transition: { duration: 0.15 }
                 }}
                 className={cn(
-                  "cursor-default transition-all inline-block",
+                  "absolute cursor-default transition-all whitespace-nowrap",
                   getWordSize(word.value),
                   getWordColor(index, word.value)
                 )}
                 style={{
-                  transform: `rotate(${rotation}deg) translateY(${verticalOffset}px)`,
-                  marginLeft: `${horizontalOffset}px`,
-                  lineHeight: 1.4,
+                  left: `${position.x}%`,
+                  top: `${position.y}%`,
+                  transform: `translate(-50%, -50%) rotate(${rotation}deg)`,
+                  zIndex: Math.round(ratio * 30),
                 }}
                 title={`${word.text}: ${word.value} ocorrências`}
               >
