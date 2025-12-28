@@ -1,7 +1,7 @@
 export { BlockAnalysisTab } from "./BlockAnalysisTab";
 export { DepartmentAnalysisTab } from "./DepartmentAnalysisTab";
 export { AnchorsTab } from "./AnchorsTab";
-export { WordCloudTab } from "./WordCloudTab";
+export { WordCloudTab, FrequentWordsList } from "./WordCloudTab";
 export { HeatMapTab } from "./HeatMapTab";
 export { ReportTab } from "./ReportTab";
 export { ActionPlanTab } from "./ActionPlanTab";

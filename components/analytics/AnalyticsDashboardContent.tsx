@@ -25,6 +25,7 @@ import {
   ChevronRight,
   Target,
   Activity,
+  MessageSquare,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { PlanType } from "@/lib/stripe/config";
@@ -58,6 +59,10 @@ const AnchorsTab = dynamic(() => import("./tabs/AnchorsTab").then(m => ({ defaul
   ssr: false,
 });
 const WordCloudTab = dynamic(() => import("./tabs/WordCloudTab").then(m => ({ default: m.WordCloudTab })), {
+  loading: () => <TabSkeleton />,
+  ssr: false,
+});
+const FrequentWordsList = dynamic(() => import("./tabs/WordCloudTab").then(m => ({ default: m.FrequentWordsList })), {
   loading: () => <TabSkeleton />,
   ssr: false,
 });
@@ -581,7 +586,15 @@ export function AnalyticsDashboardContent({
               <WordCloudTab textResponses={textResponses} />
             </SectionCard>
 
-            {/* REMOVIDO: Antigo bloco "Blocos NR-1" por bloco - agora está no NR1ExecutiveDashboard */}
+            {/* Palavras Mais Frequentes */}
+            <SectionCard
+              title="Palavras Mais Frequentes"
+              icon={MessageSquare}
+              onExpand={() => setFullscreenSection("frequentwords")}
+              accentColor="olive"
+            >
+              <FrequentWordsList textResponses={textResponses} />
+            </SectionCard>
 
           </motion.div>
         </>
@@ -622,6 +635,15 @@ export function AnalyticsDashboardContent({
         icon={Cloud}
       >
         <WordCloudTab textResponses={textResponses} />
+      </FullscreenModal>
+
+      <FullscreenModal
+        isOpen={fullscreenSection === "frequentwords"}
+        onClose={() => setFullscreenSection(null)}
+        title="Palavras Mais Frequentes"
+        icon={MessageSquare}
+      >
+        <FrequentWordsList textResponses={textResponses} />
       </FullscreenModal>
 
       <FullscreenModal
