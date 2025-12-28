@@ -1,9 +1,10 @@
 'use client';
 
 import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { Check, Building, Building2, Factory, Users } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const plans = [
   {
@@ -102,6 +103,7 @@ const colorMap = {
 export function Pricing() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   return (
     <section id="planos" className="py-12 lg:py-16 bg-white scroll-mt-20" ref={ref}>
@@ -192,35 +194,57 @@ export function Pricing() {
                 </ul>
 
                 {/* CTA Button */}
-                <Link
-                  href="/contato"
-                  className={`block w-full text-center py-3 px-6 rounded-lg font-medium transition-colors mt-auto ${colors.button}`}
-                >
-                  Começar Agora
-                </Link>
+                {termsAccepted ? (
+                  <Link
+                    href="/contato"
+                    className={`block w-full text-center py-3 px-6 rounded-lg font-medium transition-colors mt-auto ${colors.button}`}
+                  >
+                    Começar Agora
+                  </Link>
+                ) : (
+                  <button
+                    disabled
+                    className="block w-full text-center py-3 px-6 rounded-lg font-medium mt-auto bg-gray-300 text-gray-500 cursor-not-allowed"
+                  >
+                    Aceite os termos
+                  </button>
+                )}
               </motion.div>
             );
           })}
         </div>
 
-        {/* Terms Notice */}
+        {/* Terms Acceptance */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, delay: 0.35 }}
-          className="text-center mb-8"
+          className="max-w-2xl mx-auto mb-8"
         >
-          <p className="text-sm text-text-muted max-w-2xl mx-auto">
-            Ao clicar em &quot;Começar Agora&quot;, você declara que leu, compreendeu e concorda com o{" "}
-            <Link href="/termos" className="text-pm-terracotta hover:underline">
-              Termo de Aceite e Condições de Uso
-            </Link>
-            {" "}e a{" "}
-            <Link href="/privacidade" className="text-pm-terracotta hover:underline">
-              Política de Privacidade
-            </Link>
-            , e que possui poderes para contratar em nome da empresa.
-          </p>
+          <div className="bg-bg-secondary rounded-lg p-4">
+            <div className="flex items-start gap-3">
+              <Checkbox
+                id="terms-landing"
+                checked={termsAccepted}
+                onCheckedChange={(checked) => setTermsAccepted(checked === true)}
+                className="mt-0.5"
+              />
+              <label
+                htmlFor="terms-landing"
+                className="text-sm text-text-secondary leading-relaxed cursor-pointer"
+              >
+                Li e aceito o{" "}
+                <Link href="/termos" className="text-pm-terracotta hover:underline">
+                  Termo de Aceite e Condições de Uso
+                </Link>
+                {" "}e a{" "}
+                <Link href="/privacidade" className="text-pm-terracotta hover:underline">
+                  Política de Privacidade
+                </Link>
+                , e declaro que tenho poderes para contratar em nome da empresa.
+              </label>
+            </div>
+          </div>
         </motion.div>
 
         {/* Enterprise Plan */}
@@ -244,12 +268,21 @@ export function Pricing() {
                   </p>
                 </div>
               </div>
-              <Link
-                href="/contato"
-                className="inline-flex items-center justify-center bg-pm-olive-light text-pm-brown font-medium px-6 py-3 rounded-lg hover:bg-white transition-colors whitespace-nowrap"
-              >
-                Fale com Especialista
-              </Link>
+              {termsAccepted ? (
+                <Link
+                  href="/contato"
+                  className="inline-flex items-center justify-center bg-pm-olive-light text-pm-brown font-medium px-6 py-3 rounded-lg hover:bg-white transition-colors whitespace-nowrap"
+                >
+                  Fale com Especialista
+                </Link>
+              ) : (
+                <button
+                  disabled
+                  className="inline-flex items-center justify-center bg-white/30 text-white/60 font-medium px-6 py-3 rounded-lg cursor-not-allowed whitespace-nowrap"
+                >
+                  Aceite os termos
+                </button>
+              )}
             </div>
           </div>
         </motion.div>
