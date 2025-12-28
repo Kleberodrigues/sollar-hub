@@ -47,8 +47,8 @@ export function AssessmentForm({
     questionnaire_id: assessment?.questionnaire_id || '',
     department_id: assessment?.department_id || null,
     start_date: assessment?.start_date || new Date().toISOString().split('T')[0],
-    end_date: assessment?.end_date || '',
-    status: assessment?.status || 'draft',
+    end_date: assessment?.end_date || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // Default: +30 days
+    status: assessment?.status || 'active',
   });
 
   const [loading, setLoading] = useState(false);
@@ -209,9 +209,9 @@ export function AssessmentForm({
               disabled={loading}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
-              <option value="draft">Rascunho</option>
               <option value="active">Ativo</option>
               <option value="completed">Concluído</option>
+              <option value="cancelled">Cancelado</option>
             </select>
           </div>
 
