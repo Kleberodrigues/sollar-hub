@@ -38,12 +38,92 @@ const getQuestionType = (text: string): 'retention' | 'health' | 'satisfaction' 
 // Stacked Bar Chart for Retention Question (Sim/Não tenho certeza/Não)
 function RetentionChart({ anchor }: { anchor: AnchorQuestion }) {
   // Calculate distribution for Sim/Não tenho certeza/Não
-  // Assuming: 5,4 = Sim, 3 = Não tenho certeza, 2,1 = Não
-  const simCount = anchor.distribution.filter(d => ['5', '4'].includes(d.value)).reduce((acc, d) => acc + d.count, 0);
-  const incertoCount = anchor.distribution.filter(d => d.value === '3').reduce((acc, d) => acc + d.count, 0);
-  const naoCount = anchor.distribution.filter(d => ['2', '1'].includes(d.value)).reduce((acc, d) => acc + d.count, 0);
-  const total = simCount + incertoCount + naoCount || 1;
+  // Support both numeric values (5,4 = Sim, 3 = Não tenho certeza, 2,1 = Não)
+  // AND text values ("Sim", "Não tenho certeza", "Não")
 
+  let simCount = 0;
+  let incertoCount = 0;
+  let naoCount = 0;
+
+  anchor.distribution.forEach(d => {
+    const val = d.value.toLowerCase().trim();
+
+    // Check for text values first
+    if (val === 'sim' || val === 'yes') {
+      simCount += d.count;
+    } else if (val.includes('não tenho certeza') || val.includes('talvez') || val.includes('maybe') || val.includes('incerto')) {
+      incertoCount += d.count;
+    } else if (val === 'não' || val === 'nao' || val === 'no') {
+      naoCount += d.count;
+    }
+    // Fallback to numeric values
+    else if (['5', '4'].includes(d.value)) {
+      simCount += d.count;
+    } else if (d.value === '3') {
+      incertoCount += d.count;
+    } else if (['2', '1'].includes(d.value)) {
+      naoCount += d.count;
+    }
+  });
+
+  const totalCategorized = simCount + incertoCount + naoCount;
+  const totalResponses = anchor.distribution.reduce((acc, d) => acc + d.count, 0);
+
+  // If we couldn't categorize any responses, show raw distribution instead
+  if (totalCategorized === 0 && totalResponses > 0) {
+    // Sort by percentage descending
+    const sortedDist = [...anchor.distribution].sort((a, b) => b.count - a.count);
+    const maxPct = Math.max(...sortedDist.map(d => d.percentage), 1);
+
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between mb-2">
+          <h4 className="font-medium text-text-heading">Intenção de Permanência</h4>
+          <span className="text-sm text-text-muted">{anchor.responseCount} respostas</span>
+        </div>
+
+        {/* Show raw distribution as horizontal bars */}
+        <div className="space-y-3">
+          {sortedDist.map((dist, i) => {
+            const barWidth = (dist.percentage / maxPct) * 100;
+            // Assign colors based on index or value keywords
+            const val = dist.value.toLowerCase();
+            let barColor = 'bg-gray-400';
+            if (val.includes('sim') || val === 'yes' || val === '5' || val === '4') {
+              barColor = 'bg-emerald-500';
+            } else if (val.includes('certeza') || val.includes('talvez') || val === '3') {
+              barColor = 'bg-amber-400';
+            } else if (val.includes('não') || val.includes('nao') || val === 'no' || val === '2' || val === '1') {
+              barColor = 'bg-red-500';
+            }
+
+            return (
+              <div key={dist.value} className="flex items-center gap-3">
+                <span className="text-sm text-text-secondary w-32 text-right truncate" title={dist.value}>
+                  {dist.value}
+                </span>
+                <div className="flex-1 h-8 bg-gray-100 rounded-lg overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${barWidth}%` }}
+                    transition={{ duration: 0.6, delay: i * 0.1 }}
+                    className={cn("h-full rounded-lg flex items-center justify-end pr-2", barColor)}
+                  >
+                    {dist.percentage >= 5 && (
+                      <span className="text-xs font-medium text-white">{dist.percentage.toFixed(0)}%</span>
+                    )}
+                  </motion.div>
+                </div>
+                <span className="text-sm font-medium text-text-heading w-10">{dist.count}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
+  const total = totalCategorized || 1;
   const simPct = Math.round((simCount / total) * 100);
   const incertoPct = Math.round((incertoCount / total) * 100);
   const naoPct = Math.round((naoCount / total) * 100);
@@ -56,7 +136,7 @@ function RetentionChart({ anchor }: { anchor: AnchorQuestion }) {
       </div>
 
       {/* Stacked horizontal bar */}
-      <div className="relative h-10 rounded-lg overflow-hidden flex">
+      <div className="relative h-10 rounded-lg overflow-hidden flex bg-gray-100">
         {simPct > 0 && (
           <motion.div
             initial={{ width: 0 }}
@@ -162,26 +242,36 @@ function HealthBarChart({ anchor }: { anchor: AnchorQuestion }) {
   );
 }
 
-// Gauge Chart for Satisfaction Question (NPS style)
+// Gauge Chart for Satisfaction Question (NPS style, 0-10 scale)
 function SatisfactionGauge({ anchor }: { anchor: AnchorQuestion }) {
-  // Score is 0-10, normalize to 0-5 for display if needed
+  // Score is 0-10 (NPS scale)
   const score = anchor.averageScore;
-  const maxScore = 5; // Assuming 5-point scale, adjust if 10-point
-  const normalizedScore = score;
-  const percentage = (normalizedScore / maxScore) * 100;
+  const maxScore = 10;
+  const percentage = (score / maxScore) * 100;
 
   // Calculate needle angle (-90 to 90 degrees)
   const needleAngle = (percentage / 100) * 180 - 90;
 
-  // Determine color based on score
+  // Determine color based on score (0-10 scale)
   const getScoreColor = (s: number) => {
-    if (s >= 4) return { text: 'text-emerald-600', fill: '#10b981' };
-    if (s >= 3) return { text: 'text-amber-500', fill: '#f59e0b' };
+    if (s >= 8) return { text: 'text-emerald-600', fill: '#10b981' };
+    if (s >= 6) return { text: 'text-emerald-400', fill: '#34d399' };
+    if (s >= 4) return { text: 'text-amber-500', fill: '#f59e0b' };
     if (s >= 2) return { text: 'text-orange-500', fill: '#f97316' };
     return { text: 'text-red-500', fill: '#ef4444' };
   };
 
-  const scoreColor = getScoreColor(normalizedScore);
+  const scoreColor = getScoreColor(score);
+
+  // Get color for distribution bar based on value (0-10)
+  const getDistributionColor = (value: string) => {
+    const numVal = parseInt(value);
+    if (numVal >= 9) return 'bg-emerald-600';
+    if (numVal >= 7) return 'bg-emerald-400';
+    if (numVal >= 5) return 'bg-amber-400';
+    if (numVal >= 3) return 'bg-orange-400';
+    return 'bg-red-500';
+  };
 
   return (
     <div className="space-y-4">
@@ -190,37 +280,49 @@ function SatisfactionGauge({ anchor }: { anchor: AnchorQuestion }) {
         <span className="text-sm text-text-muted">{anchor.responseCount} respostas</span>
       </div>
 
-      {/* Gauge */}
+      {/* Gauge - 0 to 10 scale */}
       <div className="flex flex-col items-center">
-        <div className="relative w-64 h-32">
-          <svg viewBox="0 0 200 100" className="w-full h-full">
-            {/* Background arc segments */}
+        <div className="relative w-72 h-36">
+          <svg viewBox="0 0 200 110" className="w-full h-full">
+            {/* Background arc segments - 5 segments for 0-10 scale */}
+            {/* Segment 1: 0-2 (Red) */}
             <path
-              d="M 20 100 A 80 80 0 0 1 56 32"
+              d="M 20 100 A 80 80 0 0 1 44 44"
               fill="none"
               stroke="#ef4444"
-              strokeWidth="16"
+              strokeWidth="14"
               strokeLinecap="round"
             />
+            {/* Segment 2: 2-4 (Orange) */}
             <path
-              d="M 60 28 A 80 80 0 0 1 100 20"
+              d="M 48 40 A 80 80 0 0 1 82 22"
               fill="none"
               stroke="#f97316"
-              strokeWidth="16"
+              strokeWidth="14"
               strokeLinecap="round"
             />
+            {/* Segment 3: 4-6 (Yellow) */}
             <path
-              d="M 104 20 A 80 80 0 0 1 144 32"
+              d="M 86 21 A 80 80 0 0 1 118 21"
               fill="none"
               stroke="#f59e0b"
-              strokeWidth="16"
+              strokeWidth="14"
               strokeLinecap="round"
             />
+            {/* Segment 4: 6-8 (Light Green) */}
             <path
-              d="M 148 36 A 80 80 0 0 1 180 100"
+              d="M 122 22 A 80 80 0 0 1 156 40"
+              fill="none"
+              stroke="#34d399"
+              strokeWidth="14"
+              strokeLinecap="round"
+            />
+            {/* Segment 5: 8-10 (Green) */}
+            <path
+              d="M 160 44 A 80 80 0 0 1 180 100"
               fill="none"
               stroke="#10b981"
-              strokeWidth="16"
+              strokeWidth="14"
               strokeLinecap="round"
             />
 
@@ -230,7 +332,7 @@ function SatisfactionGauge({ anchor }: { anchor: AnchorQuestion }) {
                 x1="100"
                 y1="100"
                 x2="100"
-                y2="35"
+                y2="30"
                 stroke="#374151"
                 strokeWidth="3"
                 strokeLinecap="round"
@@ -239,42 +341,55 @@ function SatisfactionGauge({ anchor }: { anchor: AnchorQuestion }) {
               <circle cx="100" cy="100" r="4" fill="#fff" />
             </g>
 
-            {/* Scale labels */}
-            <text x="15" y="98" className="text-[10px] fill-red-500 font-medium">1</text>
-            <text x="48" y="35" className="text-[10px] fill-orange-500 font-medium">2</text>
-            <text x="96" y="18" className="text-[10px] fill-amber-500 font-medium">3</text>
-            <text x="145" y="35" className="text-[10px] fill-emerald-400 font-medium">4</text>
-            <text x="178" y="98" className="text-[10px] fill-emerald-600 font-medium">5</text>
+            {/* Scale labels: 0, 2, 4, 6, 8, 10 */}
+            <text x="10" y="105" className="text-[10px] fill-red-500 font-medium">0</text>
+            <text x="35" y="50" className="text-[10px] fill-orange-500 font-medium">2</text>
+            <text x="70" y="22" className="text-[10px] fill-amber-500 font-medium">4</text>
+            <text x="120" y="22" className="text-[10px] fill-emerald-400 font-medium">6</text>
+            <text x="155" y="50" className="text-[10px] fill-emerald-500 font-medium">8</text>
+            <text x="180" y="105" className="text-[10px] fill-emerald-600 font-medium">10</text>
           </svg>
 
           {/* Score display */}
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 text-center">
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-center">
             <span className={cn("text-4xl font-bold", scoreColor.text)}>
-              {normalizedScore.toFixed(2)}
+              {score.toFixed(1)}
             </span>
+            <span className="text-lg text-text-muted">/10</span>
           </div>
         </div>
 
         <p className="text-sm text-text-muted mt-2">Índice de Satisfação Médio</p>
       </div>
 
-      {/* Distribution mini bars */}
-      <div className="flex gap-1 h-2 mt-4">
-        {anchor.distribution.map((dist, i) => (
-          <div
-            key={i}
-            className={cn(
-              "rounded-full transition-all",
-              dist.value === "5" && "bg-emerald-500",
-              dist.value === "4" && "bg-emerald-400",
-              dist.value === "3" && "bg-amber-400",
-              dist.value === "2" && "bg-orange-400",
-              dist.value === "1" && "bg-red-500"
-            )}
-            style={{ width: `${dist.percentage}%` }}
-            title={`${dist.value}: ${dist.percentage}%`}
-          />
-        ))}
+      {/* Distribution mini bars - sorted by value */}
+      <div className="mt-4">
+        <p className="text-xs text-text-muted mb-2">Distribuição das respostas:</p>
+        <div className="flex gap-0.5 h-6 rounded-lg overflow-hidden">
+          {[...anchor.distribution]
+            .sort((a, b) => parseInt(a.value) - parseInt(b.value))
+            .map((dist, i) => (
+            <div
+              key={i}
+              className={cn(
+                "transition-all flex items-center justify-center",
+                getDistributionColor(dist.value)
+              )}
+              style={{ width: `${dist.percentage}%` }}
+              title={`${dist.value}: ${dist.count} (${dist.percentage}%)`}
+            >
+              {dist.percentage >= 8 && (
+                <span className="text-[10px] font-medium text-white">{dist.value}</span>
+              )}
+            </div>
+          ))}
+        </div>
+        {/* Legend */}
+        <div className="flex justify-between text-[10px] text-text-muted mt-1">
+          <span>Detratores (0-6)</span>
+          <span>Neutros (7-8)</span>
+          <span>Promotores (9-10)</span>
+        </div>
       </div>
     </div>
   );
