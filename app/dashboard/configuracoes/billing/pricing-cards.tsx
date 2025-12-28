@@ -112,13 +112,13 @@ const colorMap = {
     badge: "bg-pm-olive/10 text-pm-olive",
   },
   sage: {
-    border: "border-bg-sage/50 hover:border-bg-sage",
-    borderActive: "border-bg-sage",
+    border: "border-pm-olive/30 hover:border-pm-olive/60",
+    borderActive: "border-pm-olive",
     bg: "bg-white",
-    icon: "bg-bg-sage/50 text-text-heading",
-    button: "bg-bg-sage hover:bg-bg-sage/80 text-text-heading",
+    icon: "bg-pm-olive/10 text-pm-olive",
+    button: "bg-pm-olive hover:bg-pm-olive-dark text-white",
     check: "text-pm-olive",
-    badge: "bg-bg-sage/50 text-text-heading",
+    badge: "bg-pm-olive/10 text-pm-olive",
   },
 };
 
