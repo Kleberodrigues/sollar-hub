@@ -161,19 +161,19 @@ export function NR1ExecutiveDashboard({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
-        <Card className="border-0 shadow-lg bg-gradient-to-br from-pm-brown via-pm-green-dark to-pm-brown text-white overflow-hidden">
+        <Card className="border-2 border-pm-terracotta shadow-lg bg-white overflow-hidden">
           <CardContent className="p-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Main Risk Score */}
               <div className="lg:col-span-1">
                 <div className="flex items-center gap-4">
                   <div className="relative">
-                    <div className="w-24 h-24 rounded-full bg-white/10 backdrop-blur flex items-center justify-center">
+                    <div className="w-24 h-24 rounded-full bg-pm-terracotta/10 flex items-center justify-center">
                       <div className="text-center">
-                        <span className="text-4xl font-bold">
+                        <span className="text-4xl font-bold text-text-heading">
                           {metrics.avgScore.toFixed(1)}
                         </span>
-                        <span className="text-sm text-white/60 block">/5.0</span>
+                        <span className="text-sm text-text-muted block">/5.0</span>
                       </div>
                     </div>
                     <div className={cn(
@@ -186,12 +186,12 @@ export function NR1ExecutiveDashboard({
                     </div>
                   </div>
                   <div>
-                    <h2 className="text-2xl font-bold">Índice Geral NR-1</h2>
+                    <h2 className="text-2xl font-bold text-text-heading">Índice Geral NR-1</h2>
                     <p className={cn(
                       "text-lg font-medium",
-                      metrics.riskConfig.level === 'low' && "text-emerald-400",
-                      metrics.riskConfig.level === 'medium' && "text-amber-400",
-                      metrics.riskConfig.level === 'high' && "text-red-400"
+                      metrics.riskConfig.level === 'low' && "text-emerald-600",
+                      metrics.riskConfig.level === 'medium' && "text-amber-600",
+                      metrics.riskConfig.level === 'high' && "text-red-600"
                     )}>
                       {metrics.riskConfig.label}
                     </p>
@@ -201,39 +201,39 @@ export function NR1ExecutiveDashboard({
 
               {/* Risk Distribution */}
               <div className="lg:col-span-1">
-                <p className="text-sm text-white/60 mb-3">Distribuição de Risco</p>
+                <p className="text-sm text-text-muted mb-3">Distribuição de Risco</p>
                 <div className="flex items-end gap-2 h-16">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <div className="w-3 h-3 rounded bg-red-500" />
-                      <span className="text-2xl font-bold">{metrics.distribution.high}</span>
-                      <span className="text-sm text-white/60">críticas</span>
+                      <span className="text-2xl font-bold text-text-heading">{metrics.distribution.high}</span>
+                      <span className="text-sm text-text-muted">críticas</span>
                     </div>
                     <Progress
                       value={(metrics.distribution.high / metrics.total) * 100}
-                      className="h-2 bg-white/20 [&>div]:bg-red-500"
+                      className="h-2 bg-gray-200 [&>div]:bg-red-500"
                     />
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <div className="w-3 h-3 rounded bg-amber-500" />
-                      <span className="text-2xl font-bold">{metrics.distribution.medium}</span>
-                      <span className="text-sm text-white/60">atenção</span>
+                      <span className="text-2xl font-bold text-text-heading">{metrics.distribution.medium}</span>
+                      <span className="text-sm text-text-muted">atenção</span>
                     </div>
                     <Progress
                       value={(metrics.distribution.medium / metrics.total) * 100}
-                      className="h-2 bg-white/20 [&>div]:bg-amber-500"
+                      className="h-2 bg-gray-200 [&>div]:bg-amber-500"
                     />
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <div className="w-3 h-3 rounded bg-emerald-500" />
-                      <span className="text-2xl font-bold">{metrics.distribution.low}</span>
-                      <span className="text-sm text-white/60">saudáveis</span>
+                      <span className="text-2xl font-bold text-text-heading">{metrics.distribution.low}</span>
+                      <span className="text-sm text-text-muted">saudáveis</span>
                     </div>
                     <Progress
                       value={(metrics.distribution.low / metrics.total) * 100}
-                      className="h-2 bg-white/20 [&>div]:bg-emerald-500"
+                      className="h-2 bg-gray-200 [&>div]:bg-emerald-500"
                     />
                   </div>
                 </div>
@@ -242,33 +242,33 @@ export function NR1ExecutiveDashboard({
               {/* Key Metrics */}
               <div className="lg:col-span-1">
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-white/10 backdrop-blur rounded-lg p-3">
-                    <div className="flex items-center gap-2 text-white/60 mb-1">
+                  <div className="bg-bg-sage rounded-lg p-3">
+                    <div className="flex items-center gap-2 text-text-muted mb-1">
                       <Users className="w-4 h-4" />
                       <span className="text-xs">Participantes</span>
                     </div>
-                    <p className="text-2xl font-bold">{analytics.totalParticipants}</p>
+                    <p className="text-2xl font-bold text-text-heading">{analytics.totalParticipants}</p>
                   </div>
-                  <div className="bg-white/10 backdrop-blur rounded-lg p-3">
-                    <div className="flex items-center gap-2 text-white/60 mb-1">
+                  <div className="bg-bg-sage rounded-lg p-3">
+                    <div className="flex items-center gap-2 text-text-muted mb-1">
                       <Target className="w-4 h-4" />
                       <span className="text-xs">Conclusão</span>
                     </div>
-                    <p className="text-2xl font-bold">{analytics.completionRate}%</p>
+                    <p className="text-2xl font-bold text-text-heading">{analytics.completionRate}%</p>
                   </div>
-                  <div className="bg-white/10 backdrop-blur rounded-lg p-3">
-                    <div className="flex items-center gap-2 text-white/60 mb-1">
+                  <div className="bg-bg-sage rounded-lg p-3">
+                    <div className="flex items-center gap-2 text-text-muted mb-1">
                       <Activity className="w-4 h-4" />
                       <span className="text-xs">Categorias</span>
                     </div>
-                    <p className="text-2xl font-bold">{metrics.total}</p>
+                    <p className="text-2xl font-bold text-text-heading">{metrics.total}</p>
                   </div>
-                  <div className="bg-white/10 backdrop-blur rounded-lg p-3">
-                    <div className="flex items-center gap-2 text-white/60 mb-1">
+                  <div className="bg-bg-sage rounded-lg p-3">
+                    <div className="flex items-center gap-2 text-text-muted mb-1">
                       <Calendar className="w-4 h-4" />
                       <span className="text-xs">Última Resp.</span>
                     </div>
-                    <p className="text-sm font-medium">
+                    <p className="text-sm font-medium text-text-heading">
                       {analytics.lastResponseDate
                         ? new Date(analytics.lastResponseDate).toLocaleDateString('pt-BR')
                         : '—'
