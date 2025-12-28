@@ -165,114 +165,118 @@ export function WordCloudTab({ textResponses }: WordCloudTabProps) {
         </Card>
       </motion.div>
 
-      {/* Word Cloud */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-      >
-        <Card className="border-l-4 border-l-pm-olive">
-          <CardHeader className="flex flex-row items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-pm-olive/10 flex items-center justify-center">
-              <Cloud className="w-5 h-5 text-pm-olive" />
-            </div>
-            <div>
-              <CardTitle className="font-display text-xl text-text-heading">
-                Nuvem de Palavras
-              </CardTitle>
-              <p className="text-sm text-text-muted">
-                Palavras mais frequentes nas respostas abertas
-              </p>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="relative flex flex-wrap gap-x-2 gap-y-1 justify-center items-center py-8 min-h-[350px] px-4">
-              {words.map((word, index) => {
-                const rotation = getWordRotation(index);
-                return (
-                  <motion.span
-                    key={word.text}
-                    initial={{
-                      opacity: 0,
-                      scale: 0,
-                      rotate: rotation - 20,
-                      y: 30
-                    }}
-                    animate={{
-                      opacity: 1,
-                      scale: 1,
-                      rotate: rotation,
-                      y: 0
-                    }}
-                    transition={{
-                      duration: 0.5,
-                      delay: index * 0.03,
-                      type: "spring",
-                      stiffness: 100,
-                      damping: 15
-                    }}
-                    whileHover={{
-                      scale: 1.15,
-                      transition: { duration: 0.2 }
-                    }}
-                    className={cn(
-                      "cursor-default transition-all inline-block leading-tight",
-                      getWordSize(word.value),
-                      getWordColor(index, word.value)
-                    )}
-                    style={{
-                      transform: `rotate(${rotation}deg)`,
-                      marginLeft: index % 3 === 0 ? '-0.25rem' : undefined,
-                      marginRight: index % 4 === 0 ? '-0.25rem' : undefined,
-                    }}
-                    title={`${word.text}: ${word.value} ocorrências`}
-                  >
-                    {word.text}
-                  </motion.span>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
-      </motion.div>
+      {/* Word Cloud + Top Words Side by Side */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Word Cloud */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+        >
+          <Card className="border-l-4 border-l-pm-olive h-full">
+            <CardHeader className="flex flex-row items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-pm-olive/10 flex items-center justify-center">
+                <Cloud className="w-5 h-5 text-pm-olive" />
+              </div>
+              <div>
+                <CardTitle className="font-display text-xl text-text-heading">
+                  Nuvem de Palavras
+                </CardTitle>
+                <p className="text-sm text-text-muted">
+                  Visualização das palavras mais frequentes
+                </p>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="relative flex flex-wrap gap-x-2 gap-y-1 justify-center items-center py-6 min-h-[300px] px-4">
+                {words.map((word, index) => {
+                  const rotation = getWordRotation(index);
+                  return (
+                    <motion.span
+                      key={word.text}
+                      initial={{
+                        opacity: 0,
+                        scale: 0,
+                        rotate: rotation - 20,
+                        y: 30
+                      }}
+                      animate={{
+                        opacity: 1,
+                        scale: 1,
+                        rotate: rotation,
+                        y: 0
+                      }}
+                      transition={{
+                        duration: 0.5,
+                        delay: index * 0.03,
+                        type: "spring",
+                        stiffness: 100,
+                        damping: 15
+                      }}
+                      whileHover={{
+                        scale: 1.15,
+                        transition: { duration: 0.2 }
+                      }}
+                      className={cn(
+                        "cursor-default transition-all inline-block leading-tight",
+                        getWordSize(word.value),
+                        getWordColor(index, word.value)
+                      )}
+                      style={{
+                        transform: `rotate(${rotation}deg)`,
+                        marginLeft: index % 3 === 0 ? '-0.25rem' : undefined,
+                        marginRight: index % 4 === 0 ? '-0.25rem' : undefined,
+                      }}
+                      title={`${word.text}: ${word.value} ocorrências`}
+                    >
+                      {word.text}
+                    </motion.span>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
 
-      {/* Top Words List */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-      >
-        <Card className="border-l-4 border-l-pm-terracotta">
-          <CardHeader className="flex flex-row items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-pm-terracotta/10 flex items-center justify-center">
-              <MessageSquare className="w-5 h-5 text-pm-terracotta" />
-            </div>
-            <CardTitle className="font-display text-xl text-text-heading">
-              Palavras Mais Frequentes
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-              {words.slice(0, 20).map((word, index) => (
-                <motion.div
-                  key={word.text}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.2, delay: index * 0.03 }}
-                  className="flex items-center justify-between p-3 rounded-lg bg-bg-secondary"
-                >
-                  <span className="font-medium text-text-heading capitalize">
-                    {word.text}
-                  </span>
-                  <span className="text-sm text-text-muted bg-white px-2 py-1 rounded">
-                    {word.value}
-                  </span>
-                </motion.div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </motion.div>
+        {/* Top Words List */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          <Card className="border-l-4 border-l-pm-terracotta h-full">
+            <CardHeader className="flex flex-row items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-pm-terracotta/10 flex items-center justify-center">
+                <MessageSquare className="w-5 h-5 text-pm-terracotta" />
+              </div>
+              <CardTitle className="font-display text-xl text-text-heading">
+                Palavras Mais Frequentes
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 xl:grid-cols-3 gap-2">
+                {words.slice(0, 20).map((word, index) => (
+                  <motion.div
+                    key={word.text}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.2, delay: index * 0.03 }}
+                    className="flex items-center gap-2 p-2 rounded-lg bg-bg-secondary overflow-hidden"
+                    title={word.text}
+                  >
+                    <span className="font-medium text-text-heading capitalize truncate flex-1 min-w-0">
+                      {word.text}
+                    </span>
+                    <span className="text-sm text-text-muted bg-white px-2 py-0.5 rounded flex-shrink-0">
+                      {word.value}
+                    </span>
+                  </motion.div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </div>
     </div>
   );
 }
