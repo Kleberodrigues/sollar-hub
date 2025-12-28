@@ -122,7 +122,7 @@ export function TargetAudience() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={isInView ? { opacity: 1, scale: 1 } : {}}
           transition={{ duration: 0.5, delay: 0.6 }}
-          className="text-center py-12 lg:py-16"
+          className="text-center pt-6 pb-12 lg:pt-8 lg:pb-16"
         >
           <blockquote className="text-xl md:text-2xl font-display font-semibold text-pm-olive italic">
             &ldquo;Um único desligamento pode custar mais do que meses de prevenção.&rdquo;
