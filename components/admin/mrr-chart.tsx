@@ -8,7 +8,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Legend,
 } from "recharts";
 import { formatCurrency } from "@/types/admin.types";
 
@@ -33,7 +32,7 @@ function CustomTooltip({
   payload?: Array<{ value: number; dataKey: string; color: string }>;
   label?: string;
 }) {
-  if (!active || !payload) return null;
+  if (!active || !payload || !payload.length) return null;
 
   const formattedDate = label
     ? new Date(label).toLocaleDateString("pt-BR", {
@@ -42,27 +41,25 @@ function CustomTooltip({
       })
     : "";
 
+  const mrrValue = payload.find((p) => p.dataKey === "mrr");
+
   return (
     <div className="bg-white border border-border-light rounded-lg shadow-lg p-3">
       <p className="text-sm font-medium text-pm-brown mb-2 capitalize">
         {formattedDate}
       </p>
-      {payload.map((entry, index) => (
-        <div key={index} className="flex items-center gap-2 text-sm">
+      {mrrValue && (
+        <div className="flex items-center gap-2 text-sm">
           <div
             className="w-3 h-3 rounded-full"
-            style={{ backgroundColor: entry.color }}
+            style={{ backgroundColor: mrrValue.color }}
           />
-          <span className="text-text-muted">
-            {entry.dataKey === "mrr" ? "MRR:" : "Assinaturas:"}
-          </span>
+          <span className="text-text-muted">MRR:</span>
           <span className="font-medium text-pm-brown">
-            {entry.dataKey === "mrr"
-              ? formatCurrency(entry.value)
-              : entry.value}
+            {formatCurrency(mrrValue.value)}
           </span>
         </div>
-      ))}
+      )}
     </div>
   );
 }
@@ -108,22 +105,7 @@ export function MRRChart({ data, className }: MRRChartProps) {
                   })}`
                 }
               />
-              <YAxis
-                yAxisId="subs"
-                orientation="right"
-                axisLine={false}
-                tickLine={false}
-                tick={{ fill: "#8A8A8A", fontSize: 12 }}
-              />
               <Tooltip content={<CustomTooltip />} />
-              <Legend
-                verticalAlign="top"
-                align="right"
-                iconType="circle"
-                formatter={(value) =>
-                  value === "mrr" ? "MRR" : "Assinaturas"
-                }
-              />
               <Line
                 yAxisId="mrr"
                 type="monotone"
@@ -132,16 +114,6 @@ export function MRRChart({ data, className }: MRRChartProps) {
                 strokeWidth={2}
                 dot={{ fill: "#456807", strokeWidth: 0, r: 4 }}
                 activeDot={{ r: 6, fill: "#456807" }}
-              />
-              <Line
-                yAxisId="subs"
-                type="monotone"
-                dataKey="subscriptions"
-                stroke="#789750"
-                strokeWidth={2}
-                strokeDasharray="5 5"
-                dot={{ fill: "#789750", strokeWidth: 0, r: 4 }}
-                activeDot={{ r: 6, fill: "#789750" }}
               />
             </LineChart>
           </ResponsiveContainer>

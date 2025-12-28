@@ -84,6 +84,7 @@ export async function getAdminDashboardMetrics(): Promise<{
       lastMonthRevenue,
       assessmentsResult,
       newAssessmentsResult,
+      responsesResult,
     ] = await Promise.all([
       // Total organizations
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -164,6 +165,9 @@ export async function getAdminDashboardMetrics(): Promise<{
         .from("assessments")
         .select("id", { count: "exact", head: true })
         .gte("created_at", new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()),
+      // Total responses
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (supabase as any).from("responses").select("id", { count: "exact", head: true }),
     ]);
 
     // Sum revenue amounts
@@ -193,6 +197,7 @@ export async function getAdminDashboardMetrics(): Promise<{
       revenueLastMonthCents: lastRevenue,
       totalAssessments: assessmentsResult.count || 0,
       assessments30d: newAssessmentsResult.count || 0,
+      totalResponses: responsesResult.count || 0,
     };
 
     return { metrics };
