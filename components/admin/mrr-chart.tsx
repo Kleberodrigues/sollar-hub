@@ -22,6 +22,34 @@ interface MRRChartProps {
   className?: string;
 }
 
+// Format date for tooltip (full month name)
+function formatTooltipDate(dateString: string): string {
+  if (!dateString) return "";
+
+  // If already formatted (e.g., "jan. de 24"), return as is
+  if (dateString.includes(" de ")) return dateString;
+
+  // Try parsing as ISO date
+  const date = new Date(dateString + "T12:00:00");
+
+  if (isNaN(date.getTime())) {
+    const match = dateString.match(/^(\d{4})-(\d{2})/);
+    if (match) {
+      const [, year, month] = match;
+      const monthNames = ["janeiro", "fevereiro", "março", "abril", "maio", "junho",
+                         "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+      const monthIndex = parseInt(month, 10) - 1;
+      return `${monthNames[monthIndex]} de ${year}`;
+    }
+    return dateString;
+  }
+
+  return date.toLocaleDateString("pt-BR", {
+    month: "long",
+    year: "numeric",
+  });
+}
+
 // Custom tooltip component
 function CustomTooltip({
   active,
@@ -34,12 +62,7 @@ function CustomTooltip({
 }) {
   if (!active || !payload || !payload.length) return null;
 
-  const formattedDate = label
-    ? new Date(label).toLocaleDateString("pt-BR", {
-        month: "long",
-        year: "numeric",
-      })
-    : "";
+  const formattedDate = label ? formatTooltipDate(label) : "";
 
   const mrrValue = payload.find((p) => p.dataKey === "mrr");
 
@@ -77,14 +100,39 @@ function formatYAxisCurrency(valueInCents: number): string {
   return `R$ ${valueInReais.toFixed(0)}`;
 }
 
+// Parse date string safely and format for display
+function formatMonthLabel(dateString: string): string {
+  // Handle ISO date format "2024-12-01" or similar
+  if (!dateString) return "";
+
+  // Try parsing as ISO date (add time to avoid timezone issues)
+  const date = new Date(dateString + "T12:00:00");
+
+  if (isNaN(date.getTime())) {
+    // If invalid, try extracting year-month manually
+    const match = dateString.match(/^(\d{4})-(\d{2})/);
+    if (match) {
+      const [, year, month] = match;
+      const monthNames = ["jan.", "fev.", "mar.", "abr.", "mai.", "jun.",
+                         "jul.", "ago.", "set.", "out.", "nov.", "dez."];
+      const monthIndex = parseInt(month, 10) - 1;
+      const shortYear = year.slice(-2);
+      return `${monthNames[monthIndex]} de ${shortYear}`;
+    }
+    return dateString;
+  }
+
+  return date.toLocaleDateString("pt-BR", {
+    month: "short",
+    year: "2-digit",
+  });
+}
+
 export function MRRChart({ data, className }: MRRChartProps) {
   // Format data for chart
   const chartData = data.map((item) => ({
     ...item,
-    formattedMonth: new Date(item.month).toLocaleDateString("pt-BR", {
-      month: "short",
-      year: "2-digit",
-    }),
+    formattedMonth: formatMonthLabel(item.month),
   }));
 
   // Calculate max value to determine Y axis width
