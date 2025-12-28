@@ -29,7 +29,6 @@ interface UsersPageContentProps {
   users: User[];
   organizationName: string;
   inviteDialog: ReactNode;
-  bulkImportDialog: ReactNode;
   userList: ReactNode;
 }
 
@@ -37,7 +36,6 @@ export function UsersPageContent({
   users,
   organizationName,
   inviteDialog,
-  bulkImportDialog,
   userList,
 }: UsersPageContentProps) {
   const ref = useRef(null);
@@ -102,7 +100,6 @@ export function UsersPageContent({
           </div>
         </div>
         <div className="flex items-center gap-2">
-          {bulkImportDialog}
           {inviteDialog}
         </div>
       </motion.div>

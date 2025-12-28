@@ -2,10 +2,8 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { UserList } from "@/components/users/UserList";
 import { InviteUserDialog } from "@/components/users/InviteUserDialog";
-import { BulkImportDialog } from "@/components/users/BulkImportDialog";
 import { UsersPageContent, UsersErrorState } from "@/components/users/UsersPageContent";
 import { listOrganizationUsers } from "./actions";
-import { getOrganizationDepartments } from "./bulk-import-actions";
 
 export default async function UsersPage() {
   const supabase = await createClient();
@@ -33,18 +31,14 @@ export default async function UsersPage() {
     redirect("/dashboard");
   }
 
-  // Buscar usuários da organização e departamentos
-  const [result, deptResult] = await Promise.all([
-    listOrganizationUsers(),
-    getOrganizationDepartments(),
-  ]);
+  // Buscar usuários da organização
+  const result = await listOrganizationUsers();
 
   if (result.error) {
     return <UsersErrorState error={result.error} />;
   }
 
   const users = result.users || [];
-  const departments = deptResult.departments || [];
   const orgData = profile.organizations;
   const organizationName =
     orgData && typeof orgData === "object" && !Array.isArray(orgData)
@@ -62,7 +56,6 @@ export default async function UsersPage() {
       users={users}
       organizationName={organizationName}
       inviteDialog={<InviteUserDialog memberCount={memberCount} managerCount={managerCount} />}
-      bulkImportDialog={<BulkImportDialog departments={departments} />}
       userList={<UserList users={users} />}
     />
   );
