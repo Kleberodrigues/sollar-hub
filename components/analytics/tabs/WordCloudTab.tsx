@@ -131,13 +131,13 @@ export function WordCloudTab({ textResponses }: WordCloudTabProps) {
 
   const getWordSize = (value: number) => {
     const ratio = value / maxValue;
-    if (ratio > 0.85) return "text-5xl font-bold";
-    if (ratio > 0.7) return "text-4xl font-bold";
-    if (ratio > 0.5) return "text-3xl font-semibold";
-    if (ratio > 0.35) return "text-2xl font-medium";
-    if (ratio > 0.2) return "text-xl font-medium";
-    if (ratio > 0.1) return "text-lg";
-    return "text-base";
+    if (ratio > 0.85) return "text-4xl font-bold";      // Reduced from 5xl
+    if (ratio > 0.7) return "text-3xl font-bold";       // Reduced from 4xl
+    if (ratio > 0.5) return "text-2xl font-semibold";   // Reduced from 3xl
+    if (ratio > 0.35) return "text-xl font-medium";     // Reduced from 2xl
+    if (ratio > 0.2) return "text-lg font-medium";      // Reduced from xl
+    if (ratio > 0.1) return "text-base";                // Reduced from lg
+    return "text-sm";                                    // Reduced from base
   };
 
   // Rotation angles - subtle for readability
@@ -152,24 +152,40 @@ export function WordCloudTab({ textResponses }: WordCloudTabProps) {
     return rotations[index % rotations.length];
   };
 
-  // Pre-calculated positions for cloud layout - handcrafted for better distribution
+  // Pre-calculated positions - well spaced to avoid overlaps, with safe margins
   const cloudPositions = useMemo(() => {
     const positions = [
-      // Center - largest word
-      { x: 50, y: 50 },
-      // Inner ring - 2nd-5th words
-      { x: 30, y: 40 }, { x: 70, y: 45 }, { x: 45, y: 30 }, { x: 55, y: 68 },
-      // Second ring - 6th-12th words
-      { x: 20, y: 55 }, { x: 80, y: 55 }, { x: 35, y: 20 }, { x: 65, y: 75 },
-      { x: 15, y: 35 }, { x: 85, y: 40 }, { x: 50, y: 15 },
-      // Outer ring - 13th-20th words
-      { x: 25, y: 70 }, { x: 75, y: 25 }, { x: 10, y: 50 }, { x: 90, y: 60 },
-      { x: 40, y: 85 }, { x: 60, y: 12 }, { x: 18, y: 22 }, { x: 82, y: 78 },
-      // Far outer - 21st-35th words
-      { x: 12, y: 68 }, { x: 88, y: 32 }, { x: 30, y: 88 }, { x: 70, y: 8 },
-      { x: 8, y: 42 }, { x: 92, y: 48 }, { x: 22, y: 12 }, { x: 78, y: 88 },
-      { x: 45, y: 92 }, { x: 55, y: 8 }, { x: 5, y: 58 }, { x: 95, y: 42 },
-      { x: 35, y: 5 }, { x: 65, y: 95 }, { x: 50, y: 82 },
+      // Center - largest word (index 0)
+      { x: 50, y: 48 },
+      // Ring 1 - words 1-4 (well spaced around center)
+      { x: 25, y: 35 },
+      { x: 75, y: 38 },
+      { x: 35, y: 65 },
+      { x: 68, y: 62 },
+      // Ring 2 - words 5-10 (medium distance)
+      { x: 20, y: 52 },
+      { x: 80, y: 50 },
+      { x: 50, y: 25 },
+      { x: 45, y: 78 },
+      { x: 30, y: 20 },
+      { x: 72, y: 22 },
+      // Ring 3 - words 11-18 (outer)
+      { x: 18, y: 70 },
+      { x: 82, y: 68 },
+      { x: 55, y: 88 },
+      { x: 62, y: 12 },
+      { x: 15, y: 40 },
+      { x: 85, y: 35 },
+      { x: 28, y: 85 },
+      { x: 75, y: 82 },
+      // Ring 4 - words 19-25 (far edges with safe margin)
+      { x: 40, y: 12 },
+      { x: 88, y: 55 },
+      { x: 12, y: 58 },
+      { x: 65, y: 75 },
+      { x: 22, y: 28 },
+      { x: 78, y: 28 },
+      { x: 35, y: 92 },
     ];
     return positions;
   }, []);
@@ -178,12 +194,12 @@ export function WordCloudTab({ textResponses }: WordCloudTabProps) {
     if (index < cloudPositions.length) {
       return cloudPositions[index];
     }
-    // Fallback for extra words
-    const angle = index * 2.4; // Golden angle approximation
-    const radius = 35 + (index - cloudPositions.length) * 3;
+    // Fallback - place remaining words in safe positions
+    const row = Math.floor((index - cloudPositions.length) / 3);
+    const col = (index - cloudPositions.length) % 3;
     return {
-      x: Math.max(8, Math.min(92, 50 + Math.cos(angle) * radius)),
-      y: Math.max(8, Math.min(92, 50 + Math.sin(angle) * radius))
+      x: 25 + col * 25,
+      y: 92 - row * 15
     };
   };
 
@@ -248,8 +264,8 @@ export function WordCloudTab({ textResponses }: WordCloudTabProps) {
         transition={{ duration: 0.5, delay: 0.1 }}
         className="flex-1"
       >
-        <div className="relative min-h-[400px] w-full overflow-hidden">
-          {words.slice(0, 35).map((word, index) => {
+        <div className="relative min-h-[380px] w-full px-8 py-4">
+          {words.slice(0, 26).map((word, index) => {
             const ratio = word.value / maxValue;
             const rotation = getWordRotation(index, ratio);
             const position = getWordPosition(index);
