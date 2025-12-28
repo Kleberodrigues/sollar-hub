@@ -23,16 +23,16 @@ interface QuestionDistributionChartsProps {
   distributions: QuestionDistribution[];
 }
 
-// Color palette for charts
+// Color palette for charts - using design system colors
 const COLORS = [
-  "#3b82f6", // blue
-  "#22c55e", // green
-  "#eab308", // yellow
-  "#ef4444", // red
-  "#8b5cf6", // purple
-  "#ec4899", // pink
-  "#f97316", // orange
-  "#14b8a6", // teal
+  "#789750", // pm-olive
+  "#B14A2B", // pm-terracotta
+  "#456807", // pm-green-dark
+  "#9DB075", // pm-sage
+  "#77953E", // pm-green-medium
+  "#6A8445", // pm-olive-dark
+  "#C45A3A", // pm-terracotta-hover
+  "#4C2012", // pm-brown
 ];
 
 export function QuestionDistributionCharts({

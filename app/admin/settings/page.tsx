@@ -277,8 +277,8 @@ export default function AdminSettingsPage() {
 
             <div className="flex items-center justify-between py-3 border-b border-border-light">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                  <DollarSign className="h-5 w-5 text-purple-600" />
+                <div className="h-10 w-10 bg-pm-olive/10 rounded-lg flex items-center justify-center">
+                  <DollarSign className="h-5 w-5 text-pm-olive" />
                 </div>
                 <div>
                   <p className="font-medium text-pm-brown">Stripe</p>

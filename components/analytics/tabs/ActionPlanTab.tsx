@@ -286,7 +286,7 @@ export function ActionPlanTab({
         <title>Plano de Ação - ${new Date().toLocaleDateString('pt-BR')}</title>
         <style>
           body { font-family: Arial, sans-serif; padding: 20px; color: #333; }
-          h1 { color: #7c3aed; border-bottom: 2px solid #7c3aed; padding-bottom: 10px; }
+          h1 { color: #789750; border-bottom: 2px solid #789750; padding-bottom: 10px; }
           .action { border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; margin-bottom: 16px; page-break-inside: avoid; }
           .header { display: flex; gap: 8px; margin-bottom: 8px; }
           .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
@@ -339,12 +339,12 @@ export function ActionPlanTab({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <Card className="border-l-4 border-l-purple-500 bg-white">
+        <Card className="border-l-4 border-l-pm-olive bg-white">
           <CardContent className="p-6">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-xl bg-purple-100 flex items-center justify-center">
-                  <Sparkles className="w-7 h-7 text-purple-600" />
+                <div className="w-14 h-14 rounded-xl bg-pm-olive/10 flex items-center justify-center">
+                  <Sparkles className="w-7 h-7 text-pm-olive" />
                 </div>
                 <div>
                   <h2 className="text-xl font-display font-bold text-text-heading">
@@ -375,7 +375,7 @@ export function ActionPlanTab({
                 <Button
                   onClick={handleGenerate}
                   disabled={!canUseAI || isGenerating}
-                  className="bg-purple-600 hover:bg-purple-700"
+                  className="bg-pm-olive hover:bg-pm-olive-dark"
                 >
                   {isGenerating ? (
                     <>
@@ -619,11 +619,11 @@ export function ActionPlanTab({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <Card className="border-l-4 border-l-purple-500">
+            <Card className="border-l-4 border-l-pm-olive">
               <CardHeader className="flex flex-row items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
-                    <Target className="w-5 h-5 text-purple-600" />
+                  <div className="w-10 h-10 rounded-xl bg-pm-olive/10 flex items-center justify-center">
+                    <Target className="w-5 h-5 text-pm-olive" />
                   </div>
                   <CardTitle className="font-display text-xl text-text-heading">
                     Sugestões da IA ({aiActions.length})
@@ -738,10 +738,10 @@ export function ActionPlanTab({
                                 </div>
                               </div>
                             </div>
-                            <div className="flex flex-col gap-2">
+                            <div className="flex flex-col gap-2 min-w-[100px]">
                               <Button
                                 size="sm"
-                                className="bg-green-600 hover:bg-green-700"
+                                className="bg-pm-olive hover:bg-pm-olive-dark text-white shadow-sm"
                                 onClick={() => handleAcceptAction(action)}
                                 disabled={isSaving}
                               >
@@ -750,14 +750,15 @@ export function ActionPlanTab({
                               <Button
                                 variant="outline"
                                 size="sm"
+                                className="border-pm-terracotta/30 text-pm-terracotta hover:bg-pm-terracotta/10 hover:border-pm-terracotta"
                                 onClick={() => handleStartEdit(action)}
                               >
                                 <Pencil className="w-4 h-4 mr-1" /> Editar
                               </Button>
                               <Button
-                                variant="ghost"
+                                variant="outline"
                                 size="sm"
-                                className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                className="border-gray-200 text-gray-500 hover:text-red-600 hover:bg-red-50 hover:border-red-200"
                                 onClick={() => handleRejectAction(action.id)}
                               >
                                 <X className="w-4 h-4 mr-1" /> Rejeitar
@@ -783,8 +784,8 @@ export function ActionPlanTab({
           <Card className="border-dashed border-2 bg-white">
             <CardContent className="py-16">
               <div className="text-center">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-purple-100 flex items-center justify-center">
-                  <Sparkles className="w-8 h-8 text-purple-500" />
+                <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-pm-olive/10 flex items-center justify-center">
+                  <Sparkles className="w-8 h-8 text-pm-olive" />
                 </div>
                 <h3 className="text-xl font-display font-semibold text-text-heading mb-2">
                   Crie seu Plano de Ação
@@ -803,7 +804,7 @@ export function ActionPlanTab({
                   </Button>
                   <Button
                     onClick={handleGenerate}
-                    className="bg-purple-600 hover:bg-purple-700"
+                    className="bg-pm-olive hover:bg-pm-olive-dark"
                   >
                     <Sparkles className="w-4 h-4 mr-2" />
                     Gerar com IA

@@ -523,14 +523,14 @@ export function AnalyticsDashboardContent({
             </Card>
 
             {/* Plano de Ação com IA */}
-            <Card className="bg-white border border-gray-200 border-l-4 border-l-purple-500 hover:shadow-md hover:border-gray-300 transition-all cursor-pointer group"
+            <Card className="bg-white border border-gray-200 border-l-4 border-l-pm-olive hover:shadow-md hover:border-gray-300 transition-all cursor-pointer group"
               onClick={() => setFullscreenSection("action")}
             >
               <CardContent className="p-5">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center">
-                      <Sparkles className="w-6 h-6 text-purple-600" />
+                    <div className="w-12 h-12 rounded-xl bg-pm-olive/10 flex items-center justify-center">
+                      <Sparkles className="w-6 h-6 text-pm-olive" />
                     </div>
                     <div>
                       <h3 className="font-display text-lg font-semibold text-text-heading">Plano de Ação com IA</h3>
@@ -538,8 +538,8 @@ export function AnalyticsDashboardContent({
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Badge className="bg-purple-100 text-purple-700 text-xs border-0">IA</Badge>
-                    <ChevronRight className="w-5 h-5 text-text-muted group-hover:text-purple-500 transition-colors" />
+                    <Badge className="bg-pm-olive/10 text-pm-olive text-xs border-0">IA</Badge>
+                    <ChevronRight className="w-5 h-5 text-text-muted group-hover:text-pm-olive transition-colors" />
                   </div>
                 </div>
               </CardContent>

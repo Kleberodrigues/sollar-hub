@@ -188,8 +188,8 @@ export function WebhooksContent({ initialStats, initialEvents, eventTypes }: Web
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
-                  <Activity className="w-5 h-5 text-purple-600" />
+                <div className="w-10 h-10 rounded-lg bg-pm-olive/10 flex items-center justify-center">
+                  <Activity className="w-5 h-5 text-pm-olive" />
                 </div>
                 <div>
                   <p className="text-xs text-text-muted">Tipos de Evento</p>

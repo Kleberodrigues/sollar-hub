@@ -221,11 +221,11 @@ ${aiReport.conclusion}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <Card className="bg-gradient-to-br from-purple-50 via-white to-pm-terracotta/5 border-l-4 border-l-purple-500">
+        <Card className="bg-gradient-to-br from-pm-olive/5 via-white to-pm-terracotta/5 border-l-4 border-l-pm-olive">
           <CardContent className="p-6">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-pm-olive to-pm-olive-dark flex items-center justify-center">
                   <Sparkles className="w-8 h-8 text-white" />
                 </div>
                 <div>
@@ -233,7 +233,7 @@ ${aiReport.conclusion}
                     Relatório Inteligente
                   </h2>
                   <p className="text-text-muted">{assessmentTitle}</p>
-                  <p className="text-sm text-purple-600 mt-1">
+                  <p className="text-sm text-pm-olive mt-1">
                     Análise completa gerada com IA
                   </p>
                   {lastGenerated && (
@@ -248,7 +248,7 @@ ${aiReport.conclusion}
                 <Button
                   onClick={handleGenerateAIReport}
                   disabled={isGenerating !== null}
-                  className="bg-purple-600 hover:bg-purple-700"
+                  className="bg-pm-olive hover:bg-pm-olive-dark"
                   size="lg"
                 >
                   {isGenerating === "ai" ? (
@@ -416,11 +416,11 @@ ${aiReport.conclusion}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <Card className="border-l-4 border-l-purple-500">
+            <Card className="border-l-4 border-l-pm-olive">
               <CardHeader>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
-                    <Target className="w-5 h-5 text-purple-600" />
+                  <div className="w-10 h-10 rounded-xl bg-pm-olive/10 flex items-center justify-center">
+                    <Target className="w-5 h-5 text-pm-olive" />
                   </div>
                   <CardTitle className="font-display text-xl text-text-heading">
                     Prioridades de Ação
@@ -496,8 +496,8 @@ ${aiReport.conclusion}
           <Card className="border-dashed border-2">
             <CardContent className="py-16">
               <div className="text-center">
-                <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-purple-100 to-purple-50 flex items-center justify-center">
-                  <Sparkles className="w-10 h-10 text-purple-500" />
+                <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-pm-olive/20 to-pm-olive/5 flex items-center justify-center">
+                  <Sparkles className="w-10 h-10 text-pm-olive" />
                 </div>
                 <h3 className="text-2xl font-display font-semibold text-text-heading mb-3">
                   Relatório Inteligente
@@ -527,7 +527,7 @@ ${aiReport.conclusion}
                 <Button
                   onClick={handleGenerateAIReport}
                   disabled={isGenerating !== null}
-                  className="bg-purple-600 hover:bg-purple-700"
+                  className="bg-pm-olive hover:bg-pm-olive-dark"
                   size="lg"
                 >
                   <Sparkles className="w-5 h-5 mr-2" />

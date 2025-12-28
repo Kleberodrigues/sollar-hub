@@ -114,8 +114,8 @@ export function Sidebar({ userRole, isSuperAdmin = false }: SidebarProps) {
             href="/admin"
             className={cn(
               "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
-              "bg-gradient-to-r from-purple-500/10 to-purple-600/10 text-purple-700 border border-purple-200",
-              "hover:from-purple-500/20 hover:to-purple-600/20 hover:border-purple-300"
+              "bg-gradient-to-r from-pm-olive/10 to-pm-olive-dark/10 text-pm-olive-dark border border-pm-olive/30",
+              "hover:from-pm-olive/20 hover:to-pm-olive-dark/20 hover:border-pm-olive/50"
             )}
           >
             <Shield className="w-5 h-5" />

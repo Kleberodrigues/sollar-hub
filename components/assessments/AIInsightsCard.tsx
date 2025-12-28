@@ -229,9 +229,9 @@ export function AIInsightsCard({
 
   if (isLoading) {
     return (
-      <Card className="border-l-4 border-l-purple-500">
+      <Card className="border-l-4 border-l-pm-olive">
         <CardContent className="py-12 flex items-center justify-center">
-          <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
+          <Loader2 className="w-8 h-8 animate-spin text-pm-olive" />
         </CardContent>
       </Card>
     );
@@ -239,11 +239,11 @@ export function AIInsightsCard({
 
   return (
     <>
-      <Card className="border-l-4 border-l-purple-500 overflow-hidden">
-        <CardHeader className="bg-gradient-to-br from-purple-50 via-white to-pm-terracotta/5 pb-4">
+      <Card className="border-l-4 border-l-pm-olive overflow-hidden">
+        <CardHeader className="bg-gradient-to-br from-pm-olive/5 via-white to-pm-terracotta/5 pb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-pm-olive to-pm-olive-dark flex items-center justify-center">
                 <Sparkles className="w-6 h-6 text-white" />
               </div>
               <div>
@@ -302,17 +302,17 @@ export function AIInsightsCard({
             {/* Analysis Card */}
             <motion.div
               whileHover={{ scale: 1.02 }}
-              className="relative p-5 rounded-xl border-2 border-dashed border-purple-200 bg-purple-50/50 hover:border-purple-400 hover:bg-purple-50 transition-all cursor-pointer group"
+              className="relative p-5 rounded-xl border-2 border-dashed border-pm-olive/30 bg-pm-olive/5 hover:border-pm-olive hover:bg-pm-olive/10 transition-all cursor-pointer group"
               onClick={canGenerateAnalysis ? handleGenerateAnalysis : undefined}
             >
               {isGeneratingAnalysis && (
                 <div className="absolute inset-0 bg-white/80 rounded-xl flex items-center justify-center z-10">
-                  <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
+                  <Loader2 className="w-8 h-8 animate-spin text-pm-olive" />
                 </div>
               )}
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center group-hover:bg-purple-200 transition-colors">
-                  <Brain className="w-6 h-6 text-purple-600" />
+                <div className="w-12 h-12 rounded-xl bg-pm-olive/10 flex items-center justify-center group-hover:bg-pm-olive/20 transition-colors">
+                  <Brain className="w-6 h-6 text-pm-olive" />
                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold text-text-heading mb-1">
@@ -324,7 +324,7 @@ export function AIInsightsCard({
                   <Button
                     size="sm"
                     disabled={!canGenerateAnalysis || isGeneratingAnalysis || responseCount === 0}
-                    className="bg-purple-600 hover:bg-purple-700"
+                    className="bg-pm-olive hover:bg-pm-olive-dark"
                   >
                     <Sparkles className="w-4 h-4 mr-2" />
                     {responseCount === 0 ? "Aguardando respostas" : "Gerar Análise"}
@@ -419,7 +419,7 @@ export function AIInsightsCard({
                         className={cn(
                           "w-8 h-8 rounded-lg flex items-center justify-center",
                           gen.type === "analysis"
-                            ? "bg-purple-100 text-purple-600"
+                            ? "bg-pm-olive/10 text-pm-olive"
                             : "bg-pm-terracotta/10 text-pm-terracotta"
                         )}
                       >
@@ -455,7 +455,7 @@ export function AIInsightsCard({
           )}
 
           {/* Help Text */}
-          <div className="p-4 rounded-xl bg-gradient-to-r from-purple-50 to-pm-terracotta/5 border border-purple-100">
+          <div className="p-4 rounded-xl bg-gradient-to-r from-pm-olive/5 to-pm-terracotta/5 border border-pm-olive/20">
             <p className="text-sm text-text-secondary">
               <strong className="text-text-heading">Como funciona:</strong> Nossa IA analisa todas as respostas do seu assessment para identificar padrões e gerar insights acionáveis. Os planos de ação são totalmente editáveis pelo administrador.
             </p>
@@ -476,7 +476,7 @@ export function AIInsightsCard({
                   className={cn(
                     "w-10 h-10 rounded-xl flex items-center justify-center",
                     selectedGeneration?.type === "analysis"
-                      ? "bg-purple-100 text-purple-600"
+                      ? "bg-pm-olive/10 text-pm-olive"
                       : "bg-pm-terracotta/10 text-pm-terracotta"
                   )}
                 >
@@ -637,7 +637,7 @@ function AnalysisView({ analysis }: { analysis: AIAnalysis }) {
         <ul className="space-y-2">
           {analysis.keyFindings.map((finding, i) => (
             <li key={i} className="flex items-start gap-2 text-sm">
-              <CheckCircle className="w-4 h-4 text-purple-500 mt-0.5 flex-shrink-0" />
+              <CheckCircle className="w-4 h-4 text-pm-olive mt-0.5 flex-shrink-0" />
               <span>{finding}</span>
             </li>
           ))}
