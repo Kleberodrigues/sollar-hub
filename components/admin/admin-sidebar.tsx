@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { SunIcon } from "@/components/Logo";
 import {
   LayoutDashboard,
   Building2,
@@ -73,10 +74,15 @@ export function AdminSidebar({ userName }: AdminSidebarProps) {
           <Menu className="h-6 w-6 text-pm-brown" />
         </button>
         <div className="flex items-center gap-2 ml-3">
-          <div className="w-8 h-8 bg-pm-green-dark rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">SA</span>
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pm-olive/20 to-pm-terracotta/20 flex items-center justify-center">
+            <SunIcon size={20} className="text-pm-terracotta" />
           </div>
-          <h1 className="font-semibold text-pm-brown text-sm">PsicoMapa Admin</h1>
+          <div className="flex flex-col">
+            <span className="text-sm font-display font-bold">
+              <span className="text-pm-olive">Psico</span>
+              <span className="text-pm-terracotta">Mapa</span>
+            </span>
+          </div>
         </div>
       </div>
 
@@ -98,13 +104,18 @@ export function AdminSidebar({ userName }: AdminSidebarProps) {
         {/* Header */}
         <div className="p-4 border-b border-border-light">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-pm-green-dark rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">SA</span>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pm-olive/20 to-pm-terracotta/20 flex items-center justify-center">
+                <SunIcon size={24} className="text-pm-terracotta" />
               </div>
-              <div>
-                <h1 className="font-semibold text-pm-brown text-sm">PsicoMapa Admin</h1>
-                <p className="text-xs text-text-muted">Painel da Plataforma</p>
+              <div className="flex flex-col">
+                <span className="text-lg font-display font-bold">
+                  <span className="text-pm-olive">Psico</span>
+                  <span className="text-pm-terracotta">Mapa</span>
+                </span>
+                <span className="text-xs text-text-muted -mt-1">
+                  Painel da Plataforma
+                </span>
               </div>
             </div>
             {/* Close button - mobile only */}
