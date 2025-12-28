@@ -351,7 +351,7 @@ const pulseQuestions: Question[] = [
   {
     text: 'Como você está se sentindo no trabalho este mês?',
     type: 'multiple_choice',
-    category: 'bem_estar',
+    category: 'anchors',
     order_number: 1,
     required: true,
     options: ['Muito mal', 'Mal', 'Mais ou menos', 'Bem', 'Muito bem'],
@@ -364,7 +364,7 @@ const pulseQuestions: Question[] = [
   {
     text: 'Neste mês, consegui dar conta do meu trabalho sem me sentir sobrecarregado(a).',
     type: 'likert_scale',
-    category: 'carga_trabalho',
+    category: 'demands_and_pace',
     order_number: 2,
     required: true,
     options: ['Nunca', 'Raramente', 'Às vezes', 'Quase sempre', 'Sempre'],
@@ -377,7 +377,7 @@ const pulseQuestions: Question[] = [
   {
     text: 'Neste mês, consegui concluir minhas principais tarefas dentro do meu horário normal de trabalho.',
     type: 'likert_scale',
-    category: 'carga_trabalho',
+    category: 'demands_and_pace',
     order_number: 3,
     required: true,
     options: ['Nunca', 'Raramente', 'Às vezes', 'Quase sempre', 'Sempre'],
@@ -390,7 +390,7 @@ const pulseQuestions: Question[] = [
   {
     text: 'Neste mês, senti que minha liderança me apoiou quando precisei.',
     type: 'likert_scale',
-    category: 'lideranca',
+    category: 'leadership_recognition',
     order_number: 4,
     required: true,
     options: ['Nunca', 'Raramente', 'Às vezes', 'Quase sempre', 'Sempre'],
@@ -403,7 +403,7 @@ const pulseQuestions: Question[] = [
   {
     text: 'Neste mês, recebi orientações claras sobre prioridades e expectativas do meu trabalho.',
     type: 'likert_scale',
-    category: 'lideranca',
+    category: 'leadership_recognition',
     order_number: 5,
     required: true,
     options: ['Nunca', 'Raramente', 'Às vezes', 'Quase sempre', 'Sempre'],
@@ -416,7 +416,7 @@ const pulseQuestions: Question[] = [
   {
     text: 'Neste mês, senti que pude falar abertamente com minha liderança.',
     type: 'likert_scale',
-    category: 'lideranca',
+    category: 'leadership_recognition',
     order_number: 6,
     required: true,
     options: ['Nunca', 'Raramente', 'Às vezes', 'Quase sempre', 'Sempre'],
@@ -429,7 +429,7 @@ const pulseQuestions: Question[] = [
   {
     text: 'Neste mês, percebi um ambiente respeitoso e colaborativo no dia a dia.',
     type: 'likert_scale',
-    category: 'clima',
+    category: 'relationships_communication',
     order_number: 7,
     required: true,
     options: ['Nunca', 'Raramente', 'Às vezes', 'Quase sempre', 'Sempre'],
@@ -442,7 +442,7 @@ const pulseQuestions: Question[] = [
   {
     text: 'Neste mês, senti segurança para trazer dúvidas, problemas ou erros sem medo de consequências injustas.',
     type: 'likert_scale',
-    category: 'clima',
+    category: 'relationships_communication',
     order_number: 8,
     required: true,
     options: ['Nunca', 'Raramente', 'Às vezes', 'Quase sempre', 'Sempre'],
@@ -455,7 +455,7 @@ const pulseQuestions: Question[] = [
   {
     text: 'De 0 a 10, quão satisfeito(a) você está hoje com seu trabalho nesta empresa?',
     type: 'likert_scale',
-    category: 'satisfacao',
+    category: 'suggestions',
     order_number: 9,
     required: true,
     scale_labels: { '0': 'Totalmente insatisfeito(a)', '10': 'Totalmente satisfeito(a)' },
@@ -467,7 +467,7 @@ const pulseQuestions: Question[] = [
   {
     text: 'Se quiser, explique o motivo da sua nota.',
     type: 'text',
-    category: 'satisfacao',
+    category: 'suggestions',
     order_number: 10,
     required: false,
     is_strategic_open: true,
@@ -559,7 +559,7 @@ async function main() {
     console.log(`✅ Questionário Pulse criado/atualizado: ${pulseQ.id}\n`);
 
     // Inserir perguntas do Pulse
-    console.log('📝 Inserindo 5 perguntas do Pulse...');
+    console.log('📝 Inserindo 10 perguntas do Pulse...');
     for (const q of pulseQuestions) {
       const { error: qError } = await supabase
         .from('questions')
