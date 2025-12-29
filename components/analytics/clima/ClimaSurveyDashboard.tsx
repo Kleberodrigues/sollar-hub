@@ -1,343 +1,211 @@
 'use client';
 
 /**
- * ClimaSurveyDashboard - Dashboard específico para Pesquisa de Clima
+ * ClimaSurveyDashboard - Dashboard para Pesquisa de Clima
  *
- * Estrutura:
- * - Painel principal: Q1-Q8 (escalas 1-5)
- * - Cards de resumo por tema
- * - Heatmap mensal
- * - Seção separada para Satisfação (Q9, 0-10)
- * - Seção separada para Pergunta Aberta (Q10)
+ * Estrutura das 10 perguntas:
+ * Q1: Bem-estar (1-5)
+ * Q2-Q3: Carga de Trabalho (1-5)
+ * Q4-Q6: Liderança (1-5)
+ * Q7-Q8: Clima & Segurança (1-5)
+ * Q9: Satisfação NPS (0-10)
+ * Q10: Pergunta Aberta (texto)
  */
 
-import { useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import {
-  BarChart,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-} from 'recharts';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Heart,
   Briefcase,
   Users,
   Shield,
+  Target,
+  MessageSquare,
   TrendingUp,
   TrendingDown,
   Minus,
-  Target,
-  MessageSquare,
-  Calendar,
+  AlertCircle,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
-
-// Tipos
-interface ClimaSurveyResponse {
-  questionId: string;
-  questionNumber: number; // Q1-Q10
-  questionText: string;
-  questionType: 'sentiment' | 'frequency' | 'satisfaction' | 'open_text';
-  responses: Array<{
-    value: string;
-    count: number;
-    percentage: number;
-  }>;
-  averageScore?: number;
-  month: string; // YYYY-MM
-}
-
-interface MonthlyData {
-  month: string;
-  label: string; // "Jan", "Fev", etc.
-  Q1?: number; // Bem-estar
-  Q2?: number; // Carga de trabalho
-  Q3?: number; // Carga de trabalho
-  Q4?: number; // Liderança
-  Q5?: number; // Liderança
-  Q6?: number; // Liderança
-  Q7?: number; // Clima
-  Q8?: number; // Clima
-  Q9?: number; // Satisfação (0-10)
-  participantCount?: number;
-}
+import { getClimaAnalytics, type ClimaAnalytics, type ClimaQuestionData, type ClimaThemeData } from '@/app/dashboard/analytics/clima-actions';
 
 interface ClimaSurveyDashboardProps {
   assessmentId: string;
-  currentMonth?: string;
-  previousMonth?: string;
-  monthlyData?: MonthlyData[];
-  questionDistributions?: ClimaSurveyResponse[];
-  textResponses?: Array<{ text: string; theme?: string }>;
 }
 
-// Constantes de pontuação (usadas na legenda - linhas 697-702)
-const _SENTIMENT_SCALE: Record<string, number> = {
-  'Muito mal': 1,
-  'Mal': 2,
-  'Mais ou menos': 3,
-  'Bem': 4,
-  'Muito bem': 5,
+// Ícones por tema
+const THEME_ICONS: Record<string, React.ElementType> = {
+  bem_estar: Heart,
+  carga_trabalho: Briefcase,
+  lideranca: Users,
+  clima: Shield,
+  satisfacao: Target,
+  qualitativo: MessageSquare,
 };
 
-const _FREQUENCY_SCALE: Record<string, number> = {
-  'Nunca': 1,
-  'Raramente': 2,
-  'Às vezes': 3,
-  'Frequentemente': 4,
-  'Sempre': 5,
+// Cores por tema
+const THEME_COLORS: Record<string, { bg: string; icon: string; text: string }> = {
+  bem_estar: { bg: 'bg-rose-50', icon: 'text-rose-500', text: 'text-rose-700' },
+  carga_trabalho: { bg: 'bg-amber-50', icon: 'text-amber-500', text: 'text-amber-700' },
+  lideranca: { bg: 'bg-blue-50', icon: 'text-blue-500', text: 'text-blue-700' },
+  clima: { bg: 'bg-emerald-50', icon: 'text-emerald-500', text: 'text-emerald-700' },
+  satisfacao: { bg: 'bg-pm-olive/10', icon: 'text-pm-olive', text: 'text-pm-olive' },
+  qualitativo: { bg: 'bg-purple-50', icon: 'text-purple-500', text: 'text-purple-700' },
 };
 
-// Mock data para demonstração
-const generateMockMonthlyData = (): MonthlyData[] => {
-  const months = [
-    { month: '2024-07', label: 'Jul' },
-    { month: '2024-08', label: 'Ago' },
-    { month: '2024-09', label: 'Set' },
-    { month: '2024-10', label: 'Out' },
-    { month: '2024-11', label: 'Nov' },
-    { month: '2024-12', label: 'Dez' },
-  ];
+// Componente de Card de Tema
+function ThemeCard({ theme }: { theme: ClimaThemeData }) {
+  const Icon = THEME_ICONS[theme.theme] || AlertCircle;
+  const colors = THEME_COLORS[theme.theme] || THEME_COLORS.qualitativo;
 
-  return months.map((m, i) => ({
-    ...m,
-    Q1: 3.2 + Math.random() * 1.2 + i * 0.1,
-    Q2: 3.0 + Math.random() * 1.0 + i * 0.05,
-    Q3: 2.8 + Math.random() * 1.2 + i * 0.08,
-    Q4: 3.5 + Math.random() * 1.0 + i * 0.1,
-    Q5: 3.3 + Math.random() * 1.1 + i * 0.07,
-    Q6: 3.4 + Math.random() * 1.0 + i * 0.09,
-    Q7: 3.6 + Math.random() * 0.9 + i * 0.1,
-    Q8: 3.2 + Math.random() * 1.1 + i * 0.08,
-    Q9: 6.5 + Math.random() * 2.0 + i * 0.2,
-    participantCount: 45 + Math.floor(Math.random() * 20),
-  }));
-};
-
-const mockTextResponses = [
-  { text: 'A comunicação entre equipes poderia melhorar', theme: 'Comunicação' },
-  { text: 'Reconhecimento por parte da liderança é muito bom', theme: 'Liderança' },
-  { text: 'Sobrecarga de trabalho nos últimos meses', theme: 'Carga de Trabalho' },
-  { text: 'Ambiente colaborativo e respeitoso', theme: 'Clima' },
-  { text: 'Falta de feedback mais frequente', theme: 'Comunicação' },
-  { text: 'Muitas reuniões desnecessárias', theme: 'Carga de Trabalho' },
-  { text: 'Bom ambiente de trabalho', theme: 'Clima' },
-  { text: 'Precisamos de mais autonomia', theme: 'Liderança' },
-];
-
-// Componentes auxiliares
-function TrendBadge({ current, previous }: { current: number; previous: number }) {
-  const diff = current - previous;
-  const percentChange = previous > 0 ? ((diff / previous) * 100).toFixed(1) : '0';
-
-  if (Math.abs(diff) < 0.1) {
-    return (
-      <div className="flex items-center gap-1 text-gray-500 text-xs">
-        <Minus className="w-3 h-3" />
-        <span>Estável</span>
-      </div>
-    );
-  }
-
-  if (diff > 0) {
-    return (
-      <div className="flex items-center gap-1 text-green-600 text-xs">
-        <TrendingUp className="w-3 h-3" />
-        <span>+{percentChange}%</span>
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex items-center gap-1 text-red-600 text-xs">
-      <TrendingDown className="w-3 h-3" />
-      <span>{percentChange}%</span>
-    </div>
-  );
-}
-
-function ThemeCard({
-  title,
-  score,
-  previousScore,
-  icon: Icon,
-  description,
-  color,
-}: {
-  title: string;
-  score: number;
-  previousScore: number;
-  icon: React.ElementType;
-  description: string;
-  color: 'terracotta' | 'olive' | 'green' | 'blue';
-}) {
-  const colorClasses = {
-    terracotta: {
-      bg: 'bg-pm-terracotta/5',
-      iconBg: 'bg-pm-terracotta/10',
-      iconColor: 'text-pm-terracotta',
-      text: 'text-pm-terracotta',
-    },
-    olive: {
-      bg: 'bg-pm-olive/5',
-      iconBg: 'bg-pm-olive/10',
-      iconColor: 'text-pm-olive',
-      text: 'text-pm-olive',
-    },
-    green: {
-      bg: 'bg-pm-green-dark/5',
-      iconBg: 'bg-pm-green-dark/10',
-      iconColor: 'text-pm-green-dark',
-      text: 'text-pm-green-dark',
-    },
-    blue: {
-      bg: 'bg-blue-50',
-      iconBg: 'bg-blue-100',
-      iconColor: 'text-blue-600',
-      text: 'text-blue-600',
-    },
+  const getRiskBadge = (level: string) => {
+    switch (level) {
+      case 'low':
+        return <Badge className="bg-green-100 text-green-700 text-xs">Bom</Badge>;
+      case 'medium':
+        return <Badge className="bg-amber-100 text-amber-700 text-xs">Atenção</Badge>;
+      case 'high':
+        return <Badge className="bg-red-100 text-red-700 text-xs">Crítico</Badge>;
+      default:
+        return null;
+    }
   };
 
-  const colors = colorClasses[color];
-  const scoreDisplay = score.toFixed(1);
-
-  // Determinar nível de risco
-  const getRiskLevel = (s: number) => {
-    if (s >= 4) return { label: 'Ótimo', color: 'bg-green-100 text-green-700' };
-    if (s >= 3) return { label: 'Bom', color: 'bg-blue-100 text-blue-700' };
-    if (s >= 2) return { label: 'Atenção', color: 'bg-amber-100 text-amber-700' };
-    return { label: 'Crítico', color: 'bg-red-100 text-red-700' };
-  };
-
-  const risk = getRiskLevel(score);
-
   return (
-    <Card className={cn('border-none shadow-sm hover:shadow-md transition-shadow', colors.bg)}>
+    <Card className={cn('border-none shadow-sm', colors.bg)}>
       <CardContent className="p-4">
-        <div className="flex items-start justify-between mb-3">
-          <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center', colors.iconBg)}>
-            <Icon className={cn('w-5 h-5', colors.iconColor)} />
+        <div className="flex items-start justify-between mb-2">
+          <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center bg-white/60')}>
+            <Icon className={cn('w-5 h-5', colors.icon)} />
           </div>
-          <TrendBadge current={score} previous={previousScore} />
+          {getRiskBadge(theme.riskLevel)}
         </div>
-        <p className="text-xs text-text-muted mb-1">{title}</p>
-        <div className="flex items-baseline gap-2 mb-2">
+        <p className="text-xs text-text-muted mb-1">{theme.label}</p>
+        <div className="flex items-baseline gap-1">
           <span className={cn('text-2xl font-display font-bold', colors.text)}>
-            {scoreDisplay}
+            {theme.averageScore.toFixed(1)}
           </span>
           <span className="text-xs text-text-muted">/5</span>
         </div>
-        <div className="flex items-center justify-between">
-          <p className="text-xs text-text-muted truncate mr-2">{description}</p>
-          <Badge className={cn('text-xs px-2 py-0.5', risk.color)}>{risk.label}</Badge>
-        </div>
+        <p className="text-xs text-text-muted mt-1">
+          {theme.responseCount} respostas
+        </p>
       </CardContent>
     </Card>
   );
 }
 
-// Componente de Heatmap
-function ClimaHeatmap({ monthlyData }: { monthlyData: MonthlyData[] }) {
-  const questions = [
-    { key: 'Q1', label: 'Bem-estar' },
-    { key: 'Q2', label: 'Carga trabalho 1' },
-    { key: 'Q3', label: 'Carga trabalho 2' },
-    { key: 'Q4', label: 'Liderança 1' },
-    { key: 'Q5', label: 'Liderança 2' },
-    { key: 'Q6', label: 'Liderança 3' },
-    { key: 'Q7', label: 'Clima 1' },
-    { key: 'Q8', label: 'Clima 2' },
-  ];
+// Componente de Pergunta Individual
+function QuestionCard({ question }: { question: ClimaQuestionData }) {
+  const colors = THEME_COLORS[question.theme] || THEME_COLORS.qualitativo;
 
-  const getColor = (score: number) => {
-    if (score >= 4.5) return 'bg-green-600 text-white';
-    if (score >= 4) return 'bg-green-500 text-white';
-    if (score >= 3.5) return 'bg-green-400 text-white';
-    if (score >= 3) return 'bg-yellow-400 text-gray-900';
-    if (score >= 2.5) return 'bg-orange-400 text-white';
-    if (score >= 2) return 'bg-orange-500 text-white';
-    return 'bg-red-500 text-white';
+  // Barra de progresso baseada na escala
+  const maxScale = question.scale === '0-10' ? 10 : 5;
+  const progressPercent = (question.averageScore / maxScale) * 100;
+
+  // Cor da barra baseada no score
+  const getBarColor = () => {
+    const normalizedScore = question.scale === '0-10'
+      ? question.averageScore / 2 // Normaliza 0-10 para 0-5
+      : question.averageScore;
+
+    if (normalizedScore >= 4) return 'bg-green-500';
+    if (normalizedScore >= 3) return 'bg-amber-400';
+    if (normalizedScore >= 2) return 'bg-orange-500';
+    return 'bg-red-500';
   };
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full text-sm">
-        <thead>
-          <tr>
-            <th className="text-left py-2 px-3 text-text-muted font-medium">Pergunta</th>
-            {monthlyData.map((m) => (
-              <th key={m.month} className="text-center py-2 px-2 text-text-muted font-medium">
-                {m.label}
-              </th>
-            ))}
-            <th className="text-center py-2 px-2 text-text-muted font-medium">Δ</th>
-          </tr>
-        </thead>
-        <tbody>
-          {questions.map((q) => {
-            const values = monthlyData.map((m) => m[q.key as keyof MonthlyData] as number || 0);
-            const lastValue = values[values.length - 1] || 0;
-            const prevValue = values[values.length - 2] || lastValue;
-            const delta = lastValue - prevValue;
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="p-4 rounded-xl bg-white border border-border-light hover:shadow-sm transition-shadow"
+    >
+      <div className="flex items-start justify-between gap-4 mb-3">
+        <div className="flex-1">
+          <div className="flex items-center gap-2 mb-1">
+            <Badge variant="outline" className="text-xs">Q{question.questionNumber}</Badge>
+            <Badge className={cn('text-xs border-0', colors.bg, colors.text)}>
+              {question.themeLabel}
+            </Badge>
+          </div>
+          <p className="text-sm text-text-heading font-medium line-clamp-2">
+            {question.questionText}
+          </p>
+        </div>
+        <div className="text-right shrink-0">
+          <p className={cn('text-xl font-bold', colors.text)}>
+            {question.averageScore.toFixed(1)}
+          </p>
+          <p className="text-xs text-text-muted">
+            /{maxScale}
+          </p>
+        </div>
+      </div>
 
-            return (
-              <tr key={q.key} className="border-t border-border-light">
-                <td className="py-2 px-3 font-medium text-text-heading">{q.label}</td>
-                {monthlyData.map((m) => {
-                  const value = m[q.key as keyof MonthlyData] as number || 0;
-                  return (
-                    <td key={m.month} className="text-center py-2 px-2">
-                      <span className={cn(
-                        'inline-block w-10 py-1 rounded text-xs font-medium',
-                        getColor(value)
-                      )}>
-                        {value.toFixed(1)}
-                      </span>
-                    </td>
-                  );
-                })}
-                <td className="text-center py-2 px-2">
-                  <span className={cn(
-                    'inline-flex items-center gap-1 text-xs font-medium',
-                    delta > 0 ? 'text-green-600' : delta < 0 ? 'text-red-600' : 'text-gray-500'
-                  )}>
-                    {delta > 0 ? <TrendingUp className="w-3 h-3" /> : delta < 0 ? <TrendingDown className="w-3 h-3" /> : <Minus className="w-3 h-3" />}
-                    {delta > 0 ? '+' : ''}{delta.toFixed(1)}
-                  </span>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
+      {/* Barra de progresso */}
+      <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+        <motion.div
+          initial={{ width: 0 }}
+          animate={{ width: `${progressPercent}%` }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className={cn('h-full rounded-full', getBarColor())}
+        />
+      </div>
+
+      <div className="flex items-center justify-between mt-2 text-xs text-text-muted">
+        <span>{question.responseCount} respostas</span>
+        {question.distribution.length > 0 && (
+          <span>
+            Mais frequente: {question.distribution[question.distribution.length - 1]?.value}
+            ({question.distribution[question.distribution.length - 1]?.percentage}%)
+          </span>
+        )}
+      </div>
+    </motion.div>
   );
 }
 
-// Componente de Satisfação (Q9)
-function SatisfactionSection({ monthlyData }: { monthlyData: MonthlyData[] }) {
-  const latestData = monthlyData[monthlyData.length - 1];
-  const previousData = monthlyData[monthlyData.length - 2] || latestData;
-  const currentScore = latestData?.Q9 || 0;
-  const previousScore = previousData?.Q9 || 0;
-  const delta = currentScore - previousScore;
+// Componente de Satisfação NPS (Q9)
+function NPSSection({ question }: { question: ClimaQuestionData }) {
+  const score = question.averageScore;
 
   // Classificar NPS
-  const getNPSCategory = (score: number) => {
-    if (score >= 9) return { label: 'Promotores', color: 'text-green-600', bg: 'bg-green-100' };
-    if (score >= 7) return { label: 'Neutros', color: 'text-yellow-600', bg: 'bg-yellow-100' };
-    return { label: 'Detratores', color: 'text-red-600', bg: 'bg-red-100' };
+  const getNPSCategory = (s: number) => {
+    if (s >= 9) return { label: 'Excelente', color: 'text-green-600', bg: 'bg-green-100' };
+    if (s >= 7) return { label: 'Bom', color: 'text-blue-600', bg: 'bg-blue-100' };
+    if (s >= 5) return { label: 'Neutro', color: 'text-amber-600', bg: 'bg-amber-100' };
+    return { label: 'Crítico', color: 'text-red-600', bg: 'bg-red-100' };
   };
 
-  const category = getNPSCategory(currentScore);
+  const category = getNPSCategory(score);
+
+  // Calcular detratores, neutros e promotores
+  const detractors = question.distribution
+    .filter(d => {
+      const val = parseInt(d.value);
+      return !isNaN(val) && val <= 6;
+    })
+    .reduce((sum, d) => sum + d.count, 0);
+
+  const passives = question.distribution
+    .filter(d => {
+      const val = parseInt(d.value);
+      return !isNaN(val) && (val === 7 || val === 8);
+    })
+    .reduce((sum, d) => sum + d.count, 0);
+
+  const promoters = question.distribution
+    .filter(d => {
+      const val = parseInt(d.value);
+      return !isNaN(val) && val >= 9;
+    })
+    .reduce((sum, d) => sum + d.count, 0);
+
+  const total = detractors + passives + promoters;
 
   return (
     <Card className="border-pm-olive/20">
@@ -349,89 +217,67 @@ function SatisfactionSection({ monthlyData }: { monthlyData: MonthlyData[] }) {
             </div>
             <div>
               <CardTitle className="text-base font-semibold text-text-heading">
-                Satisfação Geral (Q9)
+                Q9 - Satisfação Geral
               </CardTitle>
-              <p className="text-xs text-text-muted">Escala 0-10</p>
+              <p className="text-xs text-text-muted">{question.questionText}</p>
             </div>
           </div>
           <Badge className={cn('text-xs', category.bg, category.color)}>{category.label}</Badge>
         </div>
       </CardHeader>
       <CardContent className="pt-2">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Score atual */}
-          <div className="text-center p-4 rounded-xl bg-gradient-to-br from-pm-olive/5 to-pm-olive/10">
-            <p className="text-xs text-text-muted mb-1">Nota do Mês</p>
-            <p className="text-4xl font-display font-bold text-pm-olive">
-              {currentScore.toFixed(1)}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Score */}
+          <div className="text-center p-6 rounded-xl bg-gradient-to-br from-pm-olive/5 to-pm-olive/10">
+            <p className="text-xs text-text-muted mb-1">Nota Média</p>
+            <p className="text-5xl font-display font-bold text-pm-olive">
+              {score.toFixed(1)}
             </p>
-            <p className="text-xs text-text-muted mt-1">de 10</p>
+            <p className="text-sm text-text-muted mt-1">de 10</p>
           </div>
 
-          {/* Variação */}
-          <div className="text-center p-4 rounded-xl bg-bg-secondary">
-            <p className="text-xs text-text-muted mb-1">Δ vs Mês Anterior</p>
-            <div className={cn(
-              'flex items-center justify-center gap-2 text-2xl font-display font-bold',
-              delta > 0 ? 'text-green-600' : delta < 0 ? 'text-red-600' : 'text-gray-500'
-            )}>
-              {delta > 0 ? <TrendingUp className="w-5 h-5" /> : delta < 0 ? <TrendingDown className="w-5 h-5" /> : <Minus className="w-5 h-5" />}
-              {delta > 0 ? '+' : ''}{delta.toFixed(1)}
+          {/* Distribuição NPS */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-text-secondary">Promotores (9-10)</span>
+              <span className="text-sm font-medium text-green-600">
+                {total > 0 ? Math.round((promoters / total) * 100) : 0}% ({promoters})
+              </span>
             </div>
-          </div>
-
-          {/* Mini gráfico */}
-          <div className="p-2">
-            <p className="text-xs text-text-muted mb-2 text-center">Evolução</p>
-            <div className="h-16">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={monthlyData}>
-                  <Line
-                    type="monotone"
-                    dataKey="Q9"
-                    stroke="#517A06"
-                    strokeWidth={2}
-                    dot={{ fill: '#517A06', r: 3 }}
-                  />
-                  <YAxis domain={[0, 10]} hide />
-                  <XAxis dataKey="label" hide />
-                </LineChart>
-              </ResponsiveContainer>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-text-secondary">Neutros (7-8)</span>
+              <span className="text-sm font-medium text-amber-600">
+                {total > 0 ? Math.round((passives / total) * 100) : 0}% ({passives})
+              </span>
             </div>
-          </div>
-        </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-text-secondary">Detratores (0-6)</span>
+              <span className="text-sm font-medium text-red-600">
+                {total > 0 ? Math.round((detractors / total) * 100) : 0}% ({detractors})
+              </span>
+            </div>
 
-        {/* Timeline completa */}
-        <div className="mt-4 pt-4 border-t border-border-light">
-          <p className="text-xs text-text-muted mb-3">Linha do Tempo</p>
-          <div className="h-32">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={monthlyData}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-border-light" />
-                <XAxis dataKey="label" tick={{ fill: '#666', fontSize: 11 }} />
-                <YAxis domain={[0, 10]} tick={{ fill: '#666', fontSize: 11 }} />
-                <Tooltip
-                  content={({ active, payload, label }) => {
-                    if (!active || !payload) return null;
-                    const value = Number(payload[0]?.value) || 0;
-                    return (
-                      <div className="bg-white p-2 rounded shadow-lg border text-xs">
-                        <p className="font-medium">{label}</p>
-                        <p className="text-pm-olive">Satisfação: {value.toFixed(1)}</p>
-                      </div>
-                    );
-                  }}
+            {/* Barra de distribuição */}
+            <div className="flex h-3 rounded-full overflow-hidden mt-2">
+              {promoters > 0 && (
+                <div
+                  className="bg-green-500"
+                  style={{ width: `${(promoters / total) * 100}%` }}
                 />
-                <Line
-                  type="monotone"
-                  dataKey="Q9"
-                  stroke="#517A06"
-                  strokeWidth={2}
-                  dot={{ fill: '#517A06', r: 4 }}
-                  activeDot={{ r: 6 }}
+              )}
+              {passives > 0 && (
+                <div
+                  className="bg-amber-400"
+                  style={{ width: `${(passives / total) * 100}%` }}
                 />
-              </LineChart>
-            </ResponsiveContainer>
+              )}
+              {detractors > 0 && (
+                <div
+                  className="bg-red-500"
+                  style={{ width: `${(detractors / total) * 100}%` }}
+                />
+              )}
+            </div>
           </div>
         </div>
       </CardContent>
@@ -439,28 +285,18 @@ function SatisfactionSection({ monthlyData }: { monthlyData: MonthlyData[] }) {
   );
 }
 
-// Componente de Pergunta Aberta (Q10)
-function OpenQuestionSection({
-  textResponses
-}: {
-  textResponses: Array<{ text: string; theme?: string }>
-}) {
-  // Agrupar por temas
-  const themes = useMemo(() => {
-    const themeMap = new Map<string, string[]>();
-    textResponses.forEach((r) => {
-      const theme = r.theme || 'Outros';
-      if (!themeMap.has(theme)) {
-        themeMap.set(theme, []);
-      }
-      themeMap.get(theme)!.push(r.text);
-    });
-    return Array.from(themeMap.entries())
-      .map(([theme, texts]) => ({ theme, texts, count: texts.length }))
-      .sort((a, b) => b.count - a.count);
-  }, [textResponses]);
-
-  const topThemes = themes.slice(0, 5);
+// Componente de Respostas Abertas (Q10)
+function OpenResponsesSection({ textResponses }: { textResponses: { text: string; theme?: string }[] }) {
+  if (textResponses.length === 0) {
+    return (
+      <Card className="border-pm-terracotta/20">
+        <CardContent className="py-8 text-center">
+          <MessageSquare className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+          <p className="text-sm text-text-muted">Nenhuma resposta aberta ainda</p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="border-pm-terracotta/20">
@@ -471,55 +307,26 @@ function OpenQuestionSection({
           </div>
           <div>
             <CardTitle className="text-base font-semibold text-text-heading">
-              Pergunta Aberta (Q10)
+              Q10 - Feedback Aberto
             </CardTitle>
-            <p className="text-xs text-text-muted">{textResponses.length} respostas coletadas</p>
+            <p className="text-xs text-text-muted">{textResponses.length} respostas</p>
           </div>
         </div>
       </CardHeader>
       <CardContent className="pt-2">
-        {/* Top Temas (Tags) */}
-        <div className="mb-4">
-          <p className="text-xs text-text-muted mb-2">Top Temas</p>
-          <div className="flex flex-wrap gap-2">
-            {topThemes.map((t) => (
-              <Badge
-                key={t.theme}
-                variant="outline"
-                className="text-xs px-3 py-1 bg-bg-secondary border-border-light"
-              >
-                {t.theme}
-                <span className="ml-1 text-text-muted">({t.count})</span>
-              </Badge>
-            ))}
-          </div>
-        </div>
-
-        {/* Exemplos de Frases */}
-        <div>
-          <p className="text-xs text-text-muted mb-2">Exemplos de Respostas</p>
-          <div className="space-y-2">
-            {topThemes.slice(0, 3).map((t, i) => (
-              <div key={i} className="p-3 rounded-lg bg-bg-secondary">
-                <div className="flex items-start gap-2">
-                  <Badge className="text-xs bg-pm-terracotta/10 text-pm-terracotta border-0 shrink-0">
-                    {t.theme}
-                  </Badge>
-                  <p className="text-sm text-text-secondary italic">
-                    &ldquo;{t.texts[0]}&rdquo;
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Info */}
-        <div className="mt-4 p-3 rounded-lg bg-blue-50 border border-blue-200">
-          <p className="text-xs text-blue-800">
-            <strong>Nota:</strong> As respostas abertas não possuem nota ou média.
-            Os temas são extraídos automaticamente para análise qualitativa.
-          </p>
+        <div className="space-y-2 max-h-[300px] overflow-y-auto">
+          {textResponses.slice(0, 10).map((response, index) => (
+            <div key={index} className="p-3 rounded-lg bg-bg-secondary">
+              <p className="text-sm text-text-secondary italic">
+                &ldquo;{response.text}&rdquo;
+              </p>
+            </div>
+          ))}
+          {textResponses.length > 10 && (
+            <p className="text-xs text-text-muted text-center pt-2">
+              +{textResponses.length - 10} respostas
+            </p>
+          )}
         </div>
       </CardContent>
     </Card>
@@ -527,47 +334,79 @@ function OpenQuestionSection({
 }
 
 // Componente Principal
-export function ClimaSurveyDashboard({
-  assessmentId: _assessmentId,
-  currentMonth: _currentMonth,
-  previousMonth: _previousMonth,
-  monthlyData: propMonthlyData,
-  questionDistributions: _questionDistributions,
-  textResponses: propTextResponses,
-}: ClimaSurveyDashboardProps) {
-  const [selectedMonth, setSelectedMonth] = useState<string>('latest');
+export function ClimaSurveyDashboard({ assessmentId }: ClimaSurveyDashboardProps) {
+  const [data, setData] = useState<ClimaAnalytics | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Usar dados mock se não houver dados reais
-  const monthlyData = useMemo(() => propMonthlyData || generateMockMonthlyData(), [propMonthlyData]);
-  const textResponses = useMemo(() => propTextResponses || mockTextResponses, [propTextResponses]);
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true);
+      setError(null);
 
-  const latestData = monthlyData[monthlyData.length - 1];
-  const previousData = monthlyData[monthlyData.length - 2] || latestData;
+      const result = await getClimaAnalytics(assessmentId);
 
-  // Calcular médias por tema
-  const themeScores = useMemo(() => {
-    const latest = latestData;
-    const prev = previousData;
+      if (result) {
+        setData(result);
+      } else {
+        setError('Não foi possível carregar os dados da pesquisa de clima.');
+      }
 
-    return {
-      bemEstar: {
-        current: latest?.Q1 || 0,
-        previous: prev?.Q1 || 0,
-      },
-      cargaTrabalho: {
-        current: ((latest?.Q2 || 0) + (latest?.Q3 || 0)) / 2,
-        previous: ((prev?.Q2 || 0) + (prev?.Q3 || 0)) / 2,
-      },
-      lideranca: {
-        current: ((latest?.Q4 || 0) + (latest?.Q5 || 0) + (latest?.Q6 || 0)) / 3,
-        previous: ((prev?.Q4 || 0) + (prev?.Q5 || 0) + (prev?.Q6 || 0)) / 3,
-      },
-      climaSeguranca: {
-        current: ((latest?.Q7 || 0) + (latest?.Q8 || 0)) / 2,
-        previous: ((prev?.Q7 || 0) + (prev?.Q8 || 0)) / 2,
-      },
-    };
-  }, [latestData, previousData]);
+      setLoading(false);
+    }
+
+    fetchData();
+  }, [assessmentId]);
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-32 rounded-xl" />
+          ))}
+        </div>
+        <Skeleton className="h-64 rounded-xl" />
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <Card className="border-red-200 bg-red-50">
+        <CardContent className="py-8 text-center">
+          <AlertCircle className="w-10 h-10 text-red-400 mx-auto mb-3" />
+          <p className="text-sm text-red-600">{error}</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Empty state
+  if (!data || data.totalParticipants === 0) {
+    return (
+      <Card className="border-dashed border-2 border-pm-olive/30">
+        <CardContent className="py-16 text-center">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-pm-olive/20 to-pm-terracotta/10 flex items-center justify-center">
+            <Target className="w-8 h-8 text-pm-olive" />
+          </div>
+          <h3 className="text-xl font-display font-semibold text-text-heading mb-2">
+            Pesquisa de Clima
+          </h3>
+          <p className="text-text-secondary max-w-md mx-auto">
+            Os indicadores aparecerão quando houver respostas coletadas para esta pesquisa.
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Separar Q9 e Q10 das outras perguntas
+  const q1to8 = data.questions.filter(q => q.questionNumber >= 1 && q.questionNumber <= 8);
+  const q9 = data.questions.find(q => q.questionNumber === 9);
+  const themesWithoutNPS = data.themes.filter(t => t.theme !== 'satisfacao' && t.theme !== 'qualitativo');
 
   return (
     <motion.div
@@ -582,128 +421,53 @@ export function ClimaSurveyDashboard({
             Pesquisa de Clima
           </h2>
           <p className="text-sm text-text-muted">
-            Visualização mês a mês com comparação de indicadores
+            {data.totalParticipants} participantes • 10 indicadores
           </p>
         </div>
-        <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-          <SelectTrigger className="w-40">
-            <Calendar className="w-4 h-4 mr-2" />
-            <SelectValue placeholder="Selecionar mês" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="latest">Último mês</SelectItem>
-            {monthlyData.map((m) => (
-              <SelectItem key={m.month} value={m.month}>
-                {m.label} {m.month.split('-')[0]}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
       </div>
 
-      {/* Cards de Resumo do Mês */}
+      {/* Cards de Resumo por Tema */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <ThemeCard
-          title="Bem-estar"
-          description="Q1 - Sentimento geral"
-          score={themeScores.bemEstar.current}
-          previousScore={themeScores.bemEstar.previous}
-          icon={Heart}
-          color="terracotta"
-        />
-        <ThemeCard
-          title="Carga de Trabalho"
-          description="Média Q2 + Q3"
-          score={themeScores.cargaTrabalho.current}
-          previousScore={themeScores.cargaTrabalho.previous}
-          icon={Briefcase}
-          color="olive"
-        />
-        <ThemeCard
-          title="Liderança & Comunicação"
-          description="Média Q4 + Q5 + Q6"
-          score={themeScores.lideranca.current}
-          previousScore={themeScores.lideranca.previous}
-          icon={Users}
-          color="green"
-        />
-        <ThemeCard
-          title="Clima & Segurança Psicológica"
-          description="Média Q7 + Q8"
-          score={themeScores.climaSeguranca.current}
-          previousScore={themeScores.climaSeguranca.previous}
-          icon={Shield}
-          color="blue"
-        />
+        {themesWithoutNPS.map((theme) => (
+          <ThemeCard key={theme.theme} theme={theme} />
+        ))}
       </div>
 
-      {/* Heatmap Q1-Q8 */}
+      {/* Q9 - Satisfação NPS */}
+      {q9 && <NPSSection question={q9} />}
+
+      {/* Q1-Q8 - Perguntas Detalhadas */}
       <Card>
         <CardHeader className="pb-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
-                <BarChart className="w-5 h-5 text-amber-600" />
-              </div>
-              <div>
-                <CardTitle className="text-base font-semibold text-text-heading">
-                  Mapa de Calor Q1-Q8
-                </CardTitle>
-                <p className="text-xs text-text-muted">Evolução mensal por pergunta (escala 1-5)</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2 text-xs">
-              <span className="flex items-center gap-1">
-                <span className="w-4 h-4 rounded bg-red-500" /> 1-2
-              </span>
-              <span className="flex items-center gap-1">
-                <span className="w-4 h-4 rounded bg-yellow-400" /> 3
-              </span>
-              <span className="flex items-center gap-1">
-                <span className="w-4 h-4 rounded bg-green-500" /> 4-5
-              </span>
-            </div>
-          </div>
+          <CardTitle className="text-base font-semibold text-text-heading">
+            Detalhamento por Pergunta (Q1-Q8)
+          </CardTitle>
+          <p className="text-xs text-text-muted">Escala 1-5: Nunca → Sempre</p>
         </CardHeader>
         <CardContent className="pt-2">
-          <ClimaHeatmap monthlyData={monthlyData} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {q1to8.map((question) => (
+              <QuestionCard key={question.questionId} question={question} />
+            ))}
+          </div>
         </CardContent>
       </Card>
 
-      {/* Seção 2: Satisfação (Q9) - Separada */}
-      <div className="pt-2">
-        <div className="flex items-center gap-2 mb-4">
-          <Badge variant="outline" className="text-xs">Seção 2</Badge>
-          <span className="text-sm text-text-muted">Satisfação (escala 0-10)</span>
-        </div>
-        <SatisfactionSection monthlyData={monthlyData} />
-      </div>
+      {/* Q10 - Respostas Abertas */}
+      <OpenResponsesSection textResponses={data.textResponses} />
 
-      {/* Seção 3: Pergunta Aberta (Q10) - Separada */}
-      <div className="pt-2">
-        <div className="flex items-center gap-2 mb-4">
-          <Badge variant="outline" className="text-xs">Seção 3</Badge>
-          <span className="text-sm text-text-muted">Respostas Qualitativas</span>
-        </div>
-        <OpenQuestionSection textResponses={textResponses} />
-      </div>
-
-      {/* Regras de Pontuação (Legenda) */}
+      {/* Legenda */}
       <Card className="bg-bg-secondary border-border-light">
         <CardContent className="p-4">
-          <p className="text-xs font-medium text-text-heading mb-2">Regras de Pontuação</p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-text-muted">
+          <p className="text-xs font-medium text-text-heading mb-2">Escala de Respostas</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-text-muted">
             <div>
               <p className="font-medium text-text-secondary">Q1 (Sentimento):</p>
-              <p>Muito mal=1, Mal=2, Mais ou menos=3, Bem=4, Muito bem=5</p>
+              <p>Muito mal (1) → Muito bem (5)</p>
             </div>
             <div>
               <p className="font-medium text-text-secondary">Q2-Q8 (Frequência):</p>
-              <p>Nunca=1, Raramente=2, Às vezes=3, Frequentemente=4, Sempre=5</p>
-            </div>
-            <div>
-              <p className="font-medium text-text-secondary">Índices por Tema:</p>
-              <p>Média simples das perguntas do tema (escala contínua 1-5)</p>
+              <p>Nunca (1) → Sempre (5)</p>
             </div>
           </div>
         </CardContent>
