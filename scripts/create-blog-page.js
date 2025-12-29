@@ -1,4 +1,6 @@
-import Link from 'next/link'
+const fs = require('fs');
+
+const content = `import Link from 'next/link'
 import { SlideUp, FadeIn } from '@/components/animated'
 import { Clock, ArrowRight, Calendar, Tag, BookOpen, TrendingUp } from 'lucide-react'
 import { getAllPosts, getFeaturedPost, getCategories } from '@/lib/blog/posts'
@@ -52,7 +54,7 @@ export default function BlogPage() {
       {featuredPost && (
         <section className="container mx-auto px-4 sm:px-6 lg:px-8 -mt-12 relative z-20">
           <FadeIn>
-            <Link href={`/blog/${featuredPost.slug}`} className="block group">
+            <Link href={\`/blog/\${featuredPost.slug}\`} className="block group">
               <article className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 hover:shadow-2xl transition-all duration-300">
                 <div className="grid lg:grid-cols-5 gap-0">
                   <div className="lg:col-span-2 bg-gradient-to-br from-pm-terracotta to-pm-terracotta-active p-8 lg:p-12 flex flex-col justify-center">
@@ -60,7 +62,7 @@ export default function BlogPage() {
                       <TrendingUp className="w-3 h-3" />
                       Artigo em Destaque
                     </div>
-                    <span className={`inline-flex px-3 py-1 rounded-full text-xs font-medium mb-4 w-fit ${categoryColors[featuredPost.categoria]?.bg || 'bg-gray-100'} ${categoryColors[featuredPost.categoria]?.text || 'text-gray-700'}`}>
+                    <span className={\`inline-flex px-3 py-1 rounded-full text-xs font-medium mb-4 w-fit \${categoryColors[featuredPost.categoria]?.bg || 'bg-gray-100'} \${categoryColors[featuredPost.categoria]?.text || 'text-gray-700'}\`}>
                       {featuredPost.categoria}
                     </span>
                     <h2 className="font-display text-2xl lg:text-3xl font-bold text-white mb-4 group-hover:underline decoration-2 underline-offset-4">
@@ -117,7 +119,7 @@ export default function BlogPage() {
             {categories.map(cat => (
               <span
                 key={cat}
-                className={`px-4 py-2 rounded-full text-sm font-medium ${categoryColors[cat]?.bg || 'bg-gray-100'} ${categoryColors[cat]?.text || 'text-gray-700'}`}
+                className={\`px-4 py-2 rounded-full text-sm font-medium \${categoryColors[cat]?.bg || 'bg-gray-100'} \${categoryColors[cat]?.text || 'text-gray-700'}\`}
               >
                 {cat}
               </span>
@@ -131,10 +133,10 @@ export default function BlogPage() {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {regularPosts.map((post, index) => (
             <FadeIn key={post.slug} delay={0.1 * (index + 1)}>
-              <Link href={`/blog/${post.slug}`} className="group block h-full">
+              <Link href={\`/blog/\${post.slug}\`} className="group block h-full">
                 <article className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden h-full flex flex-col hover:shadow-lg hover:border-pm-terracotta/20 transition-all duration-300 hover:-translate-y-1">
-                  <div className={`px-6 py-3 ${categoryColors[post.categoria]?.bg || 'bg-gray-50'}`}>
-                    <span className={`text-xs font-semibold uppercase tracking-wider ${categoryColors[post.categoria]?.text || 'text-gray-600'}`}>
+                  <div className={\`px-6 py-3 \${categoryColors[post.categoria]?.bg || 'bg-gray-50'}\`}>
+                    <span className={\`text-xs font-semibold uppercase tracking-wider \${categoryColors[post.categoria]?.text || 'text-gray-600'}\`}>
                       {post.categoria}
                     </span>
                   </div>
@@ -201,3 +203,7 @@ export default function BlogPage() {
     </div>
   )
 }
+`;
+
+fs.writeFileSync('app/(public)/blog/page.tsx', content, 'utf8');
+console.log('Blog page created successfully');
