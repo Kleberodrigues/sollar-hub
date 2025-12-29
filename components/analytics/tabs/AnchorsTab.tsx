@@ -282,84 +282,81 @@ function SatisfactionGauge({ anchor }: { anchor: AnchorQuestion }) {
 
       {/* Gauge - 0 to 10 scale */}
       <div className="flex flex-col items-center">
-        <div className="relative w-72 h-36">
-          <svg viewBox="0 0 200 110" className="w-full h-full">
+        {/* SVG Gauge */}
+        <div className="w-64 h-28">
+          <svg viewBox="0 0 200 100" className="w-full h-full">
             {/* Background arc segments - 5 segments for 0-10 scale */}
             {/* Segment 1: 0-2 (Red) */}
             <path
-              d="M 20 100 A 80 80 0 0 1 44 44"
+              d="M 20 90 A 80 80 0 0 1 44 34"
               fill="none"
               stroke="#ef4444"
-              strokeWidth="14"
+              strokeWidth="12"
               strokeLinecap="round"
             />
             {/* Segment 2: 2-4 (Orange) */}
             <path
-              d="M 48 40 A 80 80 0 0 1 82 22"
+              d="M 48 30 A 80 80 0 0 1 82 12"
               fill="none"
               stroke="#f97316"
-              strokeWidth="14"
+              strokeWidth="12"
               strokeLinecap="round"
             />
             {/* Segment 3: 4-6 (Yellow) */}
             <path
-              d="M 86 21 A 80 80 0 0 1 118 21"
+              d="M 86 11 A 80 80 0 0 1 118 11"
               fill="none"
               stroke="#f59e0b"
-              strokeWidth="14"
+              strokeWidth="12"
               strokeLinecap="round"
             />
             {/* Segment 4: 6-8 (Light Green) */}
             <path
-              d="M 122 22 A 80 80 0 0 1 156 40"
+              d="M 122 12 A 80 80 0 0 1 156 30"
               fill="none"
               stroke="#34d399"
-              strokeWidth="14"
+              strokeWidth="12"
               strokeLinecap="round"
             />
             {/* Segment 5: 8-10 (Green) */}
             <path
-              d="M 160 44 A 80 80 0 0 1 180 100"
+              d="M 160 34 A 80 80 0 0 1 180 90"
               fill="none"
               stroke="#10b981"
-              strokeWidth="14"
+              strokeWidth="12"
               strokeLinecap="round"
             />
 
             {/* Needle */}
-            <g transform={`rotate(${needleAngle}, 100, 100)`}>
+            <g transform={`rotate(${needleAngle}, 100, 90)`}>
               <line
                 x1="100"
-                y1="100"
+                y1="90"
                 x2="100"
-                y2="30"
+                y2="20"
                 stroke="#374151"
                 strokeWidth="3"
                 strokeLinecap="round"
               />
-              <circle cx="100" cy="100" r="8" fill="#374151" />
-              <circle cx="100" cy="100" r="4" fill="#fff" />
+              <circle cx="100" cy="90" r="8" fill="#374151" />
+              <circle cx="100" cy="90" r="4" fill="#fff" />
             </g>
 
-            {/* Scale labels: 0, 2, 4, 6, 8, 10 */}
-            <text x="10" y="105" className="text-[10px] fill-red-500 font-medium">0</text>
-            <text x="35" y="50" className="text-[10px] fill-orange-500 font-medium">2</text>
-            <text x="70" y="22" className="text-[10px] fill-amber-500 font-medium">4</text>
-            <text x="120" y="22" className="text-[10px] fill-emerald-400 font-medium">6</text>
-            <text x="155" y="50" className="text-[10px] fill-emerald-500 font-medium">8</text>
-            <text x="180" y="105" className="text-[10px] fill-emerald-600 font-medium">10</text>
+            {/* Scale labels: only 0 and 10 at edges */}
+            <text x="8" y="95" className="text-[11px] fill-red-500 font-medium">0</text>
+            <text x="182" y="95" className="text-[11px] fill-emerald-600 font-medium">10</text>
           </svg>
-
-          {/* Score display */}
-          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-center">
-            <span className={cn("text-4xl font-bold", scoreColor.text)}>
-              {score.toFixed(1)}
-            </span>
-            <span className="text-lg text-text-muted">/10</span>
-          </div>
         </div>
 
-        <p className="text-sm text-text-muted mt-2">Índice de Satisfação Médio</p>
+        {/* Score display - below gauge */}
+        <div className="text-center -mt-1">
+          <span className={cn("text-3xl font-bold", scoreColor.text)}>
+            {score.toFixed(1)}
+          </span>
+          <span className="text-base text-text-muted">/10</span>
+        </div>
+
+        <p className="text-xs text-text-muted mt-1">Índice de Satisfação Médio</p>
       </div>
 
       {/* Distribution mini bars - sorted by value */}
