@@ -7,16 +7,25 @@
  * 3. Complete survey with all 10 questions
  * 4. Navigate to analytics dashboard
  * 5. View Clima dashboard and take screenshots
+ *
+ * Note: This test requires specific system state and credentials.
+ * It may fail in CI if the required data doesn't exist.
  */
 
 import { test, expect } from '@playwright/test';
 
-const BASE_URL = 'https://sollar-hub-yurq.vercel.app';
-const ADMIN_EMAIL = 'admin@sollar.com.br';
-const ADMIN_PASSWORD = 'AdminPassword123!';
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'https://sollar-hub-yurq.vercel.app';
+const ADMIN_EMAIL = process.env.TEST_ADMIN_EMAIL || 'admin@sollar.com.br';
+const ADMIN_PASSWORD = process.env.TEST_ADMIN_PASSWORD || 'AdminPassword123!';
+
+// Skip this test in CI if credentials are not configured
+const shouldSkip = process.env.CI && !process.env.TEST_ADMIN_EMAIL;
 
 test.describe('Clima Survey Complete Flow', () => {
   test.setTimeout(300000); // 5 minutes timeout
+
+  // Skip in CI environments without proper test credentials
+  test.skip(shouldSkip, 'Skipping in CI - requires configured test credentials');
 
   test('Complete Clima survey and verify analytics dashboard', async ({ page }) => {
     // Enable verbose logging
