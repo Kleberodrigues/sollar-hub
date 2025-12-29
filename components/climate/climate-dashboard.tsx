@@ -61,14 +61,14 @@ const SENTIMENT_COLORS = {
 };
 
 export function ClimateDashboard({
-  organizationId,
+  organizationId: _organizationId,
   assessments,
 }: ClimateDashboardProps) {
   const [selectedMonth, setSelectedMonth] = useState<string>(() => {
     const now = new Date();
     return String(now.getMonth() + 1).padStart(2, "0");
   });
-  const [selectedYear, setSelectedYear] = useState<string>(() => {
+  const [selectedYear, _setSelectedYear] = useState<string>(() => {
     return String(new Date().getFullYear());
   });
   const [compareMode, setCompareMode] = useState(false);
@@ -327,7 +327,7 @@ export function ClimateDashboard({
               Nenhuma pesquisa de clima encontrada
             </h3>
             <p className="text-text-secondary max-w-md mx-auto">
-              Crie uma nova avaliação usando o questionário "Pesquisa de Clima"
+              Crie uma nova avaliação usando o questionário &quot;Pesquisa de Clima&quot;
               para começar a acompanhar o bem-estar da sua equipe.
             </p>
           </div>
