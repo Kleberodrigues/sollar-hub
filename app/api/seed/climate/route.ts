@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
+import { randomUUID } from "crypto";
 
 const CLIMA_QUESTIONNAIRE_ID = "b2222222-2222-2222-2222-222222222222";
 
@@ -288,49 +289,62 @@ async function seedClimateData(count: number) {
       logs.push(`✅ Avaliação criada: ${assessment.title}`);
     }
 
-    // 5. Gerar respostas
-    logs.push(`📤 Gerando ${count} respostas...`);
+    // 5. Gerar respostas (uma linha por pergunta por respondente)
+    logs.push(`📤 Gerando ${count} respondentes...`);
 
-    const responses: {
+    const allResponses: {
       assessment_id: string;
-      answers: Record<string, string | number>;
-      is_anonymous: boolean;
-      completed_at: string;
+      question_id: string;
+      response_text: string;
+      value: number | null;
+      anonymous_id: string;
     }[] = [];
 
     for (let i = 0; i < count; i++) {
-      const answers: Record<string, string | number> = {};
+      // Gerar UUID único para este respondente
+      const anonymousId = randomUUID();
 
       for (const q of questions || []) {
+        let responseText = "";
+        let value: number | null = null;
+
         if (q.order_index === 1) {
-          answers[q.id] = weightedRandom(Q1_OPTIONS, [5, 10, 25, 40, 20]);
+          // Q1 - Sentimento
+          responseText = weightedRandom(Q1_OPTIONS, [5, 10, 25, 40, 20]);
         } else if (q.order_index >= 2 && q.order_index <= 8) {
-          answers[q.id] = weightedRandom(LIKERT_OPTIONS, [5, 10, 30, 35, 20]);
+          // Q2-Q8 - Likert
+          responseText = weightedRandom(LIKERT_OPTIONS, [5, 10, 30, 35, 20]);
         } else if (q.order_index === 9) {
-          answers[q.id] = generateNPSScore();
+          // Q9 - NPS (0-10)
+          value = generateNPSScore();
+          responseText = String(value);
         } else if (q.order_index === 10) {
+          // Q10 - Comentário (70% respondem)
           if (Math.random() < 0.7) {
-            answers[q.id] =
-              Q10_COMMENTS[Math.floor(Math.random() * Q10_COMMENTS.length)];
+            responseText = Q10_COMMENTS[Math.floor(Math.random() * Q10_COMMENTS.length)];
+          } else {
+            continue; // Pular se não responder
           }
         }
-      }
 
-      responses.push({
-        assessment_id: assessmentId,
-        answers,
-        is_anonymous: true,
-        completed_at: new Date().toISOString(),
-      });
+        allResponses.push({
+          assessment_id: assessmentId,
+          question_id: q.id,
+          response_text: responseText,
+          value,
+          anonymous_id: anonymousId,
+        });
+      }
     }
 
+    logs.push(`   Total de respostas a inserir: ${allResponses.length}`);
     logs.push("   Salvando respostas no banco de dados...");
 
-    const batchSize = 10;
+    const batchSize = 50;
     let insertedCount = 0;
 
-    for (let i = 0; i < responses.length; i += batchSize) {
-      const batch = responses.slice(i, i + batchSize);
+    for (let i = 0; i < allResponses.length; i += batchSize) {
+      const batch = allResponses.slice(i, i + batchSize);
       const { error } = await supabase.from("responses").insert(batch);
 
       if (error) {
