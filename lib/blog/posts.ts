@@ -17,7 +17,8 @@ export interface BlogPost {
     cargo: string;
     avatar?: string;
   };
-  imagem?: string;
+  imagem: string;
+  imagemAlt: string;
   referencias: {
     titulo: string;
     url: string;
@@ -395,6 +396,8 @@ export const blogPosts: BlogPost[] = [
     tags: ['NR-1', 'Riscos Psicossociais', 'GRO', 'PGR', 'MTE'],
     tempo: '12 min',
     destaque: true,
+    imagem: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&q=80',
+    imagemAlt: 'Profissionais analisando documentos de compliance e legislação trabalhista',
     autor: {
       nome: 'Equipe PsicoMapa',
       cargo: 'Especialistas em Saúde Ocupacional',
@@ -423,6 +426,8 @@ export const blogPosts: BlogPost[] = [
     categoria: 'Guia Prático',
     tags: ['Riscos Psicossociais', 'COPSOQ', 'Avaliação', 'RH', 'SST'],
     tempo: '10 min',
+    imagem: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=800&q=80',
+    imagemAlt: 'Profissional de RH analisando relatórios de avaliação de riscos',
     autor: {
       nome: 'Equipe PsicoMapa',
       cargo: 'Especialistas em Saúde Ocupacional',
@@ -446,6 +451,8 @@ export const blogPosts: BlogPost[] = [
     categoria: 'Saúde Mental',
     tags: ['Burnout', 'CID-11', 'OMS', 'Doença Ocupacional', 'Saúde Mental'],
     tempo: '8 min',
+    imagem: 'https://images.unsplash.com/photo-1616077168712-fc6c788db4af?w=800&q=80',
+    imagemAlt: 'Pessoa exausta no trabalho representando burnout ocupacional',
     autor: {
       nome: 'Equipe PsicoMapa',
       cargo: 'Especialistas em Saúde Ocupacional',
@@ -469,6 +476,8 @@ export const blogPosts: BlogPost[] = [
     categoria: 'Metodologia',
     tags: ['COPSOQ', 'Metodologia', 'Avaliação', 'Pesquisa', 'Validação'],
     tempo: '9 min',
+    imagem: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80',
+    imagemAlt: 'Dashboard de análise de dados e métricas de avaliação',
     autor: {
       nome: 'Equipe PsicoMapa',
       cargo: 'Especialistas em Saúde Ocupacional',
@@ -492,6 +501,8 @@ export const blogPosts: BlogPost[] = [
     categoria: 'Compliance',
     tags: ['GRO', 'PGR', 'NR-1', 'Compliance', 'SST'],
     tempo: '11 min',
+    imagem: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800&q=80',
+    imagemAlt: 'Documentos de compliance e gestão de riscos sobre mesa de escritório',
     autor: {
       nome: 'Equipe PsicoMapa',
       cargo: 'Especialistas em Saúde Ocupacional',
@@ -515,6 +526,8 @@ export const blogPosts: BlogPost[] = [
     categoria: 'Cultura',
     tags: ['Cultura Organizacional', 'Saúde Mental', 'Liderança', 'Prevenção', 'Bem-estar'],
     tempo: '7 min',
+    imagem: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80',
+    imagemAlt: 'Equipe de trabalho colaborando em ambiente corporativo saudável',
     autor: {
       nome: 'Equipe PsicoMapa',
       cargo: 'Especialistas em Saúde Ocupacional',
@@ -527,6 +540,295 @@ export const blogPosts: BlogPost[] = [
       }
     ],
     conteudo: post6Content
+  },
+  // Novos artigos adicionados
+  {
+    slug: 'saude-mental-trabalho-remoto-hibrido-desafios-solucoes',
+    titulo: 'Saúde Mental no Trabalho Remoto e Híbrido',
+    subtitulo: 'Desafios e estratégias para manter equipes saudáveis à distância',
+    resumo: 'O trabalho remoto trouxe flexibilidade, mas também novos desafios para a saúde mental. Descubra como identificar sinais de alerta e criar um ambiente virtual saudável.',
+    data: '15 Nov 2024',
+    dataISO: '2024-11-15',
+    categoria: 'Saúde Mental',
+    tags: ['Trabalho Remoto', 'Home Office', 'Saúde Mental', 'Híbrido', 'Bem-estar'],
+    tempo: '8 min',
+    imagem: 'https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=800&q=80',
+    imagemAlt: 'Profissional trabalhando em home office com laptop',
+    autor: {
+      nome: 'Equipe PsicoMapa',
+      cargo: 'Especialistas em Saúde Ocupacional',
+    },
+    referencias: [],
+    conteudo: `## O novo normal do trabalho
+
+O trabalho remoto e híbrido se consolidou como realidade permanente para milhões de brasileiros. Com ele, surgem novos desafios para a saúde mental que precisam ser endereçados.
+
+## Principais riscos psicossociais no trabalho remoto
+
+### 1. Isolamento Social
+A falta de contato presencial pode levar a sentimentos de solidão e desconexão com a equipe.
+
+### 2. Dificuldade em Separar Trabalho e Vida Pessoal
+Sem fronteiras físicas claras, muitos profissionais trabalham mais horas e têm dificuldade em "desligar".
+
+### 3. Comunicação Assíncrona
+Mal-entendidos são mais frequentes quando a comunicação não é face a face.
+
+## Estratégias de Proteção
+
+- Estabelecer horários fixos de trabalho
+- Criar rituais de início e fim do expediente
+- Manter contato regular com colegas
+- Reservar espaço físico dedicado ao trabalho
+- Praticar pausas regulares
+
+---
+
+*O PsicoMapa oferece avaliações específicas para equipes remotas e híbridas.*`
+  },
+  {
+    slug: 'lideranca-humanizada-prevencao-riscos-psicossociais',
+    titulo: 'Liderança Humanizada: O Papel dos Gestores na Prevenção',
+    subtitulo: 'Como líderes podem criar ambientes psicologicamente seguros',
+    resumo: 'A liderança é o fator mais determinante para a saúde mental das equipes. Aprenda práticas de gestão que previnem o adoecimento e promovem bem-estar.',
+    data: '10 Nov 2024',
+    dataISO: '2024-11-10',
+    categoria: 'Liderança',
+    tags: ['Liderança', 'Gestão', 'Saúde Mental', 'Prevenção', 'Equipes'],
+    tempo: '9 min',
+    imagem: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&q=80',
+    imagemAlt: 'Líder conduzindo reunião de equipe em ambiente colaborativo',
+    autor: {
+      nome: 'Equipe PsicoMapa',
+      cargo: 'Especialistas em Saúde Ocupacional',
+    },
+    referencias: [],
+    conteudo: `## O impacto da liderança na saúde mental
+
+Estudos mostram que a qualidade da liderança é responsável por até 70% da variação no engajamento e bem-estar das equipes.
+
+## Características da Liderança Humanizada
+
+### Escuta Ativa
+Líderes que ouvem genuinamente criam ambientes de confiança.
+
+### Feedback Construtivo
+Feedback frequente e respeitoso promove desenvolvimento sem gerar ansiedade.
+
+### Flexibilidade
+Adaptar-se às necessidades individuais dos colaboradores.
+
+### Reconhecimento
+Valorizar esforços e conquistas de forma consistente.
+
+## Sinais de Alerta para Líderes
+
+- Aumento de conflitos na equipe
+- Queda de produtividade
+- Afastamentos frequentes
+- Alta rotatividade
+
+---
+
+*Capacite sua liderança com o PsicoMapa. Oferecemos diagnósticos e treinamentos.*`
+  },
+  {
+    slug: 'assedio-moral-trabalho-identificar-prevenir-combater',
+    titulo: 'Assédio Moral no Trabalho: Como Identificar e Combater',
+    subtitulo: 'Guia completo sobre prevenção e responsabilização',
+    resumo: 'O assédio moral é uma das principais causas de adoecimento no trabalho. Saiba como identificar, prevenir e criar políticas eficazes de combate.',
+    data: '05 Nov 2024',
+    dataISO: '2024-11-05',
+    categoria: 'Compliance',
+    tags: ['Assédio Moral', 'Compliance', 'Prevenção', 'RH', 'Legislação'],
+    tempo: '10 min',
+    imagem: 'https://images.unsplash.com/photo-1573497019236-17f8177b81e8?w=800&q=80',
+    imagemAlt: 'Ambiente corporativo representando relações de trabalho',
+    autor: {
+      nome: 'Equipe PsicoMapa',
+      cargo: 'Especialistas em Saúde Ocupacional',
+    },
+    referencias: [],
+    conteudo: `## O que é Assédio Moral?
+
+Assédio moral é a exposição repetida e prolongada a situações humilhantes e constrangedoras no ambiente de trabalho.
+
+## Formas de Assédio Moral
+
+### Vertical Descendente
+Do superior para o subordinado (mais comum).
+
+### Vertical Ascendente
+Do subordinado para o superior.
+
+### Horizontal
+Entre colegas do mesmo nível hierárquico.
+
+### Organizacional
+Práticas institucionalizadas pela própria empresa.
+
+## Como Identificar
+
+- Críticas constantes sem fundamento
+- Isolamento do colaborador
+- Sobrecarga ou retirada de tarefas
+- Humilhações públicas
+- Ameaças veladas
+
+## Responsabilidade da Empresa
+
+A empresa é responsável por manter um ambiente livre de assédio, podendo responder civilmente por danos causados.
+
+---
+
+*O PsicoMapa inclui avaliação de comportamentos ofensivos em seu diagnóstico.*`
+  },
+  {
+    slug: 'pesquisa-clima-organizacional-guia-implementacao',
+    titulo: 'Pesquisa de Clima: Guia de Implementação',
+    subtitulo: 'Passo a passo para diagnosticar a saúde da sua organização',
+    resumo: 'A pesquisa de clima é ferramenta essencial para entender a realidade da empresa. Aprenda a planejar, aplicar e agir sobre os resultados.',
+    data: '01 Nov 2024',
+    dataISO: '2024-11-01',
+    categoria: 'Guia Prático',
+    tags: ['Pesquisa de Clima', 'Diagnóstico', 'RH', 'Engajamento', 'Metodologia'],
+    tempo: '11 min',
+    imagem: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80',
+    imagemAlt: 'Gráficos e dados de pesquisa organizacional em tela de computador',
+    autor: {
+      nome: 'Equipe PsicoMapa',
+      cargo: 'Especialistas em Saúde Ocupacional',
+    },
+    referencias: [],
+    conteudo: `## Por que fazer Pesquisa de Clima?
+
+A pesquisa de clima organizacional é a ferramenta mais eficaz para ouvir colaboradores de forma estruturada e anônima.
+
+## Etapas da Implementação
+
+### 1. Planejamento
+- Defina objetivos claros
+- Escolha a metodologia adequada
+- Planeje a comunicação
+
+### 2. Sensibilização
+- Comunique lideranças
+- Engaje colaboradores
+- Garanta confidencialidade
+
+### 3. Aplicação
+- Use plataformas digitais
+- Defina prazo adequado (7-14 dias)
+- Monitore adesão
+
+### 4. Análise
+- Interprete por departamento
+- Identifique padrões
+- Priorize áreas críticas
+
+### 5. Ação
+- Desenvolva plano de ação
+- Comunique resultados
+- Monitore implementação
+
+---
+
+*O PsicoMapa oferece pesquisas de clima integradas à avaliação de riscos psicossociais.*`
+  },
+  {
+    slug: 'indicadores-saude-mental-empresas-metricas-essenciais',
+    titulo: 'Indicadores de Saúde Mental nas Empresas',
+    subtitulo: 'Métricas essenciais para monitorar o bem-estar organizacional',
+    resumo: 'O que não se mede não se gerencia. Conheça os principais indicadores para acompanhar a saúde mental da sua organização.',
+    data: '25 Out 2024',
+    dataISO: '2024-10-25',
+    categoria: 'Metodologia',
+    tags: ['Indicadores', 'Métricas', 'Saúde Mental', 'Gestão', 'RH'],
+    tempo: '8 min',
+    imagem: 'https://images.unsplash.com/photo-1543286386-713bdd548da4?w=800&q=80',
+    imagemAlt: 'Dashboard de indicadores e métricas empresariais',
+    autor: {
+      nome: 'Equipe PsicoMapa',
+      cargo: 'Especialistas em Saúde Ocupacional',
+    },
+    referencias: [],
+    conteudo: `## A importância de medir
+
+Indicadores de saúde mental permitem identificar problemas antes que se tornem críticos e avaliar a eficácia das ações implementadas.
+
+## Indicadores Quantitativos
+
+### Absenteísmo
+Taxa de faltas relacionadas a problemas de saúde mental.
+
+### Turnover
+Rotatividade de pessoal, especialmente em áreas críticas.
+
+### Afastamentos INSS
+Número de afastamentos por CID F (transtornos mentais).
+
+### Sinistralidade do Plano de Saúde
+Uso de serviços de saúde mental.
+
+## Indicadores Qualitativos
+
+### eNPS (Employee Net Promoter Score)
+Satisfação e lealdade dos colaboradores.
+
+### Índice de Engajamento
+Medido através de pesquisas de clima.
+
+### Scores COPSOQ
+Avaliação sistemática de riscos psicossociais.
+
+---
+
+*O PsicoMapa gera dashboards completos com todos estes indicadores.*`
+  },
+  {
+    slug: 'retorno-investimento-saude-mental-roi',
+    titulo: 'ROI da Saúde Mental: Investir em Pessoas Dá Retorno',
+    subtitulo: 'Dados e cases que comprovam o valor do investimento em bem-estar',
+    resumo: 'Investir em saúde mental não é custo, é investimento com retorno comprovado. Veja dados e estudos que demonstram o ROI de programas de bem-estar.',
+    data: '20 Out 2024',
+    dataISO: '2024-10-20',
+    categoria: 'Gestão',
+    tags: ['ROI', 'Investimento', 'Saúde Mental', 'Produtividade', 'Custos'],
+    tempo: '7 min',
+    imagem: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&q=80',
+    imagemAlt: 'Gráfico de crescimento financeiro representando retorno sobre investimento',
+    autor: {
+      nome: 'Equipe PsicoMapa',
+      cargo: 'Especialistas em Saúde Ocupacional',
+    },
+    referencias: [],
+    conteudo: `## O custo de não investir
+
+A OMS estima que transtornos de ansiedade e depressão custam à economia global US$ 1 trilhão por ano em perda de produtividade.
+
+## Retorno Comprovado
+
+### Dados da OMS
+Para cada US$ 1 investido em tratamento de transtornos mentais, há um retorno de US$ 4 em melhoria de saúde e produtividade.
+
+### Redução de Custos
+- Diminuição de afastamentos: até 30%
+- Redução do turnover: até 25%
+- Menor sinistralidade: até 20%
+
+### Ganhos de Produtividade
+Colaboradores saudáveis são até 21% mais produtivos.
+
+## Cases de Sucesso
+
+Empresas que implementaram programas de saúde mental reportam:
+- Aumento de 15% no engajamento
+- Redução de 40% em conflitos
+- Melhoria de 25% no clima organizacional
+
+---
+
+*Calcule o ROI potencial da sua empresa com o simulador do PsicoMapa.*`
   }
 ];
 
