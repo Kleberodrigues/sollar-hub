@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FileText, Eye, MessageSquare, Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { isTemplateQuestionnaire, getLockedQuestionnaireInfo } from "@/lib/constants/questionnaire-templates";
+import { isTemplateQuestionnaire, getLockedQuestionnaireInfo, getQuestionnaireSlug } from "@/lib/constants/questionnaire-templates";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface Questionnaire {
@@ -103,7 +103,7 @@ function QuestionnaireCard({ questionnaire, canManage: _canManage }: { questionn
 
           {/* Ações */}
           <div className="flex flex-col gap-2 ml-4">
-            <Link href={`/dashboard/questionnaires/${questionnaire.id}`}>
+            <Link href={`/dashboard/questionnaires/${getQuestionnaireSlug(questionnaire.id)}`}>
               <Button
                 variant="outline"
                 size="sm"

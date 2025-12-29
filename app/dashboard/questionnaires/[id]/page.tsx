@@ -6,7 +6,7 @@ import { ArrowLeft, Shield } from "lucide-react";
 import Link from "next/link";
 // DeleteQuestionnaireButton is imported for future use
 // import { DeleteQuestionnaireButton } from "@/components/questionnaires/delete-questionnaire-button";
-import { TEMPLATE_IDS_ARRAY, isTemplateQuestionnaire, getLockedQuestionnaireInfo } from "@/lib/constants/questionnaire-templates";
+import { TEMPLATE_IDS_ARRAY, isTemplateQuestionnaire, getLockedQuestionnaireInfo, resolveQuestionnaireId } from "@/lib/constants/questionnaire-templates";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -24,7 +24,9 @@ export default async function QuestionnairePage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { id } = await params;
+  const { id: slugOrId } = await params;
+  // Resolve slug para ID (para URLs amigáveis)
+  const id = resolveQuestionnaireId(slugOrId);
   const supabase = await createClient();
 
   const {

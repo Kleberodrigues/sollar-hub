@@ -17,6 +17,38 @@ export const QUESTIONNAIRE_TEMPLATE_IDS = {
 export const TEMPLATE_IDS_ARRAY = Object.values(QUESTIONNAIRE_TEMPLATE_IDS);
 
 /**
+ * Slugs amigáveis para templates (usados em URLs)
+ */
+export const QUESTIONNAIRE_SLUGS = {
+  'riscos-psicossociais': QUESTIONNAIRE_TEMPLATE_IDS.SOLLAR_PSICOSSOCIAL,
+  'clima-mensal': QUESTIONNAIRE_TEMPLATE_IDS.PULSE_MENSAL,
+} as const;
+
+export const ID_TO_SLUG = {
+  [QUESTIONNAIRE_TEMPLATE_IDS.SOLLAR_PSICOSSOCIAL]: 'riscos-psicossociais',
+  [QUESTIONNAIRE_TEMPLATE_IDS.PULSE_MENSAL]: 'clima-mensal',
+} as const;
+
+/**
+ * Resolve um slug ou ID para o ID real do questionário
+ */
+export function resolveQuestionnaireId(slugOrId: string): string {
+  // Se for um slug conhecido, retorna o ID correspondente
+  if (slugOrId in QUESTIONNAIRE_SLUGS) {
+    return QUESTIONNAIRE_SLUGS[slugOrId as keyof typeof QUESTIONNAIRE_SLUGS];
+  }
+  // Caso contrário, assume que já é um ID
+  return slugOrId;
+}
+
+/**
+ * Retorna o slug para um ID de template, ou o próprio ID se não for template
+ */
+export function getQuestionnaireSlug(questionnaireId: string): string {
+  return ID_TO_SLUG[questionnaireId as keyof typeof ID_TO_SLUG] || questionnaireId;
+}
+
+/**
  * Informações sobre templates protegidos por regulamentação
  */
 export const LOCKED_QUESTIONNAIRE_INFO = {
