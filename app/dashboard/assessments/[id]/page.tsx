@@ -6,6 +6,7 @@ import { ArrowLeft, Edit, BarChart3, Users } from "lucide-react";
 import Link from "next/link";
 import { ParticipantImportDialog } from "@/components/assessments/ParticipantImportDialog";
 import { getParticipants } from "../participant-import-actions";
+import { getQuestionnaireSlug } from "@/lib/constants/questionnaire-templates";
 
 export default async function AssessmentPage({
   params,
@@ -158,7 +159,7 @@ export default async function AssessmentPage({
                 Questionário
               </p>
               <Link
-                href={`/dashboard/questionnaires/${assessment.questionnaires?.id}`}
+                href={`/dashboard/questionnaires/${getQuestionnaireSlug(assessment.questionnaires?.id || '')}`}
                 className="text-sm font-medium text-pm-green-dark hover:underline"
               >
                 {assessment.questionnaires?.title || "N/A"}
