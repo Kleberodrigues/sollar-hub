@@ -3,7 +3,8 @@
 import { createClient } from "@/lib/supabase/server";
 
 // IDs das perguntas do Clima (definidos na migration)
-const CLIMA_QUESTION_IDS = [
+// Prefixado com _ para indicar que é referência de documentação
+const _CLIMA_QUESTION_IDS = [
   'c1111111-0001-4000-8000-000000000001', // Q1 - Bem-estar
   'c1111111-0002-4000-8000-000000000002', // Q2 - Carga trabalho
   'c1111111-0003-4000-8000-000000000003', // Q3 - Carga trabalho
