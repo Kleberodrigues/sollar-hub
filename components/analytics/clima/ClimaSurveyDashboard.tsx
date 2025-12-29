@@ -23,9 +23,6 @@ import {
   Shield,
   Target,
   MessageSquare,
-  TrendingUp,
-  TrendingDown,
-  Minus,
   AlertCircle,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
