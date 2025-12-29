@@ -15,6 +15,7 @@ import {
   CreditCard,
   Shield,
   Target,
+  CloudSun,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -59,6 +60,12 @@ const navigationItems: NavItem[] = [
     title: "Análise de Riscos",
     href: "/dashboard/analytics",
     icon: BarChart3,
+    roles: ["admin", "responsavel_empresa", "membro"],
+  },
+  {
+    title: "Pesquisa de Clima",
+    href: "/dashboard/climate",
+    icon: CloudSun,
     roles: ["admin", "responsavel_empresa", "membro"],
   },
   {

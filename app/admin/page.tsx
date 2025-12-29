@@ -94,12 +94,9 @@ async function DashboardContent() {
           trend={metrics.newOrganizations30d > 0 ? "up" : "neutral"}
         />
         <KPICard
-          title="Total de Usuários"
-          value={metrics.totalUsers}
-          change={metrics.newUsers30d}
-          changeLabel="novos (30d)"
+          title="Total de Respondentes"
+          value={metrics.totalResponses}
           icon="users"
-          trend={metrics.newUsers30d > 0 ? "up" : "neutral"}
         />
         <KPICard
           title="Taxa de Churn"
@@ -127,9 +124,12 @@ async function DashboardContent() {
           trend={metrics.assessments30d > 0 ? "up" : "neutral"}
         />
         <KPICard
-          title="Total de Respondentes"
-          value={metrics.totalResponses}
-          icon="chart"
+          title="Total de Usuários"
+          value={metrics.totalUsers}
+          change={metrics.newUsers30d}
+          changeLabel="novos (30d)"
+          icon="users"
+          trend={metrics.newUsers30d > 0 ? "up" : "neutral"}
         />
         <KPICard
           title="Receita Mensal"
