@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -307,13 +308,19 @@ export function AnalyticsDashboardContent({
   const [fullscreenSection, setFullscreenSection] = useState<string | null>(null);
   const [showClimaView, setShowClimaView] = useState(isPulse); // Default to clima view for pulse
   const hasResponses = analytics.totalParticipants > 0;
+  const searchParams = useSearchParams();
 
-  // Abrir seção automaticamente quando initialSection for passado
+  // Abrir seção automaticamente baseado na URL (section=action)
   useEffect(() => {
-    if (initialSection && hasResponses) {
+    const section = searchParams.get('section');
+    if (section === 'action') {
+      // Abrir modal do Plano de Ação com IA independente de ter respostas
+      setFullscreenSection('action');
+    } else if (initialSection && hasResponses) {
+      // Para outras seções, manter comportamento original
       setFullscreenSection(initialSection);
     }
-  }, [initialSection, hasResponses]);
+  }, [searchParams, initialSection, hasResponses]);
 
   // Calcular distribuição de risco
   const _riskDistribution = useMemo(() => {
