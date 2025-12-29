@@ -74,10 +74,10 @@ export default async function EditAssessmentPage({
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-text-heading">
-          Editar Assessment
+          Editar Avaliação
         </h1>
         <p className="text-text-secondary mt-1">
-          Atualize as informações do assessment
+          Atualize as informações da avaliação
         </p>
       </div>
 
