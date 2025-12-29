@@ -291,7 +291,12 @@ async function seedClimateData(count: number) {
     // 5. Gerar respostas
     logs.push(`📤 Gerando ${count} respostas...`);
 
-    const responses = [];
+    const responses: {
+      assessment_id: string;
+      answers: Record<string, string | number>;
+      is_anonymous: boolean;
+      completed_at: string;
+    }[] = [];
 
     for (let i = 0; i < count; i++) {
       const answers: Record<string, string | number> = {};
