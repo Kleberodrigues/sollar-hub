@@ -153,13 +153,12 @@ export function DashboardContent({ metrics, profile, userEmail }: DashboardConte
         })}
       </div>
       {/* Info Card */}
-      <div className="max-w-2xl">
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={isInView ? { opacity: 1, x: 0 } : {}}
-          transition={{ duration: 0.5, delay: 0.4 }}
-        >
-          <Card className="h-full border-l-4 border-l-pm-olive">
+      <motion.div
+        initial={{ opacity: 0, x: -20 }}
+        animate={isInView ? { opacity: 1, x: 0 } : {}}
+        transition={{ duration: 0.5, delay: 0.4 }}
+      >
+        <Card className="h-full border-l-4 border-l-pm-olive bg-gradient-to-r from-white to-bg-sage/20">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 font-display text-xl text-text-heading">
                 <Target className="w-5 h-5 text-pm-olive" />
@@ -193,9 +192,8 @@ export function DashboardContent({ metrics, profile, userEmail }: DashboardConte
                 </Link>
               </Button>
             </CardContent>
-          </Card>
-        </motion.div>
-      </div>
+        </Card>
+      </motion.div>
       {/* Profile Card */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
