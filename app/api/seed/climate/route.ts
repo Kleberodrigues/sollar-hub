@@ -78,7 +78,7 @@ async function seedClimateData(count: number, targetOrgId?: string) {
 
     // 1. Verificar/criar questionário
     logs.push("📋 Verificando questionário de clima...");
-    let { data: questionnaire } = await supabase
+    const { data: questionnaire } = await supabase
       .from("questionnaires")
       .select("id, title")
       .eq("id", CLIMA_QUESTIONNAIRE_ID)
