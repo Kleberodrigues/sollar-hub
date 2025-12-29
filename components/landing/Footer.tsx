@@ -44,11 +44,11 @@ export function Footer() {
                 contato@psicomapa.cloud
               </a>
               <a
-                href="tel:+5511912345678"
+                href="https://wa.me/5519933006478?text=Ol%C3%A1!%20Gostaria%20de%20falar%20com%20um%20especialista." target="_blank" rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 text-white/70 hover:text-white transition-colors text-sm"
               >
                 <Phone className="w-4 h-4" />
-                (11) 91234-5678
+                (19) 93300-6478
               </a>
             </div>
           </div>

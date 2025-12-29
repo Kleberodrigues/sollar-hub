@@ -2,8 +2,8 @@
 
 import { motion } from "framer-motion";
 
-const WHATSAPP_NUMBER = "5511999999999"; // Substituir pelo número real
-const WHATSAPP_MESSAGE = "Olá! Gostaria de saber mais sobre o PsicoMapa.";
+const WHATSAPP_NUMBER = "5519933006478"; // Substituir pelo número real
+const WHATSAPP_MESSAGE = "Olá! Gostaria de falar com um especialista sobre o PsicoMapa.";
 
 export function WhatsAppButton() {
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
