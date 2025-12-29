@@ -407,62 +407,86 @@ export function AnalyticsDashboardContent({
   // Empty state
   if (!hasResponses) {
     return (
-      <div className="space-y-6" data-testid="analytics-dashboard">
-        <div className="flex justify-end gap-2">
-          <ImportDialog assessmentId={assessmentId} currentPlan={currentPlan} onImportComplete={onDataChange} />
-        </div>
-        <Card className="border-dashed border-2 border-pm-olive/30">
-          <CardContent className="py-16">
-            <div className="text-center">
-              <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-pm-olive/20 to-pm-terracotta/10 flex items-center justify-center">
-                <BarChart3 className="w-10 h-10 text-pm-olive" />
+      <>
+        <div className="space-y-6" data-testid="analytics-dashboard">
+          <div className="flex justify-end gap-2">
+            <ImportDialog assessmentId={assessmentId} currentPlan={currentPlan} onImportComplete={onDataChange} />
+          </div>
+          <Card className="border-dashed border-2 border-pm-olive/30">
+            <CardContent className="py-16">
+              <div className="text-center">
+                <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-pm-olive/20 to-pm-terracotta/10 flex items-center justify-center">
+                  <BarChart3 className="w-10 h-10 text-pm-olive" />
+                </div>
+                <h3 className="font-display text-2xl font-semibold text-text-heading mb-3">
+                  Ainda não há respostas
+                </h3>
+                <p className="text-text-secondary max-w-md mx-auto">
+                  Os gráficos e análises aparecerão quando houver respostas coletadas para esta avaliação.
+                </p>
               </div>
-              <h3 className="font-display text-2xl font-semibold text-text-heading mb-3">
-                Ainda não há respostas
-              </h3>
-              <p className="text-text-secondary max-w-md mx-auto">
-                Os gráficos e análises aparecerão quando houver respostas coletadas para esta avaliação.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Modal do Plano de Ação disponível mesmo sem respostas */}
+        <FullscreenModal
+          isOpen={fullscreenSection === "action"}
+          onClose={() => setFullscreenSection(null)}
+          title="Plano de Ação com IA"
+          icon={Sparkles}
+        >
+          <ActionPlanTab assessmentId={assessmentId} currentPlan={currentPlan} highRiskCategories={[]} />
+        </FullscreenModal>
+      </>
     );
   }
 
   // Suppression state - protect anonymity when insufficient responses
   if (analytics.isSuppressed && analytics.suppressionInfo) {
     return (
-      <div className="space-y-6" data-testid="analytics-dashboard">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="font-display text-2xl font-bold text-text-heading">Análise de Resultados</h1>
-            <p className="text-sm text-text-muted mt-1">{assessmentTitle}</p>
-          </div>
-          <div className="flex gap-2">
-            <ImportDialog assessmentId={assessmentId} currentPlan={currentPlan} onImportComplete={onDataChange} />
-          </div>
-        </div>
-        <SuppressedDataCard
-          currentCount={analytics.suppressionInfo.currentCount}
-          minimumRequired={analytics.suppressionInfo.minimumRequired}
-          title="Aguardando Mais Respostas"
-          description={`Para proteger o anonimato dos respondentes e garantir analises estatisticamente significativas, o dashboard de analytics requer no minimo ${ANONYMITY_THRESHOLDS.ASSESSMENT_MINIMUM} participantes.`}
-          countType="responses"
-        />
-        {/* Show basic stats without detailed analysis */}
-        <Card className="border-pm-olive/20">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-4 text-text-muted">
-              <Users className="w-5 h-5 text-pm-olive" />
-              <div>
-                <p className="text-sm font-medium">Participantes até o momento</p>
-                <p className="text-2xl font-display font-bold text-text-heading">{analytics.totalParticipants}</p>
-              </div>
+      <>
+        <div className="space-y-6" data-testid="analytics-dashboard">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="font-display text-2xl font-bold text-text-heading">Análise de Resultados</h1>
+              <p className="text-sm text-text-muted mt-1">{assessmentTitle}</p>
             </div>
-          </CardContent>
-        </Card>
-      </div>
+            <div className="flex gap-2">
+              <ImportDialog assessmentId={assessmentId} currentPlan={currentPlan} onImportComplete={onDataChange} />
+            </div>
+          </div>
+          <SuppressedDataCard
+            currentCount={analytics.suppressionInfo.currentCount}
+            minimumRequired={analytics.suppressionInfo.minimumRequired}
+            title="Aguardando Mais Respostas"
+            description={`Para proteger o anonimato dos respondentes e garantir analises estatisticamente significativas, o dashboard de analytics requer no minimo ${ANONYMITY_THRESHOLDS.ASSESSMENT_MINIMUM} participantes.`}
+            countType="responses"
+          />
+          {/* Show basic stats without detailed analysis */}
+          <Card className="border-pm-olive/20">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-4 text-text-muted">
+                <Users className="w-5 h-5 text-pm-olive" />
+                <div>
+                  <p className="text-sm font-medium">Participantes até o momento</p>
+                  <p className="text-2xl font-display font-bold text-text-heading">{analytics.totalParticipants}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Modal do Plano de Ação disponível mesmo com dados suprimidos */}
+        <FullscreenModal
+          isOpen={fullscreenSection === "action"}
+          onClose={() => setFullscreenSection(null)}
+          title="Plano de Ação com IA"
+          icon={Sparkles}
+        >
+          <ActionPlanTab assessmentId={assessmentId} currentPlan={currentPlan} highRiskCategories={[]} />
+        </FullscreenModal>
+      </>
     );
   }
 
