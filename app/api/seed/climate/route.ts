@@ -10,6 +10,7 @@ export async function GET(request: Request) {
   const secret = url.searchParams.get("secret");
   const count = parseInt(url.searchParams.get("count") || "30");
   const orgId = url.searchParams.get("orgId") || undefined;
+  const all = url.searchParams.get("all") === "true";
 
   if (secret !== "psicomapa-seed-2025") {
     return NextResponse.json(
@@ -18,7 +19,70 @@ export async function GET(request: Request) {
     );
   }
 
+  if (all) {
+    return seedAllOrganizations(count);
+  }
+
   return seedClimateData(count, orgId);
+}
+
+// Seed data for ALL organizations
+async function seedAllOrganizations(count: number) {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+
+  if (!supabaseUrl || !supabaseServiceKey) {
+    return NextResponse.json(
+      { error: "Missing Supabase configuration" },
+      { status: 500 }
+    );
+  }
+
+  const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+  // Buscar todas as organizações
+  const { data: orgs, error: orgsError } = await supabase
+    .from("organizations")
+    .select("id, name");
+
+  if (orgsError || !orgs || orgs.length === 0) {
+    return NextResponse.json(
+      { error: "Nenhuma organização encontrada", details: orgsError?.message },
+      { status: 404 }
+    );
+  }
+
+  const results: { org: string; success: boolean; responsesInserted?: number; error?: string }[] = [];
+
+  for (const org of orgs) {
+    try {
+      const response = await seedClimateData(count, org.id);
+      const data = await response.json();
+
+      results.push({
+        org: org.name,
+        success: data.success || false,
+        responsesInserted: data.summary?.responsesInserted,
+        error: data.error
+      });
+    } catch (err) {
+      results.push({
+        org: org.name,
+        success: false,
+        error: String(err)
+      });
+    }
+  }
+
+  const totalSuccess = results.filter(r => r.success).length;
+  const totalResponses = results.reduce((acc, r) => acc + (r.responsesInserted || 0), 0);
+
+  return NextResponse.json({
+    success: true,
+    message: `Dados criados para ${totalSuccess}/${orgs.length} organizações`,
+    totalResponses,
+    results
+  });
 }
 
 // Opções de resposta
