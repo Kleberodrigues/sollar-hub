@@ -19,15 +19,17 @@ const ADMIN_EMAIL = process.env.TEST_ADMIN_EMAIL || 'admin@sollar.com.br';
 const ADMIN_PASSWORD = process.env.TEST_ADMIN_PASSWORD || 'AdminPassword123!';
 
 // Skip this test in CI if credentials are not configured
-const shouldSkip = process.env.CI && !process.env.TEST_ADMIN_EMAIL;
+const shouldSkip = !!(process.env.CI && !process.env.TEST_ADMIN_EMAIL);
 
 test.describe('Clima Survey Complete Flow', () => {
   test.setTimeout(300000); // 5 minutes timeout
 
-  // Skip in CI environments without proper test credentials
-  test.skip(shouldSkip, 'Skipping in CI - requires configured test credentials');
-
-  test('Complete Clima survey and verify analytics dashboard', async ({ page }) => {
+  test('Complete Clima survey and verify analytics dashboard', async ({ page }, testInfo) => {
+    // Skip in CI environments without proper test credentials
+    if (shouldSkip) {
+      testInfo.skip(true, 'Skipping in CI - requires configured test credentials');
+      return;
+    }
     // Enable verbose logging
     page.on('console', msg => console.log('Browser:', msg.text()));
 
