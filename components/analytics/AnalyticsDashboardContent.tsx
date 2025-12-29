@@ -602,17 +602,7 @@ export function AnalyticsDashboardContent({
               <DepartmentAnalysisTab departments={departments} totalParticipants={analytics.totalParticipants} compact />
             </SectionCard>
 
-            {/* Âncoras */}
-            <SectionCard
-              title="Âncoras de Satisfação"
-              icon={Anchor}
-              onExpand={() => setFullscreenSection("anchors")}
-              accentColor="olive"
-            >
-              <AnchorsTab anchors={anchorsData.anchors} overallAnchorScore={anchorsData.overallScore} compact />
-            </SectionCard>
-
-            {/* Nuvem de Palavras */}
+            {/* Nuvem de Palavras (inclui Palavras Frequentes no modal) */}
             <SectionCard
               title="Nuvem de Palavras"
               icon={Cloud}
@@ -621,17 +611,21 @@ export function AnalyticsDashboardContent({
             >
               <WordCloudTab textResponses={textResponses} />
             </SectionCard>
+          </motion.div>
 
-            {/* Palavras Mais Frequentes */}
-            <SectionCard
-              title="Palavras Mais Frequentes"
-              icon={MessageSquare}
-              onExpand={() => setFullscreenSection("frequentwords")}
-              accentColor="olive"
-            >
-              <FrequentWordsList textResponses={textResponses} />
-            </SectionCard>
-
+          {/* Âncoras de Satisfação - Exibição inline completa */}
+          <motion.div variants={sollarMotion.fadeUp}>
+            <Card className="bg-white border border-border-light overflow-hidden">
+              <div className="px-5 py-4 border-b border-border-light/50 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-pm-olive/10 flex items-center justify-center">
+                  <Anchor className="w-5 h-5 text-pm-olive" />
+                </div>
+                <h3 className="text-base font-semibold text-text-heading">Âncoras de Satisfação</h3>
+              </div>
+              <CardContent className="p-5">
+                <AnchorsTab anchors={anchorsData.anchors} overallAnchorScore={anchorsData.overallScore} inline />
+              </CardContent>
+            </Card>
           </motion.div>
         </>
       )}
@@ -670,16 +664,24 @@ export function AnalyticsDashboardContent({
         title="Nuvem de Palavras"
         icon={Cloud}
       >
-        <WordCloudTab textResponses={textResponses} />
-      </FullscreenModal>
-
-      <FullscreenModal
-        isOpen={fullscreenSection === "frequentwords"}
-        onClose={() => setFullscreenSection(null)}
-        title="Palavras Mais Frequentes"
-        icon={MessageSquare}
-      >
-        <FrequentWordsList textResponses={textResponses} />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
+          {/* Nuvem de Palavras - ocupa 2/3 */}
+          <div className="lg:col-span-2">
+            <WordCloudTab textResponses={textResponses} />
+          </div>
+          {/* Palavras Frequentes - ocupa 1/3 */}
+          <div className="lg:col-span-1">
+            <Card className="h-full">
+              <div className="px-4 py-3 border-b border-border-light/50 flex items-center gap-2">
+                <MessageSquare className="w-4 h-4 text-pm-terracotta" />
+                <h3 className="text-sm font-semibold text-text-heading">Palavras Mais Frequentes</h3>
+              </div>
+              <CardContent className="p-4">
+                <FrequentWordsList textResponses={textResponses} />
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </FullscreenModal>
 
       <FullscreenModal

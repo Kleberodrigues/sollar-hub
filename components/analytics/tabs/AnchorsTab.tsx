@@ -18,6 +18,7 @@ interface AnchorsTabProps {
   anchors: AnchorQuestion[];
   overallAnchorScore: number;
   compact?: boolean;
+  inline?: boolean;
 }
 
 // Identify question type based on text content
@@ -438,7 +439,7 @@ function DefaultAnchorChart({ anchor }: { anchor: AnchorQuestion }) {
   );
 }
 
-export function AnchorsTab({ anchors, overallAnchorScore, compact = false }: AnchorsTabProps) {
+export function AnchorsTab({ anchors, overallAnchorScore, compact = false, inline = false }: AnchorsTabProps) {
   const getSatisfactionLevel = (score: number): { label: string; color: string; icon: typeof Heart } => {
     if (score >= 4) return { label: "Excelente", color: "text-green-600 bg-green-100", icon: Star };
     if (score >= 3) return { label: "Bom", color: "text-blue-600 bg-blue-100", icon: ThumbsUp };
@@ -448,6 +449,88 @@ export function AnchorsTab({ anchors, overallAnchorScore, compact = false }: Anc
 
   const overallLevel = getSatisfactionLevel(overallAnchorScore);
   const OverallIcon = overallLevel.icon;
+
+  // Render the appropriate visualization based on question type
+  const renderAnchorVisualization = (anchor: AnchorQuestion) => {
+    const questionType = getQuestionType(anchor.text);
+
+    switch (questionType) {
+      case 'retention':
+        return <RetentionChart anchor={anchor} />;
+      case 'health':
+        return <HealthBarChart anchor={anchor} />;
+      case 'satisfaction':
+        return <SatisfactionGauge anchor={anchor} />;
+      default:
+        return <DefaultAnchorChart anchor={anchor} />;
+    }
+  };
+
+  // Inline view - shows all anchors in a compact grid without expanding
+  if (inline) {
+    if (anchors.length === 0) {
+      return (
+        <div className="flex flex-col items-center justify-center py-8 text-center">
+          <Anchor className="w-10 h-10 text-gray-300 mb-3" />
+          <p className="text-sm text-text-muted">Nenhuma âncora configurada</p>
+          <p className="text-xs text-text-muted mt-1">Adicione perguntas da categoria &quot;anchors&quot;</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-4">
+        {/* Header with overall score */}
+        <div className="flex items-center justify-between pb-4 border-b border-gray-100">
+          <div className="flex items-center gap-3">
+            <div className="relative w-12 h-12 flex-shrink-0">
+              <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
+                <circle cx="18" cy="18" r="14" fill="none" className="stroke-gray-100" strokeWidth="4" />
+                <circle
+                  cx="18" cy="18" r="14" fill="none"
+                  className="stroke-pm-olive" strokeWidth="4" strokeLinecap="round"
+                  strokeDasharray={`${(overallAnchorScore / 5) * 88} 100`}
+                />
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <span className="text-sm font-bold text-text-heading">{overallAnchorScore.toFixed(1)}</span>
+              </div>
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-text-heading">Índice Geral</p>
+              <Badge className={cn("text-xs", overallLevel.color)}>
+                <OverallIcon className="w-3 h-3 mr-1" />
+                {overallLevel.label}
+              </Badge>
+            </div>
+          </div>
+          <span className="text-xs text-text-muted">{anchors.length} indicadores</span>
+        </div>
+
+        {/* Grid of anchor visualizations */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {anchors.map((anchor, index) => (
+            <motion.div
+              key={anchor.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: index * 0.1 }}
+              className="p-4 rounded-xl bg-bg-secondary"
+            >
+              {/* Question text (truncated) */}
+              <p className="text-xs font-medium text-text-secondary mb-3 line-clamp-2">
+                {anchor.text}
+              </p>
+              {/* Visualization */}
+              <div className="[&_h4]:hidden [&_.space-y-4]:space-y-2 [&_.text-lg]:text-sm [&_.text-2xl]:text-lg [&_.w-64]:w-48 [&_.h-28]:h-20">
+                {renderAnchorVisualization(anchor)}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   // Compact view for SectionCard
   if (compact) {
@@ -540,22 +623,6 @@ export function AnchorsTab({ anchors, overallAnchorScore, compact = false }: Anc
       </Card>
     );
   }
-
-  // Render the appropriate visualization based on question type
-  const renderAnchorVisualization = (anchor: AnchorQuestion) => {
-    const questionType = getQuestionType(anchor.text);
-
-    switch (questionType) {
-      case 'retention':
-        return <RetentionChart anchor={anchor} />;
-      case 'health':
-        return <HealthBarChart anchor={anchor} />;
-      case 'satisfaction':
-        return <SatisfactionGauge anchor={anchor} />;
-      default:
-        return <DefaultAnchorChart anchor={anchor} />;
-    }
-  };
 
   return (
     <div className="space-y-6">
