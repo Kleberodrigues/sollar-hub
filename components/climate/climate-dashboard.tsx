@@ -96,24 +96,7 @@ export function ClimateDashboard({
     async (assessmentId: string): Promise<ClimateData | null> => {
       const supabase = createClient();
 
-      // Get all responses for this assessment
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data: responses, error } = (await supabase
-        .from("responses")
-        .select(
-          `
-        id,
-        answers,
-        created_at
-      `
-        )
-        .eq("assessment_id", assessmentId)) as any;
-
-      if (error || !responses?.length) {
-        return null;
-      }
-
-      // Get questions
+      // Get questions first
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data: questions } = (await supabase
         .from("questions")
@@ -123,10 +106,24 @@ export function ClimateDashboard({
 
       if (!questions) return null;
 
-      // Process Q1 responses (sentiment)
-      const q1Question = questions.find(
-        (q: { order_index: number }) => q.order_index === 1
-      );
+      // Get all responses for this assessment (one row per question per respondent)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: responses, error } = (await supabase
+        .from("responses")
+        .select("id, question_id, response_text, value, anonymous_id")
+        .eq("assessment_id", assessmentId)) as any;
+
+      if (error || !responses?.length) {
+        return null;
+      }
+
+      // Build question lookup map
+      const questionMap: Record<string, { order_index: number; text: string }> = {};
+      questions.forEach((q: { id: string; order_index: number; text: string }) => {
+        questionMap[q.id] = { order_index: q.order_index, text: q.text };
+      });
+
+      // Initialize counters
       const q1Counts: Record<string, number> = {
         "Muito mal": 0,
         "Mal": 0,
@@ -135,7 +132,6 @@ export function ClimateDashboard({
         "Muito bem": 0,
       };
 
-      // Process Q2-Q8 responses (likert)
       const q2to8Questions = questions.filter(
         (q: { order_index: number }) => q.order_index >= 2 && q.order_index <= 8
       );
@@ -144,70 +140,50 @@ export function ClimateDashboard({
         { text: string; counts: Record<string, number> }
       > = {};
 
-      q2to8Questions.forEach(
-        (q: { id: string; text: string }) => {
-          likertCounts[q.id] = {
-            text: q.text,
-            counts: {
-              Nunca: 0,
-              Raramente: 0,
-              "Às vezes": 0,
-              "Quase sempre": 0,
-              Sempre: 0,
-            },
-          };
-        }
-      );
+      q2to8Questions.forEach((q: { id: string; text: string }) => {
+        likertCounts[q.id] = {
+          text: q.text,
+          counts: {
+            Nunca: 0,
+            Raramente: 0,
+            "Às vezes": 0,
+            "Quase sempre": 0,
+            Sempre: 0,
+          },
+        };
+      });
 
-      // Process Q9 responses (NPS)
-      const q9Question = questions.find(
-        (q: { order_index: number }) => q.order_index === 9
-      );
       const q9Scores: number[] = [];
-
-      // Process Q10 responses (themes)
-      const q10Question = questions.find(
-        (q: { order_index: number }) => q.order_index === 10
-      );
       const themeCounts: Record<string, number> = {};
+      const uniqueRespondents = new Set<string>();
 
-      // Process each response
+      // Process each response row
       responses.forEach(
-        (response: { answers: Record<string, string | number> }) => {
-          const answers = response.answers || {};
+        (r: { question_id: string; response_text: string; value: number | null; anonymous_id: string }) => {
+          const question = questionMap[r.question_id];
+          if (!question) return;
 
-          // Q1
-          if (q1Question && answers[q1Question.id]) {
-            const answer = String(answers[q1Question.id]);
-            if (q1Counts[answer] !== undefined) {
-              q1Counts[answer]++;
+          uniqueRespondents.add(r.anonymous_id);
+
+          if (question.order_index === 1) {
+            // Q1 - Sentiment
+            if (q1Counts[r.response_text] !== undefined) {
+              q1Counts[r.response_text]++;
             }
-          }
-
-          // Q2-Q8
-          q2to8Questions.forEach(
-            (q: { id: string }) => {
-              if (answers[q.id]) {
-                const answer = String(answers[q.id]);
-                if (likertCounts[q.id]?.counts[answer] !== undefined) {
-                  likertCounts[q.id].counts[answer]++;
-                }
-              }
+          } else if (question.order_index >= 2 && question.order_index <= 8) {
+            // Q2-Q8 - Likert
+            if (likertCounts[r.question_id]?.counts[r.response_text] !== undefined) {
+              likertCounts[r.question_id].counts[r.response_text]++;
             }
-          );
-
-          // Q9
-          if (q9Question && answers[q9Question.id] !== undefined) {
-            const score = Number(answers[q9Question.id]);
+          } else if (question.order_index === 9) {
+            // Q9 - NPS
+            const score = r.value ?? Number(r.response_text);
             if (!isNaN(score)) {
               q9Scores.push(score);
             }
-          }
-
-          // Q10 - Simple word extraction for themes
-          if (q10Question && answers[q10Question.id]) {
-            const text = String(answers[q10Question.id]).toLowerCase();
-            // Extract simple keywords/themes
+          } else if (question.order_index === 10) {
+            // Q10 - Themes
+            const text = r.response_text?.toLowerCase() || "";
             const keywords = [
               "excesso de trabalho",
               "sobrecarga",
@@ -224,16 +200,14 @@ export function ClimateDashboard({
               "pressão",
               "estresse",
             ];
+            let matched = false;
             keywords.forEach((keyword) => {
               if (text.includes(keyword)) {
                 themeCounts[keyword] = (themeCounts[keyword] || 0) + 1;
+                matched = true;
               }
             });
-            // If no keyword matched, count as "outros"
-            if (
-              text.length > 0 &&
-              !keywords.some((k) => text.includes(k))
-            ) {
+            if (text.length > 0 && !matched) {
               themeCounts["outros comentários"] =
                 (themeCounts["outros comentários"] || 0) + 1;
             }
@@ -279,7 +253,7 @@ export function ClimateDashboard({
           .map(([theme, count]) => ({ theme, count }))
           .sort((a, b) => b.count - a.count)
           .slice(0, 10),
-        totalResponses: responses.length,
+        totalResponses: uniqueRespondents.size,
       };
     },
     []
