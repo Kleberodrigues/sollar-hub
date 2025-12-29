@@ -3,6 +3,23 @@ import { NextResponse } from "next/server";
 
 const CLIMA_QUESTIONNAIRE_ID = "b2222222-2222-2222-2222-222222222222";
 
+// GET handler for easy testing via browser/WebFetch
+export async function GET(request: Request) {
+  const url = new URL(request.url);
+  const secret = url.searchParams.get("secret");
+  const count = parseInt(url.searchParams.get("count") || "30");
+
+  if (secret !== "psicomapa-seed-2025") {
+    return NextResponse.json(
+      { error: "Unauthorized. Use ?secret=psicomapa-seed-2025" },
+      { status: 401 }
+    );
+  }
+
+  // Redirect to internal POST processing
+  return seedClimateData(count);
+}
+
 // Opções de resposta
 const Q1_OPTIONS = ["Muito mal", "Mal", "Mais ou menos", "Bem", "Muito bem"];
 const LIKERT_OPTIONS = ["Nunca", "Raramente", "Às vezes", "Quase sempre", "Sempre"];
@@ -40,15 +57,9 @@ function generateNPSScore(): number {
   return weightedRandom([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], weights);
 }
 
-export async function POST(request: Request) {
+// Shared seed function for both GET and POST
+async function seedClimateData(count: number) {
   try {
-    const { count = 25, secret } = await request.json();
-
-    // Simple secret protection
-    if (secret !== "psicomapa-seed-2025") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
     const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
@@ -341,5 +352,20 @@ export async function POST(request: Request) {
       { error: `Erro inesperado: ${error}` },
       { status: 500 }
     );
+  }
+}
+
+// POST handler
+export async function POST(request: Request) {
+  try {
+    const { count = 30, secret } = await request.json();
+
+    if (secret !== "psicomapa-seed-2025") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    return seedClimateData(count);
+  } catch {
+    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
   }
 }
