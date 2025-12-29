@@ -9,6 +9,7 @@ export async function GET(request: Request) {
   const url = new URL(request.url);
   const secret = url.searchParams.get("secret");
   const count = parseInt(url.searchParams.get("count") || "30");
+  const orgId = url.searchParams.get("orgId") || undefined;
 
   if (secret !== "psicomapa-seed-2025") {
     return NextResponse.json(
@@ -17,8 +18,7 @@ export async function GET(request: Request) {
     );
   }
 
-  // Redirect to internal POST processing
-  return seedClimateData(count);
+  return seedClimateData(count, orgId);
 }
 
 // Opções de resposta
@@ -59,7 +59,7 @@ function generateNPSScore(): number {
 }
 
 // Shared seed function for both GET and POST
-async function seedClimateData(count: number) {
+async function seedClimateData(count: number, targetOrgId?: string) {
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
     const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -210,31 +210,52 @@ async function seedClimateData(count: number) {
 
     // 3. Buscar organização
     logs.push("🏢 Verificando organização...");
-    const { data: orgs } = await supabase
-      .from("organizations")
-      .select("id, name")
-      .limit(1);
-
     let organizationId: string;
-    if (!orgs || orgs.length === 0) {
-      logs.push("   Criando organização de teste...");
-      const { data: newOrg, error: orgError } = await supabase
+
+    if (targetOrgId) {
+      // Use provided organization ID
+      const { data: org } = await supabase
         .from("organizations")
-        .insert({ name: "Empresa Teste", slug: "empresa-teste" })
-        .select()
+        .select("id, name")
+        .eq("id", targetOrgId)
         .single();
 
-      if (orgError || !newOrg) {
+      if (org) {
+        organizationId = org.id;
+        logs.push(`✅ Usando organização especificada: ${org.name}`);
+      } else {
         return NextResponse.json(
-          { error: `Erro ao criar organização: ${orgError?.message}`, logs },
-          { status: 500 }
+          { error: "Organização não encontrada", logs },
+          { status: 404 }
         );
       }
-      organizationId = newOrg.id;
-      logs.push(`✅ Organização criada: ${newOrg.name}`);
     } else {
-      organizationId = orgs[0].id;
-      logs.push(`✅ Usando organização: ${orgs[0].name}`);
+      // Fallback to first organization
+      const { data: orgs } = await supabase
+        .from("organizations")
+        .select("id, name")
+        .limit(1);
+
+      if (!orgs || orgs.length === 0) {
+        logs.push("   Criando organização de teste...");
+        const { data: newOrg, error: orgError } = await supabase
+          .from("organizations")
+          .insert({ name: "Empresa Teste", slug: "empresa-teste" })
+          .select()
+          .single();
+
+        if (orgError || !newOrg) {
+          return NextResponse.json(
+            { error: `Erro ao criar organização: ${orgError?.message}`, logs },
+            { status: 500 }
+          );
+        }
+        organizationId = newOrg.id;
+        logs.push(`✅ Organização criada: ${newOrg.name}`);
+      } else {
+        organizationId = orgs[0].id;
+        logs.push(`✅ Usando organização: ${orgs[0].name}`);
+      }
     }
 
     // 4. Criar avaliação
@@ -377,13 +398,13 @@ async function seedClimateData(count: number) {
 // POST handler
 export async function POST(request: Request) {
   try {
-    const { count = 30, secret } = await request.json();
+    const { count = 30, secret, organizationId } = await request.json();
 
     if (secret !== "psicomapa-seed-2025") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    return seedClimateData(count);
+    return seedClimateData(count, organizationId);
   } catch {
     return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
   }
