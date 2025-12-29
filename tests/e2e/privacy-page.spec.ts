@@ -50,8 +50,8 @@ test.describe('Privacy Policy Page', () => {
   });
 
   test('should have contact email links', async ({ page }) => {
-    // Find email links
-    const emailLinks = page.locator('a[href^="mailto:juliakalil@sollartreinamentos.com.br"]');
+    // Find email links - using the correct PsicoMapa contact email
+    const emailLinks = page.locator('a[href^="mailto:contato@psicomapa.cloud"]');
 
     // Should have at least 2 email links (section 6 and 8)
     await expect(emailLinks).toHaveCount(2);
