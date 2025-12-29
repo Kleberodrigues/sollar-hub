@@ -590,6 +590,21 @@ export function AnalyticsDashboardContent({
             />
           </motion.div>
 
+          {/* Âncoras de Satisfação - Exibição inline completa */}
+          <motion.div variants={sollarMotion.fadeUp}>
+            <Card className="bg-white border border-border-light overflow-hidden">
+              <div className="px-5 py-4 border-b border-border-light/50 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-pm-olive/10 flex items-center justify-center">
+                  <Anchor className="w-5 h-5 text-pm-olive" />
+                </div>
+                <h3 className="text-base font-semibold text-text-heading">Âncoras de Satisfação</h3>
+              </div>
+              <CardContent className="p-5">
+                <AnchorsTab anchors={anchorsData.anchors} overallAnchorScore={anchorsData.overallScore} inline />
+              </CardContent>
+            </Card>
+          </motion.div>
+
           {/* Grid de Análises Complementares */}
           <motion.div variants={sollarMotion.fadeUp} className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             {/* Departamentos */}
@@ -611,21 +626,6 @@ export function AnalyticsDashboardContent({
             >
               <WordCloudTab textResponses={textResponses} />
             </SectionCard>
-          </motion.div>
-
-          {/* Âncoras de Satisfação - Exibição inline completa */}
-          <motion.div variants={sollarMotion.fadeUp}>
-            <Card className="bg-white border border-border-light overflow-hidden">
-              <div className="px-5 py-4 border-b border-border-light/50 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-pm-olive/10 flex items-center justify-center">
-                  <Anchor className="w-5 h-5 text-pm-olive" />
-                </div>
-                <h3 className="text-base font-semibold text-text-heading">Âncoras de Satisfação</h3>
-              </div>
-              <CardContent className="p-5">
-                <AnchorsTab anchors={anchorsData.anchors} overallAnchorScore={anchorsData.overallScore} inline />
-              </CardContent>
-            </Card>
           </motion.div>
         </>
       )}
