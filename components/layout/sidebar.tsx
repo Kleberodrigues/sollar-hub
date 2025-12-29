@@ -157,9 +157,21 @@ export function Sidebar({ userRole, isSuperAdmin = false }: SidebarProps) {
           const Icon = item.icon;
           const href = getHref(item);
           const basePath = item.href.split("?")[0];
-          const isActive =
-            pathname === basePath ||
-            (basePath !== "/dashboard" && pathname.startsWith(basePath));
+          const currentSection = searchParams.get("section");
+
+          // Lógica especial para distinguir Análise de Riscos e Plano de Ação
+          let isActive = false;
+          if (item.preserveAssessment) {
+            // Plano de Ação: ativo SOMENTE quando section=action está na URL
+            isActive = pathname.startsWith("/dashboard/analytics") && currentSection === "action";
+          } else if (basePath === "/dashboard/analytics") {
+            // Análise de Riscos: ativo quando em analytics SEM section=action
+            isActive = pathname.startsWith("/dashboard/analytics") && currentSection !== "action";
+          } else {
+            // Outros itens: lógica padrão
+            isActive = pathname === basePath ||
+              (basePath !== "/dashboard" && pathname.startsWith(basePath));
+          }
 
           return (
             <Link
