@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { SunIcon } from "@/components/Logo";
 import {
@@ -34,7 +34,6 @@ interface NavItem {
   href: string;
   icon: typeof LayoutDashboard;
   roles: string[];
-  preserveAssessment?: boolean;
 }
 
 const navigationItems: NavItem[] = [
@@ -64,10 +63,9 @@ const navigationItems: NavItem[] = [
   },
   {
     title: "Plano de Ação",
-    href: "/dashboard/analytics?section=action",
+    href: "/dashboard/action-plan",
     icon: Target,
     roles: ["admin", "responsavel_empresa", "membro"],
-    preserveAssessment: true,
   },
   {
     title: "Departamentos",
@@ -97,22 +95,11 @@ const navigationItems: NavItem[] = [
 
 export function Sidebar({ userRole, isSuperAdmin = false }: SidebarProps) {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const currentAssessment = searchParams.get("assessment");
 
   // Filtrar itens baseado no role do usuário
   const visibleItems = navigationItems.filter((item) =>
     item.roles.includes(userRole)
   );
-
-  // Função para obter href dinâmico
-  const getHref = (item: NavItem) => {
-    // Se o item deve preservar o assessment e estamos em analytics com um assessment
-    if (item.preserveAssessment && currentAssessment && pathname.startsWith("/dashboard/analytics")) {
-      return `/dashboard/analytics?assessment=${currentAssessment}&section=action`;
-    }
-    return item.href;
-  };
 
   return (
     <aside className="w-64 bg-white border-r border-border-light flex flex-col h-screen sticky top-0">
@@ -155,28 +142,16 @@ export function Sidebar({ userRole, isSuperAdmin = false }: SidebarProps) {
       <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
         {visibleItems.map((item) => {
           const Icon = item.icon;
-          const href = getHref(item);
           const basePath = item.href.split("?")[0];
-          const currentSection = searchParams.get("section");
 
-          // Lógica especial para distinguir Análise de Riscos e Plano de Ação
-          let isActive = false;
-          if (item.preserveAssessment) {
-            // Plano de Ação: ativo SOMENTE quando section=action está na URL
-            isActive = pathname.startsWith("/dashboard/analytics") && currentSection === "action";
-          } else if (basePath === "/dashboard/analytics") {
-            // Análise de Riscos: ativo quando em analytics SEM section=action
-            isActive = pathname.startsWith("/dashboard/analytics") && currentSection !== "action";
-          } else {
-            // Outros itens: lógica padrão
-            isActive = pathname === basePath ||
-              (basePath !== "/dashboard" && pathname.startsWith(basePath));
-          }
+          // Lógica padrão de ativo
+          const isActive = pathname === basePath ||
+            (basePath !== "/dashboard" && pathname.startsWith(basePath));
 
           return (
             <Link
               key={item.title}
-              href={href}
+              href={item.href}
               className={cn(
                 "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
                 isActive
