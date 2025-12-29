@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { SlideUp, FadeIn } from '@/components/animated'
-import { Clock, Calendar, ArrowLeft, ExternalLink, User, Share2, BookOpen } from 'lucide-react'
+import { Clock, Calendar, ArrowLeft, ExternalLink, User, Share2 } from 'lucide-react'
 import { getPostBySlug, getAllPosts } from '@/lib/blog/posts'
 import ReactMarkdown from 'react-markdown'
 
