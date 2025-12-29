@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { SunIcon } from "@/components/Logo";
 import {
@@ -29,7 +29,15 @@ const ROLE_LABELS: Record<string, string> = {
   membro: "Membro",
 };
 
-const navigationItems = [
+interface NavItem {
+  title: string;
+  href: string;
+  icon: typeof LayoutDashboard;
+  roles: string[];
+  preserveAssessment?: boolean;
+}
+
+const navigationItems: NavItem[] = [
   {
     title: "Página Inicial",
     href: "/dashboard",
@@ -59,6 +67,7 @@ const navigationItems = [
     href: "/dashboard/analytics?section=action",
     icon: Target,
     roles: ["admin", "responsavel_empresa", "membro"],
+    preserveAssessment: true,
   },
   {
     title: "Departamentos",
@@ -88,11 +97,22 @@ const navigationItems = [
 
 export function Sidebar({ userRole, isSuperAdmin = false }: SidebarProps) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const currentAssessment = searchParams.get("assessment");
 
   // Filtrar itens baseado no role do usuário
   const visibleItems = navigationItems.filter((item) =>
     item.roles.includes(userRole)
   );
+
+  // Função para obter href dinâmico
+  const getHref = (item: NavItem) => {
+    // Se o item deve preservar o assessment e estamos em analytics com um assessment
+    if (item.preserveAssessment && currentAssessment && pathname.startsWith("/dashboard/analytics")) {
+      return `/dashboard/analytics?assessment=${currentAssessment}&section=action`;
+    }
+    return item.href;
+  };
 
   return (
     <aside className="w-64 bg-white border-r border-border-light flex flex-col h-screen sticky top-0">
@@ -135,14 +155,16 @@ export function Sidebar({ userRole, isSuperAdmin = false }: SidebarProps) {
       <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
         {visibleItems.map((item) => {
           const Icon = item.icon;
+          const href = getHref(item);
+          const basePath = item.href.split("?")[0];
           const isActive =
-            pathname === item.href ||
-            (item.href !== "/dashboard" && pathname.startsWith(item.href));
+            pathname === basePath ||
+            (basePath !== "/dashboard" && pathname.startsWith(basePath));
 
           return (
             <Link
-              key={item.href}
-              href={item.href}
+              key={item.title}
+              href={href}
               className={cn(
                 "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
                 isActive
