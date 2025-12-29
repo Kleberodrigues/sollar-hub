@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Anchor, Heart, Star, ThumbsUp, Shield, Users, TrendingUp } from "lucide-react";
+import { Anchor, Heart, Star, ThumbsUp, Shield, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface AnchorQuestion {
