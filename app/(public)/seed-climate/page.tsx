@@ -25,7 +25,7 @@ export default function SeedClimatePage() {
           .from("user_profiles")
           .select("organization_id")
           .eq("id", user.id)
-          .single();
+          .single() as { data: { organization_id: string | null } | null };
 
         if (profile?.organization_id) {
           setOrganizationId(profile.organization_id);
@@ -35,7 +35,7 @@ export default function SeedClimatePage() {
             .from("organizations")
             .select("name")
             .eq("id", profile.organization_id)
-            .single();
+            .single() as { data: { name: string } | null };
 
           if (org) {
             setOrganizationName(org.name);
