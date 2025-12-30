@@ -34,7 +34,7 @@ export default async function ClimatePage() {
 
   // Get climate assessments for this organization
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: assessments } = (await supabase
+  const { data: assessments, error: assessmentsError } = (await supabase
     .from("assessments")
     .select(
       `
@@ -48,6 +48,14 @@ export default async function ClimatePage() {
     .eq("organization_id", profile.organization_id)
     .eq("questionnaire_id", CLIMA_QUESTIONNAIRE_ID)
     .order("start_date", { ascending: false })) as any;
+
+  // Debug log
+  console.log("Climate Dashboard Debug:", {
+    organizationId: profile.organization_id,
+    questionnaireId: CLIMA_QUESTIONNAIRE_ID,
+    assessmentsFound: assessments?.length || 0,
+    error: assessmentsError?.message
+  });
 
   return (
     <div className="space-y-6">
