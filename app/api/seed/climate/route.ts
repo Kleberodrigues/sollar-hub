@@ -322,8 +322,8 @@ async function seedClimateData(count: number, targetOrgId?: string) {
       }
     }
 
-    // 4. Criar avaliação
-    logs.push("📊 Criando avaliação de clima para este mês...");
+    // 4. Criar ou buscar avaliação do mês atual
+    logs.push("📊 Buscando/criando avaliação de clima para este mês...");
     const now = new Date();
     const startDate = new Date(now.getFullYear(), now.getMonth(), 1);
     const endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
@@ -334,44 +334,46 @@ async function seedClimateData(count: number, targetOrgId?: string) {
     ];
 
     let assessmentId: string;
+    const assessmentTitle = `Pesquisa de Clima - ${monthNames[now.getMonth()]} ${now.getFullYear()}`;
 
-    const { data: assessment, error: assessmentError } = await supabase
+    // Primeiro, buscar se já existe avaliação para este mês
+    const { data: existingAssessment } = await supabase
       .from("assessments")
-      .insert({
-        title: `Pesquisa de Clima - ${monthNames[now.getMonth()]} ${now.getFullYear()}`,
-        questionnaire_id: CLIMA_QUESTIONNAIRE_ID,
-        organization_id: organizationId,
-        start_date: startDate.toISOString(),
-        end_date: endDate.toISOString(),
-        status: "active",
-      })
-      .select()
+      .select("id, title")
+      .eq("questionnaire_id", CLIMA_QUESTIONNAIRE_ID)
+      .eq("organization_id", organizationId)
+      .gte("start_date", startDate.toISOString())
+      .lte("start_date", endDate.toISOString())
+      .limit(1)
       .single();
 
-    if (assessmentError) {
-      logs.push(`⚠️ Avaliação pode já existir, buscando...`);
-
-      const { data: existingAssessment } = await supabase
+    if (existingAssessment) {
+      assessmentId = existingAssessment.id;
+      logs.push(`✅ Usando avaliação existente: ${existingAssessment.title}`);
+    } else {
+      // Criar nova avaliação para este mês
+      const { data: newAssessment, error: assessmentError } = await supabase
         .from("assessments")
-        .select("id, title")
-        .eq("questionnaire_id", CLIMA_QUESTIONNAIRE_ID)
-        .eq("organization_id", organizationId)
-        .order("created_at", { ascending: false })
-        .limit(1)
+        .insert({
+          title: assessmentTitle,
+          questionnaire_id: CLIMA_QUESTIONNAIRE_ID,
+          organization_id: organizationId,
+          start_date: startDate.toISOString(),
+          end_date: endDate.toISOString(),
+          status: "active",
+        })
+        .select()
         .single();
 
-      if (existingAssessment) {
-        assessmentId = existingAssessment.id;
-        logs.push(`✅ Usando avaliação existente: ${existingAssessment.title}`);
-      } else {
+      if (assessmentError || !newAssessment) {
+        logs.push(`❌ Erro ao criar avaliação: ${assessmentError?.message}`);
         return NextResponse.json(
-          { error: "Não foi possível criar ou encontrar avaliação", logs },
+          { error: `Erro ao criar avaliação: ${assessmentError?.message}`, logs },
           { status: 500 }
         );
       }
-    } else {
-      assessmentId = assessment.id;
-      logs.push(`✅ Avaliação criada: ${assessment.title}`);
+      assessmentId = newAssessment.id;
+      logs.push(`✅ Avaliação criada: ${newAssessment.title}`);
     }
 
     // 5. Gerar respostas (uma linha por pergunta por respondente)
