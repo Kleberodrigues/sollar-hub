@@ -324,9 +324,21 @@ async function seedClimateData(count: number, targetOrgId?: string) {
 
     // 4. Criar ou buscar avaliação do mês atual
     logs.push("📊 Buscando/criando avaliação de clima para este mês...");
-    const now = new Date();
-    const startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-    const endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+    // Use Brazil timezone to calculate month correctly
+    const nowUTC = new Date();
+    const brazilFormatter = new Intl.DateTimeFormat('pt-BR', {
+      timeZone: 'America/Sao_Paulo',
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+    });
+    const brazilParts = brazilFormatter.formatToParts(nowUTC);
+    const brazilYear = parseInt(brazilParts.find(p => p.type === 'year')?.value || '2025');
+    const brazilMonth = parseInt(brazilParts.find(p => p.type === 'month')?.value || '12') - 1; // 0-indexed
+
+    const startDate = new Date(Date.UTC(brazilYear, brazilMonth, 1));
+    const endDate = new Date(Date.UTC(brazilYear, brazilMonth + 1, 0, 23, 59, 59));
 
     const monthNames = [
       "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
@@ -334,7 +346,9 @@ async function seedClimateData(count: number, targetOrgId?: string) {
     ];
 
     let assessmentId: string;
-    const assessmentTitle = `Pesquisa de Clima - ${monthNames[now.getMonth()]} ${now.getFullYear()}`;
+    const assessmentTitle = `Pesquisa de Clima - ${monthNames[brazilMonth]} ${brazilYear}`;
+
+    logs.push(`   Mês calculado (Brasil): ${monthNames[brazilMonth]} ${brazilYear}`);
 
     // Primeiro, buscar se já existe avaliação para este mês
     const { data: existingAssessment } = await supabase
