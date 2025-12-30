@@ -66,14 +66,16 @@ export function SatisfactionGauge({
 
             {/* Tick marks */}
             {[0, 2, 4, 6, 8, 10].map((tick) => {
-              const angle = (tick / 10) * 180 - 90;
-              const rad = (angle * Math.PI) / 180;
+              // Ângulo: 0→180° (esquerda), 10→0° (direita), passando pelo topo
+              const angleDeg = 180 - (tick / 10) * 180;
+              const rad = (angleDeg * Math.PI) / 180;
               const innerRadius = 70;
               const outerRadius = 85;
+              // SVG tem Y invertido, então usamos -sin para y
               const x1 = 100 + Math.cos(rad) * innerRadius;
-              const y1 = 100 + Math.sin(rad) * innerRadius;
+              const y1 = 100 - Math.sin(rad) * innerRadius;
               const x2 = 100 + Math.cos(rad) * outerRadius;
-              const y2 = 100 + Math.sin(rad) * outerRadius;
+              const y2 = 100 - Math.sin(rad) * outerRadius;
               return (
                 <g key={tick}>
                   <line
@@ -86,7 +88,7 @@ export function SatisfactionGauge({
                   />
                   <text
                     x={100 + Math.cos(rad) * 55}
-                    y={100 + Math.sin(rad) * 55}
+                    y={100 - Math.sin(rad) * 55}
                     textAnchor="middle"
                     dominantBaseline="middle"
                     className="text-[10px] fill-gray-500"

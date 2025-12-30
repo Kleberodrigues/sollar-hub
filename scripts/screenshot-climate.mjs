@@ -50,6 +50,34 @@ async function main() {
     await page.screenshot({ path: './screenshots/climate-dashboard-viewport.png' });
     console.log('📸 Screenshot viewport salvo!');
 
+    // Scroll dentro do main content
+    await page.evaluate(() => {
+      const main = document.querySelector('main') || document.documentElement;
+      main.scrollTop = 500;
+      window.scrollTo(0, 500);
+    });
+    await page.waitForTimeout(500);
+    await page.screenshot({ path: './screenshots/climate-dashboard-scroll1.png' });
+    console.log('📸 Screenshot scroll 1 salvo!');
+
+    // Scroll mais para baixo
+    await page.evaluate(() => {
+      const main = document.querySelector('main') || document.documentElement;
+      main.scrollTop = 1000;
+      window.scrollTo(0, 1000);
+    });
+    await page.waitForTimeout(500);
+    await page.screenshot({ path: './screenshots/climate-dashboard-scroll2.png' });
+    console.log('📸 Screenshot scroll 2 salvo!');
+
+    // Scroll até o final
+    await page.evaluate(() => {
+      window.scrollTo(0, document.body.scrollHeight);
+    });
+    await page.waitForTimeout(500);
+    await page.screenshot({ path: './screenshots/climate-dashboard-bottom.png' });
+    console.log('📸 Screenshot bottom salvo!');
+
     console.log('🎉 Concluído!');
 
   } catch (error) {
