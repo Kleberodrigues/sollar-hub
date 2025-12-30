@@ -500,16 +500,12 @@ export function ClimateDashboard({
 
           {/* Q2-Q8 - Likert Stacked Bars */}
           <Card>
-            <CardHeader className="pb-2">
+            <CardHeader className="pb-4">
               <CardTitle className="text-lg font-display text-pm-green-dark">
                 Q2 a Q8 - Avaliação por Dimensão
               </CardTitle>
-              <p className="text-sm text-text-muted mt-1">
-                Barras agrupadas por cor: Vermelho (Nunca/Raramente), Amarelo (Às
-                vezes), Verde (Quase sempre/Sempre)
-              </p>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-0">
               <LikertStackedBars data={climateData.q2to8Responses} />
             </CardContent>
           </Card>

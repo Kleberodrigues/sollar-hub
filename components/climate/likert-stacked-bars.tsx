@@ -56,7 +56,7 @@ export function LikertStackedBars({ data }: LikertStackedBarsProps) {
       </div>
 
       {/* Bars */}
-      <div className="space-y-4">
+      <div className="space-y-5">
         {data.map((question, index) => {
           const grouped = groupDistribution(question.distribution);
           const questionNumber = index + 2; // Q2 to Q8
@@ -64,17 +64,15 @@ export function LikertStackedBars({ data }: LikertStackedBarsProps) {
           return (
             <div key={question.questionId} className="space-y-2">
               {/* Question text */}
-              <div className="flex items-start gap-2">
-                <span className="text-sm font-semibold text-pm-terracotta whitespace-nowrap">
+              <p className="text-sm text-text-primary leading-relaxed">
+                <span className="font-bold text-pm-terracotta mr-2">
                   Q{questionNumber}
                 </span>
-                <p className="text-sm text-text-secondary line-clamp-2">
-                  {question.questionText}
-                </p>
-              </div>
+                {question.questionText}
+              </p>
 
               {/* Stacked bar */}
-              <div className="flex h-10 rounded-lg overflow-hidden bg-gray-100">
+              <div className="flex h-8 rounded-lg overflow-hidden bg-gray-100">
                 {grouped.negative > 0 && (
                   <div
                     className="bg-red-500 flex items-center justify-center text-white text-xs font-medium transition-all duration-500 hover:opacity-90"
@@ -108,12 +106,6 @@ export function LikertStackedBars({ data }: LikertStackedBarsProps) {
         })}
       </div>
 
-      {/* Summary */}
-      <div className="pt-4 border-t border-border-light">
-        <p className="text-xs text-text-muted text-center">
-          Passe o mouse sobre as barras para ver os percentuais detalhados
-        </p>
-      </div>
     </div>
   );
 }
