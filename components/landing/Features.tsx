@@ -124,7 +124,7 @@ export function Features() {
             className="bg-pm-terracotta hover:bg-pm-terracotta-hover text-lg px-8 py-6"
             asChild
           >
-            <Link href="/precos">
+            <Link href="/#planos">
               Comece Agora
               <ArrowRight className="ml-2 w-5 h-5" />
             </Link>

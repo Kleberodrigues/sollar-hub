@@ -45,7 +45,7 @@ export function CTA() {
               className="bg-white text-pm-terracotta hover:bg-white/90 text-lg px-8 py-6"
               asChild
             >
-              <Link href="/precos">
+              <Link href="/#planos">
                 Comece Agora
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Link>
