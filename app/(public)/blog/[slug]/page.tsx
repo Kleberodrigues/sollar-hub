@@ -227,7 +227,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
-                  href="/precos"
+                  href="/#planos"
                   className="inline-flex items-center justify-center px-6 py-3 bg-pm-olive-light text-pm-brown font-medium rounded-lg hover:bg-white transition-colors"
                 >
                   Conhecer Planos

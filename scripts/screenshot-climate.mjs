@@ -35,9 +35,9 @@ async function main() {
     await page.screenshot({ path: './screenshots/dashboard-home.png', fullPage: true });
     console.log('📸 Screenshot do dashboard salvo!');
 
-    // 2. Navegar para Pesquisa de Clima
+    // 2. Navegar para Pesquisa de Clima (com cache bypass)
     console.log('🌡️ Navegando para Pesquisa de Clima...');
-    await page.goto(`${BASE_URL}/dashboard/climate`, { waitUntil: 'networkidle' });
+    await page.goto(`${BASE_URL}/dashboard/climate?_=${Date.now()}`, { waitUntil: 'networkidle' });
 
     // Aguardar carregamento dos dados
     await page.waitForTimeout(3000);

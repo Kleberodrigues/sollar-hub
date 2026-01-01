@@ -149,7 +149,7 @@ export function Hero() {
                 className="border-pm-olive text-pm-olive hover:bg-pm-olive hover:text-white text-lg px-8 py-6"
                 asChild
               >
-                <Link href="/precos">
+                <Link href="/#planos">
                   Ver Planos
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Link>
