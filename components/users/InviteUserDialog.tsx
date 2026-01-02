@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -23,16 +24,30 @@ import {
 } from "@/components/ui/select";
 import { inviteUser } from "@/app/dashboard/users/actions";
 import { inviteUserSchema } from "@/lib/validations";
+import { Lock } from "lucide-react";
+import { type PlanType, PLANS } from "@/lib/stripe/config";
 
 interface InviteUserDialogProps {
   memberCount?: number;
   managerCount?: number;
+  currentPlan?: PlanType;
 }
 
-export function InviteUserDialog({ memberCount = 0, managerCount = 0 }: InviteUserDialogProps) {
-  const memberLimitReached = memberCount >= 1;
-  const managerLimitReached = managerCount >= 1;
-  const bothLimitsReached = memberLimitReached && managerLimitReached;
+export function InviteUserDialog({
+  memberCount = 0,
+  managerCount = 0,
+  currentPlan = 'base',
+}: InviteUserDialogProps) {
+  // Get plan limits from config
+  const planConfig = PLANS[currentPlan];
+  const maxTeamMembers = planConfig?.limits.maxTeamMembers ?? 10;
+  const totalMembers = memberCount + managerCount;
+
+  // Check if limit is reached based on plan
+  const teamLimitReached = maxTeamMembers !== Infinity && totalMembers >= maxTeamMembers;
+  const memberLimitReached = memberCount >= Math.max(1, Math.floor(maxTeamMembers * 0.8)); // 80% can be members
+  const managerLimitReached = managerCount >= Math.max(1, Math.ceil(maxTeamMembers * 0.2)); // 20% can be managers
+  const bothLimitsReached = teamLimitReached;
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -145,11 +160,17 @@ export function InviteUserDialog({ memberCount = 0, managerCount = 0 }: InviteUs
             <Label htmlFor="role">Perfil *</Label>
             {bothLimitsReached ? (
               <div className="p-3 bg-amber-50 border border-amber-200 rounded-md">
-                <p className="text-sm text-amber-700 font-medium">
-                  Limite de usuários atingido
-                </p>
+                <div className="flex items-center gap-2">
+                  <Lock className="h-4 w-4 text-amber-600" />
+                  <p className="text-sm text-amber-700 font-medium">
+                    Limite de usuários atingido
+                  </p>
+                </div>
                 <p className="text-xs text-amber-600 mt-1">
-                  Sua organização já possui 1 gerente e 1 membro. Contate o suporte para aumentar os limites.
+                  Seu plano {planConfig?.name} permite até {maxTeamMembers === Infinity ? 'ilimitados' : maxTeamMembers} membros.
+                  {maxTeamMembers !== Infinity && (
+                    <> Você tem {totalMembers}/{maxTeamMembers}. <a href="/dashboard/configuracoes/billing" className="underline hover:text-amber-700">Faça upgrade</a> para adicionar mais.</>
+                  )}
                 </p>
               </div>
             ) : (
@@ -175,13 +196,14 @@ export function InviteUserDialog({ memberCount = 0, managerCount = 0 }: InviteUs
                   <strong>Responsável:</strong> Acesso completo, gerencia usuários e diagnósticos |{" "}
                   <strong>Membro:</strong> Acesso limitado, visualiza relatórios
                 </p>
-                {(memberLimitReached || managerLimitReached) && (
-                  <p className="text-xs text-amber-600">
-                    {memberLimitReached && "Limite de 1 membro atingido. "}
-                    {managerLimitReached && "Limite de 1 gerente atingido. "}
-                    Contate o suporte para aumentar.
-                  </p>
-                )}
+                <div className="flex items-center justify-between text-xs text-text-muted">
+                  <span>Membros da equipe: {totalMembers}/{maxTeamMembers === Infinity ? '∞' : maxTeamMembers}</span>
+                  {maxTeamMembers !== Infinity && totalMembers >= maxTeamMembers - 2 && (
+                    <Badge variant="outline" className="gap-1 text-amber-600 border-amber-200">
+                      Limite próximo
+                    </Badge>
+                  )}
+                </div>
               </>
             )}
           </div>

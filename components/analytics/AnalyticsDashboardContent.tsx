@@ -719,7 +719,7 @@ export function AnalyticsDashboardContent({
           title="Tendência do Clima Organizacional"
           icon={TrendingUp}
         >
-          <ClimaTrendTab assessmentType={assessmentType} />
+          <ClimaTrendTab assessmentType={assessmentType} currentPlan={currentPlan} />
         </FullscreenModal>
       )}
     </motion.div>
