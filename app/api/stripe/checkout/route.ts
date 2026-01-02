@@ -16,7 +16,10 @@ const checkoutSchema = z.object({
   plan: z.enum(["base", "intermediario", "avancado"], {
     errorMap: () => ({ message: "Plan must be 'base', 'intermediario', or 'avancado'" }),
   }),
-  // interval removed - only yearly billing available
+  termsAccepted: z.boolean().refine((val) => val === true, {
+    message: "Terms must be accepted to proceed",
+  }),
+  acceptedAt: z.string().datetime().optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -62,7 +65,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { organizationId, plan } = validation.data;
+    const { organizationId, plan, acceptedAt } = validation.data;
+    // termsAccepted is validated by zod schema (must be true to proceed)
 
     // Verify user is admin of organization
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -71,11 +75,11 @@ export async function POST(request: NextRequest) {
       .eq("id", user.id)
       .single();
 
-    if (!profile || profile.organization_id !== organizationId || profile.role !== "admin") {
+    if (!profile || profile.organization_id !== organizationId || profile.role !== "responsavel_empresa") {
       return NextResponse.json(
         {
           error: "Forbidden",
-          message: "Only organization admins can manage billing",
+          message: "Apenas responsáveis da empresa podem gerenciar assinaturas",
         },
         { status: 403 }
       );
@@ -90,6 +94,7 @@ export async function POST(request: NextRequest) {
       userEmail: user.email!,
       successUrl: `${baseUrl}/dashboard/configuracoes/billing?success=true`,
       cancelUrl: `${baseUrl}/dashboard/configuracoes/billing?canceled=true`,
+      termsAcceptedAt: acceptedAt || new Date().toISOString(),
     });
 
     if (error) {
