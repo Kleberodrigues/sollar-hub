@@ -191,6 +191,10 @@ test.describe("Checkout Flow", () => {
   });
 
   test("10. Checkout redirects to Stripe (with terms accepted)", async ({ page }) => {
+    // Skip this test in CI - Stripe keys not available
+    // This test requires real Stripe API keys to work
+    test.skip(!!process.env.CI, "Skipping Stripe redirect test in CI - requires Stripe keys");
+
     // Login as admin
     await page.goto("/login");
     await page.getByLabel("Email").fill("admin@sollar.com.br");
