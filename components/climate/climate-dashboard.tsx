@@ -52,12 +52,13 @@ const MONTHS = [
   { value: "12", label: "Dez" },
 ];
 
+// Cores alinhadas com Sollar Design System
 const SENTIMENT_COLORS = {
-  "Muito mal": "#DC2626",
-  "Mal": "#F97316",
-  "Mais ou menos": "#EAB308",
-  "Bem": "#22C55E",
-  "Muito bem": "#16A34A",
+  "Muito mal": "#DC3545",     // sollar-risk-critical (vermelho)
+  "Mal": "#B85C38",           // sollar-terracotta (risco alto)
+  "Mais ou menos": "#E8A849", // sollar-warning (âmbar)
+  "Bem": "#97B376",           // sollar-olive-400
+  "Muito bem": "#789750",     // sollar-olive-500 (sucesso)
 };
 
 export function ClimateDashboard({
@@ -463,7 +464,7 @@ export function ClimateDashboard({
             {/* Q1 - Sentiment Chart */}
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-lg font-display text-pm-green-dark">
+                <CardTitle className="text-lg font-display text-sollar-terracotta-600">
                   Q1 - Como você está se sentindo no trabalho este mês?
                 </CardTitle>
               </CardHeader>
@@ -483,7 +484,7 @@ export function ClimateDashboard({
             {/* Q9 - Satisfaction Gauge */}
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-lg font-display text-pm-green-dark">
+                <CardTitle className="text-lg font-display text-sollar-terracotta-600">
                   Q9 - De 0 a 10, quão satisfeito(a) você está?
                 </CardTitle>
               </CardHeader>
@@ -501,7 +502,7 @@ export function ClimateDashboard({
           {/* Q2-Q8 - Likert Stacked Bars */}
           <Card>
             <CardHeader className="pb-4">
-              <CardTitle className="text-lg font-display text-pm-green-dark">
+              <CardTitle className="text-lg font-display text-sollar-terracotta-600">
                 Q2 a Q8 - Avaliação por Dimensão
               </CardTitle>
             </CardHeader>
@@ -514,7 +515,7 @@ export function ClimateDashboard({
           {climateData.q10Themes.length > 0 && (
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-lg font-display text-pm-green-dark">
+                <CardTitle className="text-lg font-display text-sollar-terracotta-600">
                   Q10 - Motivos das notas (temas identificados)
                 </CardTitle>
               </CardHeader>

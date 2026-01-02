@@ -16,8 +16,8 @@ function capitalize(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-// Get sentiment color based on theme
-function getThemeColor(theme: string): string {
+// Get sentiment color based on theme - Sollar Design System
+function getThemeColor(theme: string): { pill: string; bar: string } {
   const negativeThemes = [
     "excesso de trabalho",
     "sobrecarga",
@@ -34,12 +34,24 @@ function getThemeColor(theme: string): string {
   ];
 
   if (negativeThemes.some((t) => theme.includes(t))) {
-    return "bg-red-100 text-red-700 border-red-200";
+    // Terracotta para temas negativos
+    return {
+      pill: "bg-sollar-terracotta-100 text-sollar-terracotta-700 border-sollar-terracotta-200",
+      bar: "bg-sollar-terracotta-500"
+    };
   }
   if (positiveThemes.some((t) => theme.includes(t))) {
-    return "bg-green-100 text-green-700 border-green-200";
+    // Olive para temas positivos
+    return {
+      pill: "bg-sollar-olive-100 text-sollar-olive-700 border-sollar-olive-200",
+      bar: "bg-sollar-olive-500"
+    };
   }
-  return "bg-gray-100 text-gray-700 border-gray-200";
+  // Neutro
+  return {
+    pill: "bg-gray-100 text-gray-700 border-gray-200",
+    bar: "bg-gray-400"
+  };
 }
 
 export function ThemeList({ themes }: ThemeListProps) {
@@ -49,7 +61,7 @@ export function ThemeList({ themes }: ThemeListProps) {
     <div className="space-y-3">
       {themes.map((theme, index) => {
         const barWidth = maxCount > 0 ? (theme.count / maxCount) * 100 : 0;
-        const colorClass = getThemeColor(theme.theme);
+        const colors = getThemeColor(theme.theme);
 
         return (
           <div key={theme.theme} className="flex items-center gap-3">
@@ -62,13 +74,13 @@ export function ThemeList({ themes }: ThemeListProps) {
             <div className="flex-1 relative">
               {/* Background bar */}
               <div
-                className={`absolute inset-y-0 left-0 rounded-lg opacity-30 transition-all duration-500 ${colorClass.split(" ")[0]}`}
+                className={`absolute inset-y-0 left-0 rounded-lg opacity-30 transition-all duration-500 ${colors.bar}`}
                 style={{ width: `${barWidth}%` }}
               />
 
               {/* Content */}
               <div
-                className={`relative flex items-center justify-between px-4 py-2.5 rounded-lg border ${colorClass}`}
+                className={`relative flex items-center justify-between px-4 py-2.5 rounded-lg border ${colors.pill}`}
               >
                 <div className="flex items-center gap-2">
                   <MessageSquare className="w-4 h-4 opacity-60" />

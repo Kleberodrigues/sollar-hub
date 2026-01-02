@@ -20,12 +20,12 @@ export function SatisfactionGauge({
   // Calculate gauge rotation (0-10 maps to -90 to 90 degrees)
   const rotation = (score / 10) * 180 - 90;
 
-  // Get score color
+  // Get score color - Sollar Design System
   const getScoreColor = (s: number) => {
-    if (s <= 4) return "#DC2626"; // Red
-    if (s <= 6) return "#F97316"; // Orange
-    if (s <= 7) return "#EAB308"; // Yellow
-    return "#22C55E"; // Green
+    if (s <= 4) return "#DC3545";  // sollar-risk-critical
+    if (s <= 6) return "#B85C38";  // sollar-terracotta (risco alto)
+    if (s <= 7) return "#E8A849";  // sollar-warning (âmbar)
+    return "#789750";              // sollar-olive (sucesso)
   };
 
   const total = distribution.detractors + distribution.passives + distribution.promoters;
@@ -45,13 +45,14 @@ export function SatisfactionGauge({
             style={{ transform: "rotate(0deg)" }}
           >
             {/* Background arc segments */}
+            {/* Gradiente com cores Sollar Design System */}
             <defs>
               <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#DC2626" />
-                <stop offset="40%" stopColor="#F97316" />
-                <stop offset="60%" stopColor="#EAB308" />
-                <stop offset="80%" stopColor="#22C55E" />
-                <stop offset="100%" stopColor="#16A34A" />
+                <stop offset="0%" stopColor="#DC3545" />
+                <stop offset="30%" stopColor="#B85C38" />
+                <stop offset="50%" stopColor="#E8A849" />
+                <stop offset="75%" stopColor="#97B376" />
+                <stop offset="100%" stopColor="#789750" />
               </linearGradient>
             </defs>
 
@@ -156,7 +157,7 @@ export function SatisfactionGauge({
         </div>
       </div>
 
-      {/* Distribution bar */}
+      {/* Distribution bar - Sollar Design System colors */}
       <div className="space-y-2">
         <p className="text-sm font-medium text-text-secondary">
           Distribuição das respostas:
@@ -164,33 +165,33 @@ export function SatisfactionGauge({
         <div className="flex h-8 rounded-lg overflow-hidden">
           {detractorPct > 0 && (
             <div
-              className="bg-red-500 flex items-center justify-center text-white text-xs font-medium transition-all"
-              style={{ width: `${detractorPct}%` }}
+              className="flex items-center justify-center text-white text-xs font-medium transition-all"
+              style={{ width: `${detractorPct}%`, backgroundColor: "#B85C38" }}
             >
               {distribution.detractors}
             </div>
           )}
           {passivePct > 0 && (
             <div
-              className="bg-yellow-500 flex items-center justify-center text-white text-xs font-medium transition-all"
-              style={{ width: `${passivePct}%` }}
+              className="flex items-center justify-center text-white text-xs font-medium transition-all"
+              style={{ width: `${passivePct}%`, backgroundColor: "#E8A849" }}
             >
               {distribution.passives}
             </div>
           )}
           {promoterPct > 0 && (
             <div
-              className="bg-green-500 flex items-center justify-center text-white text-xs font-medium transition-all"
-              style={{ width: `${promoterPct}%` }}
+              className="flex items-center justify-center text-white text-xs font-medium transition-all"
+              style={{ width: `${promoterPct}%`, backgroundColor: "#789750" }}
             >
               {distribution.promoters}
             </div>
           )}
         </div>
         <div className="flex justify-between text-xs text-text-muted">
-          <span>Detratores (0-6)</span>
-          <span>Neutros (7-8)</span>
-          <span>Promotores (9-10)</span>
+          <span className="text-sollar-terracotta-500">Detratores (0-6)</span>
+          <span className="text-amber-600">Neutros (7-8)</span>
+          <span className="text-sollar-olive-500">Promotores (9-10)</span>
         </div>
       </div>
     </div>
