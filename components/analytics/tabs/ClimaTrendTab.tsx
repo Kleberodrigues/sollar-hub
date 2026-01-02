@@ -4,11 +4,13 @@
  * ClimaTrendTab - Análise de Tendência para Pesquisas de Clima
  *
  * Mostra evolução histórica dos indicadores de clima organizacional
+ * Requer plano Intermediário ou superior (comparativeAnalysis)
  */
 
 import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   LineChart,
   Line,
@@ -29,8 +31,12 @@ import {
   Target,
   Users,
   Heart,
+  Lock,
+  ArrowRight,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
+import type { PlanType } from '@/lib/stripe/config';
 
 interface TrendDataPoint {
   date: string;
@@ -47,6 +53,7 @@ interface ClimaTrendTabProps {
   currentScore?: number;
   previousScore?: number;
   assessmentType?: string;
+  currentPlan?: PlanType;
 }
 
 // Mock data for demonstration - in production this would come from the backend
@@ -149,7 +156,11 @@ export function ClimaTrendTab({
   currentScore,
   previousScore,
   assessmentType = 'pulse',
+  currentPlan = 'base',
 }: ClimaTrendTabProps) {
+  // Check if user has access to comparative analysis (Intermediário or Avançado)
+  const hasComparativeAccess = currentPlan === 'intermediario' || currentPlan === 'avancado';
+
   // Use mock data if no trend data is provided
   const data = useMemo(() => trendData || generateMockTrendData(), [trendData]);
 
@@ -183,6 +194,37 @@ export function ClimaTrendTab({
       </div>
     );
   };
+
+  // Block access for Base plan users
+  if (!hasComparativeAccess) {
+    return (
+      <div className="flex items-center justify-center h-full min-h-[400px]">
+        <Card className="max-w-md border-dashed">
+          <CardContent className="flex flex-col items-center justify-center py-12 text-center">
+            <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center mb-4">
+              <Lock className="w-8 h-8 text-amber-600" />
+            </div>
+            <h3 className="font-display text-xl font-semibold text-text-heading mb-2">
+              Análise Comparativa
+            </h3>
+            <p className="text-sm text-text-muted mb-4">
+              Compare tendências entre ciclos de avaliação e acompanhe a evolução dos indicadores ao longo do tempo.
+            </p>
+            <div className="flex items-center gap-2 mb-6">
+              <Badge variant="outline" className="text-xs">Atual: Base</Badge>
+              <Badge className="bg-pm-terracotta text-xs">Requer: Intermediário</Badge>
+            </div>
+            <Link href="/dashboard/configuracoes/billing">
+              <Button className="gap-2 bg-pm-terracotta hover:bg-pm-terracotta-hover">
+                Fazer Upgrade
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   if (assessmentType !== 'pulse') {
     return (

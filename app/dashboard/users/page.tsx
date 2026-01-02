@@ -4,6 +4,7 @@ import { UserList } from "@/components/users/UserList";
 import { InviteUserDialog } from "@/components/users/InviteUserDialog";
 import { UsersPageContent, UsersErrorState } from "@/components/users/UsersPageContent";
 import { listOrganizationUsers } from "./actions";
+import type { PlanType } from "@/lib/stripe/config";
 
 export default async function UsersPage() {
   const supabase = await createClient();
@@ -47,6 +48,16 @@ export default async function UsersPage() {
       ? (orgData[0] as { name: string }).name
       : "Organização";
 
+  // Buscar plano atual da organização
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: subscription } = await (supabase
+    .from("subscriptions")
+    .select("plan")
+    .eq("organization_id", profileData.organization_id)
+    .single() as any);
+
+  const currentPlan: PlanType = subscription?.plan || 'base';
+
   // Contar membros e gerentes atuais para limitar convites
   const memberCount = users.filter((u: { role: string }) => u.role === "membro").length;
   const managerCount = users.filter((u: { role: string }) => u.role === "responsavel_empresa").length;
@@ -55,7 +66,7 @@ export default async function UsersPage() {
     <UsersPageContent
       users={users}
       organizationName={organizationName}
-      inviteDialog={<InviteUserDialog memberCount={memberCount} managerCount={managerCount} />}
+      inviteDialog={<InviteUserDialog memberCount={memberCount} managerCount={managerCount} currentPlan={currentPlan} />}
       userList={<UserList users={users} />}
     />
   );

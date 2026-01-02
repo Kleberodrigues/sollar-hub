@@ -5,6 +5,7 @@
  *
  * Modal para importação de dados CSV/XLSX
  * Inclui drag-and-drop, preview e validação
+ * Requer plano Intermediário ou superior
  */
 
 import { useState, useCallback } from 'react';
@@ -36,6 +37,7 @@ import {
   XCircle,
   Download,
   Loader2,
+  Lock,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
@@ -63,7 +65,7 @@ type ImportStep = 'upload' | 'preview' | 'importing' | 'complete';
 
 export function ImportDialog({
   assessmentId,
-  currentPlan: _currentPlan = 'base',
+  currentPlan = 'base',
   onImportComplete,
 }: ImportDialogProps) {
   const [open, setOpen] = useState(false);
@@ -80,8 +82,8 @@ export function ImportDialog({
     importedCount?: number;
   } | null>(null);
 
-  // All plans have access to import features
-  const _canImport = true;
+  // Import requires Intermediário or Avançado plan
+  const canImport = currentPlan === 'intermediario' || currentPlan === 'avancado';
 
   // Reset state ao fechar
   const handleClose = () => {
@@ -254,6 +256,31 @@ export function ImportDialog({
       setIsLoading(false);
     }
   };
+
+  // If user can't import, show locked button with upgrade message
+  if (!canImport) {
+    return (
+      <Button
+        variant="outline"
+        className="gap-2 opacity-70"
+        onClick={() => {
+          toast.info('Importação requer plano Intermediário ou superior', {
+            action: {
+              label: 'Ver planos',
+              onClick: () => window.location.href = '/dashboard/configuracoes/billing',
+            },
+          });
+        }}
+      >
+        <Upload className="h-4 w-4" />
+        Importar
+        <Badge variant="outline" className="gap-1 text-xs ml-1">
+          <Lock className="h-3 w-3" />
+          Intermediário
+        </Badge>
+      </Button>
+    );
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
