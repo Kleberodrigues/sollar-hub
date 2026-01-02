@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardHeader,
@@ -14,11 +15,36 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
+import { Building, Building2, Factory, Check, Loader2 } from "lucide-react";
 import { registerUser } from "./actions";
 import { registerSchema } from "@/lib/validations";
 
-export default function RegisterPage() {
+// Plan info for display
+const planInfo: Record<string, { name: string; price: string; icon: typeof Building; color: string }> = {
+  base: { name: "Base", price: "R$ 3.970/ano", icon: Building, color: "text-pm-terracotta" },
+  intermediario: { name: "Intermediário", price: "R$ 4.970/ano", icon: Building2, color: "text-pm-olive" },
+  avancado: { name: "Avançado", price: "R$ 5.970/ano", icon: Factory, color: "text-pm-olive" },
+};
+
+// Loading fallback component
+function RegisterLoading() {
+  return (
+    <div className="min-h-screen bg-bg-sage flex items-center justify-center px-6 py-12">
+      <div className="flex items-center gap-2 text-text-muted">
+        <Loader2 className="w-5 h-5 animate-spin" />
+        <span>Carregando...</span>
+      </div>
+    </div>
+  );
+}
+
+// Main register form component
+function RegisterForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const selectedPlan = searchParams.get("plan") as keyof typeof planInfo | null;
+  const plan = selectedPlan && planInfo[selectedPlan] ? planInfo[selectedPlan] : null;
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [passwordMatch, setPasswordMatch] = useState(true);
@@ -62,8 +88,12 @@ export default function RegisterPage() {
       if (result.error) {
         setError(result.error);
       } else {
-        // Sucesso - redirecionar
-        router.push("/dashboard");
+        // Sucesso - redirecionar para checkout se tiver plano selecionado
+        if (selectedPlan) {
+          router.push(`/dashboard/configuracoes/billing?checkout=${selectedPlan}`);
+        } else {
+          router.push("/dashboard");
+        }
         router.refresh();
       }
     } catch {
@@ -80,8 +110,31 @@ export default function RegisterPage() {
           <CardHeader className="text-center">
             <CardTitle className="text-3xl">Criar Conta</CardTitle>
             <CardDescription>
-              Comece a usar o PsicoMapa gratuitamente
+              {plan ? (
+                <span>Complete seu cadastro para assinar o plano selecionado</span>
+              ) : (
+                <span>Crie sua conta para começar</span>
+              )}
             </CardDescription>
+
+            {/* Selected Plan Display */}
+            {plan && (
+              <div className="mt-4 p-4 rounded-lg bg-gray-50 border border-gray-200">
+                <div className="flex items-center justify-center gap-3">
+                  <div className={`w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center ${plan.color}`}>
+                    <plan.icon className="w-5 h-5" />
+                  </div>
+                  <div className="text-left">
+                    <p className="font-semibold text-text-heading">Plano {plan.name}</p>
+                    <p className="text-sm text-text-muted">{plan.price}</p>
+                  </div>
+                  <Badge className="bg-pm-olive text-white ml-2">
+                    <Check className="w-3 h-3 mr-1" />
+                    Selecionado
+                  </Badge>
+                </div>
+              </div>
+            )}
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -223,5 +276,14 @@ export default function RegisterPage() {
         </Card>
       </div>
     </div>
+  );
+}
+
+// Default export with Suspense wrapper
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<RegisterLoading />}>
+      <RegisterForm />
+    </Suspense>
   );
 }

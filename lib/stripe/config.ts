@@ -98,7 +98,7 @@ export const PLANS: Record<PlanType, PlanConfig> = {
       maxEmployees: 120,
       maxActiveAssessments: Infinity,
       maxQuestionsPerAssessment: 100,
-      maxTeamMembers: 10,
+      maxTeamMembers: 2, // 1 gerente + 1 membro
       aiAnalysesPerMonth: 20,
       aiActionPlansPerMonth: 10,
     },
@@ -142,7 +142,7 @@ export const PLANS: Record<PlanType, PlanConfig> = {
       maxEmployees: 250,
       maxActiveAssessments: Infinity,
       maxQuestionsPerAssessment: 150,
-      maxTeamMembers: 25,
+      maxTeamMembers: 2, // 1 gerente + 1 membro
       aiAnalysesPerMonth: 50,
       aiActionPlansPerMonth: 25,
     },
@@ -187,7 +187,7 @@ export const PLANS: Record<PlanType, PlanConfig> = {
       maxEmployees: 400,
       maxActiveAssessments: Infinity,
       maxQuestionsPerAssessment: Infinity,
-      maxTeamMembers: Infinity,
+      maxTeamMembers: 2, // 1 gerente + 1 membro
       aiAnalysesPerMonth: Infinity,
       aiActionPlansPerMonth: Infinity,
     },

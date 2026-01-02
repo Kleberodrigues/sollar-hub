@@ -1,20 +1,32 @@
 /**
  * Pricing Cards Component - NR-1 Focused Plans
  * Displays all 3 plans (Base, Intermediario, Avancado) with employee ranges
+ * Includes terms acceptance before checkout
  */
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Check, Building, Building2, Factory, Loader2, Users } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Check, Building, Building2, Factory, Loader2, Users, Shield, FileText, Scale } from "lucide-react";
 import { toast } from "sonner";
 import { PLANS, type PlanType } from "@/lib/stripe/config";
+import Link from "next/link";
 
 interface PricingCardsProps {
   organizationId: string;
   currentPlan: string | null;
+  autoCheckoutPlan?: string;
 }
 
 const plans: Array<{
@@ -95,20 +107,54 @@ const colorMap = {
   },
 };
 
-export function PricingCards({ organizationId, currentPlan }: PricingCardsProps) {
+export function PricingCards({ organizationId, currentPlan, autoCheckoutPlan }: PricingCardsProps) {
   const [isLoading, setIsLoading] = useState<string | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<PlanType | null>(null);
+  const [showTermsDialog, setShowTermsDialog] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
 
-  const handleCheckout = async (plan: PlanType) => {
+  const canProceed = termsAccepted && privacyAccepted;
+
+  // Auto-open checkout dialog if plan is specified in URL
+  useEffect(() => {
+    if (autoCheckoutPlan && ['base', 'intermediario', 'avancado'].includes(autoCheckoutPlan)) {
+      const plan = autoCheckoutPlan as PlanType;
+      if (plan !== currentPlan) {
+        setSelectedPlan(plan);
+        setShowTermsDialog(true);
+      }
+    }
+  }, [autoCheckoutPlan, currentPlan]);
+
+  const openCheckoutDialog = (plan: PlanType) => {
     if (plan === currentPlan) return;
+    setSelectedPlan(plan);
+    setTermsAccepted(false);
+    setPrivacyAccepted(false);
+    setShowTermsDialog(true);
+  };
 
-    setIsLoading(plan);
+  const closeDialog = () => {
+    setShowTermsDialog(false);
+    setSelectedPlan(null);
+    setTermsAccepted(false);
+    setPrivacyAccepted(false);
+  };
+
+  const handleCheckout = async () => {
+    if (!selectedPlan || !canProceed) return;
+
+    setIsLoading(selectedPlan);
     try {
       const response = await fetch("/api/stripe/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           organizationId,
-          plan,
+          plan: selectedPlan,
+          termsAccepted: true,
+          acceptedAt: new Date().toISOString(),
         }),
       });
 
@@ -119,6 +165,7 @@ export function PricingCards({ organizationId, currentPlan }: PricingCardsProps)
       toast.error(error instanceof Error ? error.message : "Erro ao iniciar checkout");
     } finally {
       setIsLoading(null);
+      closeDialog();
     }
   };
 
@@ -236,7 +283,7 @@ export function PricingCards({ organizationId, currentPlan }: PricingCardsProps)
               <Button
                 className={`w-full ${colors.button} transition-all mt-auto`}
                 size="default"
-                onClick={() => handleCheckout(plan.id)}
+                onClick={() => openCheckoutDialog(plan.id)}
                 disabled={isLoading !== null || isCurrent}
               >
                 {isLoading === plan.id ? (
@@ -251,6 +298,130 @@ export function PricingCards({ organizationId, currentPlan }: PricingCardsProps)
           );
         })}
       </div>
+
+      {/* Terms Acceptance Dialog */}
+      <Dialog open={showTermsDialog} onOpenChange={(open) => !open && closeDialog()}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Shield className="w-5 h-5 text-pm-terracotta" />
+              Confirmar Assinatura
+            </DialogTitle>
+            <DialogDescription>
+              {selectedPlan && (
+                <span>
+                  Plano <strong>{plans.find(p => p.id === selectedPlan)?.name}</strong> - {" "}
+                  {formatPrice(plans.find(p => p.id === selectedPlan)?.yearlyPrice || 0)}/ano
+                </span>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            <p className="text-sm text-text-muted">
+              Para prosseguir com a assinatura, por favor leia e aceite os termos abaixo:
+            </p>
+
+            {/* Terms of Service */}
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-50 border border-gray-200">
+              <Checkbox
+                id="terms"
+                checked={termsAccepted}
+                onCheckedChange={(checked) => setTermsAccepted(checked === true)}
+                className="mt-0.5"
+              />
+              <div className="flex-1">
+                <label
+                  htmlFor="terms"
+                  className="text-sm font-medium cursor-pointer flex items-center gap-2"
+                >
+                  <FileText className="w-4 h-4 text-pm-olive" />
+                  Termos de Uso
+                </label>
+                <p className="text-xs text-text-muted mt-1">
+                  Li e concordo com os{" "}
+                  <Link
+                    href="/termos"
+                    target="_blank"
+                    className="text-pm-terracotta hover:underline font-medium"
+                  >
+                    Termos de Uso
+                  </Link>{" "}
+                  da plataforma Sollar Insight Hub.
+                </p>
+              </div>
+            </div>
+
+            {/* Privacy Policy */}
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-50 border border-gray-200">
+              <Checkbox
+                id="privacy"
+                checked={privacyAccepted}
+                onCheckedChange={(checked) => setPrivacyAccepted(checked === true)}
+                className="mt-0.5"
+              />
+              <div className="flex-1">
+                <label
+                  htmlFor="privacy"
+                  className="text-sm font-medium cursor-pointer flex items-center gap-2"
+                >
+                  <Scale className="w-4 h-4 text-pm-olive" />
+                  Privacidade e LGPD
+                </label>
+                <p className="text-xs text-text-muted mt-1">
+                  Li e concordo com a{" "}
+                  <Link
+                    href="/privacidade"
+                    target="_blank"
+                    className="text-pm-terracotta hover:underline font-medium"
+                  >
+                    Política de Privacidade
+                  </Link>{" "}
+                  e{" "}
+                  <Link
+                    href="/lgpd"
+                    target="_blank"
+                    className="text-pm-terracotta hover:underline font-medium"
+                  >
+                    conformidade LGPD
+                  </Link>.
+                </p>
+              </div>
+            </div>
+
+            {/* Info Note */}
+            <div className="p-3 rounded-lg bg-blue-50 border border-blue-200">
+              <p className="text-xs text-blue-800">
+                <strong>Importante:</strong> Ao prosseguir, você será redirecionado para o Stripe,
+                nosso processador de pagamentos seguro. O pagamento é anual e pode ser cancelado a qualquer momento.
+              </p>
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="outline" onClick={closeDialog} disabled={isLoading !== null}>
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleCheckout}
+              disabled={!canProceed || isLoading !== null}
+              className="bg-pm-terracotta hover:bg-pm-terracotta-hover text-white gap-2"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Processando...
+                </>
+              ) : (
+                <>
+                  <Shield className="w-4 h-4" />
+                  Prosseguir para Pagamento
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Footer Info */}
       <div className="text-center space-y-2">

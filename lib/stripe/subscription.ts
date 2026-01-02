@@ -21,6 +21,7 @@ interface CreateCheckoutParams {
   userEmail: string;
   successUrl: string;
   cancelUrl: string;
+  termsAcceptedAt?: string; // ISO date when terms were accepted
 }
 
 interface CreateCheckoutResult {
@@ -56,6 +57,7 @@ export async function createCheckoutSession({
   userEmail,
   successUrl,
   cancelUrl,
+  termsAcceptedAt,
 }: CreateCheckoutParams): Promise<CreateCheckoutResult> {
   if (!stripe) {
     return { url: null, error: "Stripe not configured" };
@@ -128,6 +130,7 @@ export async function createCheckoutSession({
         organization_id: organizationId,
         plan,
         interval: "yearly",
+        terms_accepted_at: termsAcceptedAt || new Date().toISOString(),
       },
     });
 

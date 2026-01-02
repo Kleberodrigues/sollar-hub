@@ -45,7 +45,8 @@ async function getOrganizationId() {
 
   return {
     organizationId: membership.organization_id,
-    isAdmin: membership.role === "admin",
+    // Support both old "admin" role and new "responsavel_empresa" role
+    isAdmin: membership.role === "admin" || membership.role === "responsavel_empresa",
     userId: user.id,
   };
 }
@@ -57,7 +58,7 @@ async function getOrganizationId() {
 export default async function BillingPage({
   searchParams,
 }: {
-  searchParams: Promise<{ success?: string; canceled?: string }>;
+  searchParams: Promise<{ success?: string; canceled?: string; checkout?: string }>;
 }) {
   const { organizationId, isAdmin } = await getOrganizationId();
   const subscription = await getSubscription(organizationId);
@@ -80,6 +81,7 @@ export default async function BillingPage({
       isAdmin={isAdmin}
       showSuccess={!!params.success}
       showCanceled={!!params.canceled}
+      autoCheckoutPlan={params.checkout}
       paymentHistorySlot={
         <Suspense fallback={<PaymentHistorySkeleton />}>
           <PaymentHistoryTable organizationId={organizationId} />

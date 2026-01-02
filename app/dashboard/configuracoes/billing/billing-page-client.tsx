@@ -23,6 +23,7 @@ interface BillingPageClientProps {
   isAdmin: boolean;
   showSuccess: boolean;
   showCanceled: boolean;
+  autoCheckoutPlan?: string;
   paymentHistorySlot: ReactNode;
 }
 
@@ -33,6 +34,7 @@ export function BillingPageClient({
   isAdmin,
   showSuccess,
   showCanceled,
+  autoCheckoutPlan,
   paymentHistorySlot,
 }: BillingPageClientProps) {
   const ref = useRef(null);
@@ -191,6 +193,7 @@ export function BillingPageClient({
               <PricingCards
                 organizationId={organizationId}
                 currentPlan={subscription?.plan || "free"}
+                autoCheckoutPlan={autoCheckoutPlan}
               />
             </CardContent>
           </Card>

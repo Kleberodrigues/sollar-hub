@@ -7,6 +7,7 @@ import { Check, Building, Building2, Factory, Users } from "lucide-react";
 
 const plans = [
   {
+    id: 'base',
     name: 'Base',
     description: '50 a 120 colaboradores',
     objective: '14 Relatórios anuais',
@@ -18,6 +19,7 @@ const plans = [
     highlighted: false,
   },
   {
+    id: 'intermediario',
     name: 'Intermediário',
     description: '121 a 250 colaboradores',
     objective: '24 Relatórios anuais',
@@ -29,6 +31,7 @@ const plans = [
     highlighted: true,
   },
   {
+    id: 'avancado',
     name: 'Avançado',
     description: '251 a 400 colaboradores',
     objective: '28 Relatórios anuais',
@@ -168,10 +171,10 @@ export function Pricing() {
 
                 {/* CTA Button */}
                 <Link
-                  href="/contato"
+                  href={`/register?plan=${plan.id}`}
                   className={`block w-full text-center py-3 px-6 rounded-lg font-medium transition-colors mt-auto ${colors.button}`}
                 >
-                  Começar Agora
+                  Assinar {plan.name}
                 </Link>
               </motion.div>
             );
