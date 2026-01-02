@@ -52,9 +52,9 @@ test.describe('Checkout Flow - Billing Page', () => {
       const dialogTitle = page.getByRole('heading', { name: /Confirmar Assinatura/i });
       await expect(dialogTitle).toBeVisible({ timeout: 5000 });
 
-      // Verificar elementos do dialog
-      await expect(page.getByText(/Termos de Uso/)).toBeVisible();
-      await expect(page.getByText(/Privacidade e LGPD/)).toBeVisible();
+      // Verificar elementos do dialog (usar label para ser específico)
+      await expect(page.getByLabel(/Termos de Uso/)).toBeVisible();
+      await expect(page.getByLabel(/Privacidade e LGPD/)).toBeVisible();
     } else {
       console.log('Subscribe button not visible - user may already have a plan');
     }
