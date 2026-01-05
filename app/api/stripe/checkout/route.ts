@@ -68,18 +68,34 @@ export async function POST(request: NextRequest) {
     const { organizationId, plan, acceptedAt } = validation.data;
     // termsAccepted is validated by zod schema (must be true to proceed)
 
-    // Verify user is admin of organization
+    // Verify user is admin of organization or super admin
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: profile } = await (supabase.from("user_profiles") as any)
-      .select("role, organization_id")
+    const { data: profile, error: profileError } = await (supabase.from("user_profiles") as any)
+      .select("role, organization_id, is_super_admin")
       .eq("id", user.id)
       .single();
 
-    if (!profile || profile.organization_id !== organizationId || profile.role !== "responsavel_empresa") {
+    console.log("[Stripe Checkout] Profile check:", {
+      userId: user.id,
+      profile,
+      profileError,
+      requestedOrgId: organizationId,
+    });
+
+    // Super admins can checkout for any organization
+    const isSuperAdmin = profile?.is_super_admin === true;
+    // Allow both "admin" (legacy/new users) and "responsavel_empresa" roles
+    const isOrgAdmin = profile?.organization_id === organizationId &&
+      (profile?.role === "responsavel_empresa" || profile?.role === "admin");
+
+    console.log("[Stripe Checkout] Permission check:", { isSuperAdmin, isOrgAdmin, role: profile?.role });
+
+    if (!profile || (!isSuperAdmin && !isOrgAdmin)) {
+      console.log("[Stripe Checkout] Permission denied");
       return NextResponse.json(
         {
           error: "Forbidden",
-          message: "Apenas responsáveis da empresa podem gerenciar assinaturas",
+          message: "Apenas responsáveis da empresa ou super admins podem gerenciar assinaturas",
         },
         { status: 403 }
       );

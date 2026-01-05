@@ -145,6 +145,7 @@ export function PricingCards({ organizationId, currentPlan, autoCheckoutPlan }: 
   const handleCheckout = async () => {
     if (!selectedPlan || !canProceed) return;
 
+    console.log("[Checkout] Starting checkout", { organizationId, selectedPlan });
     setIsLoading(selectedPlan);
     try {
       const response = await fetch("/api/stripe/checkout", {
@@ -159,9 +160,22 @@ export function PricingCards({ organizationId, currentPlan, autoCheckoutPlan }: 
       });
 
       const data = await response.json();
-      if (!response.ok) throw new Error(data.message || "Erro ao iniciar checkout");
+      console.log("[Checkout] Response:", { status: response.status, data });
+
+      if (!response.ok) {
+        console.error("[Checkout] Error:", data);
+        throw new Error(data.message || "Erro ao iniciar checkout");
+      }
+
+      if (!data.url) {
+        console.error("[Checkout] No URL returned:", data);
+        throw new Error("URL de checkout não retornada");
+      }
+
+      console.log("[Checkout] Redirecting to:", data.url);
       window.location.href = data.url;
     } catch (error) {
+      console.error("[Checkout] Exception:", error);
       toast.error(error instanceof Error ? error.message : "Erro ao iniciar checkout");
     } finally {
       setIsLoading(null);
