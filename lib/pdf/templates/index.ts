@@ -8,3 +8,4 @@ export { RiscosPsicossociaisPDF } from './RiscosPsicossociaisPDF';
 export { ClimaMensalPDF } from './ClimaMensalPDF';
 export { PlanoAcaoPDF } from './PlanoAcaoPDF';
 export { ExecutivoLiderancaPDF } from './ExecutivoLiderancaPDF';
+export { CorrelacaoPDF } from './CorrelacaoPDF';

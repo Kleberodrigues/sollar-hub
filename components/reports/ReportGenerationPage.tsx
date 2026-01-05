@@ -30,14 +30,27 @@ import {
   generateClimaMensalReport,
   generatePlanoAcaoReport,
   generateExecutivoLiderancaReport,
+  generateCorrelacaoReport,
   getReportHistory,
   type AssessmentClosureCheck,
   type GeneratedReport,
   type ReportType,
 } from '@/app/dashboard/analytics/reports';
 
+// Interface para tipos de relatório
+interface ReportTypeConfig {
+  id: ReportType;
+  title: string;
+  description: string;
+  icon: React.ComponentType<{ className?: string }>;
+  frequency: string;
+  applicableTo: string[];
+  features: string[];
+  comingSoon?: boolean;
+}
+
 // Tipos de relatório disponíveis
-const REPORT_TYPES = [
+const REPORT_TYPES: ReportTypeConfig[] = [
   {
     id: 'riscos_psicossociais' as ReportType,
     title: 'Relatório Riscos Psicossociais',
@@ -90,8 +103,7 @@ const REPORT_TYPES = [
     icon: GitBranch,
     frequency: 'Trimestral',
     applicableTo: ['nr1'],
-    features: ['Mapa de correlação', 'Conclusões de alavancas'],
-    comingSoon: true,
+    features: ['Mapa de correlação', 'Conclusões de alavancas', 'Validação teórica'],
   },
 ];
 
@@ -158,6 +170,9 @@ export function ReportGenerationPage({
           break;
         case 'executivo_lideranca':
           result = await generateExecutivoLiderancaReport(assessmentId);
+          break;
+        case 'correlacao':
+          result = await generateCorrelacaoReport(assessmentId);
           break;
         default:
           throw new Error('Tipo de relatório não implementado');
