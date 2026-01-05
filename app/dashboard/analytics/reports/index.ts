@@ -34,5 +34,5 @@ export {
 // Report generators
 export { generateRiscosPsicossociaisReport } from './riscos-psicossociais-actions';
 export { generateClimaMensalReport } from './clima-mensal-actions';
-// export { generatePlanoAcaoReport } from './plano-acao-actions';
+export { generatePlanoAcaoReport } from './plano-acao-actions';
 // export { generateExecutivoLiderancaReport } from './executivo-lideranca-actions';

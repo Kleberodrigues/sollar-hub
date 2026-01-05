@@ -28,6 +28,7 @@ import {
   checkAssessmentClosed,
   generateRiscosPsicossociaisReport,
   generateClimaMensalReport,
+  generatePlanoAcaoReport,
   getReportHistory,
   type AssessmentClosureCheck,
   type GeneratedReport,
@@ -71,7 +72,6 @@ const REPORT_TYPES = [
     frequency: 'Trimestral',
     applicableTo: ['nr1', 'clima'],
     features: ['3-5 prioridades', 'Backlog por tema', 'Estrutura de governança'],
-    comingSoon: true,
   },
   {
     id: 'executivo_lideranca' as ReportType,
@@ -152,6 +152,9 @@ export function ReportGenerationPage({
           break;
         case 'clima_mensal':
           result = await generateClimaMensalReport(assessmentId);
+          break;
+        case 'plano_acao':
+          result = await generatePlanoAcaoReport(assessmentId);
           break;
         default:
           throw new Error('Tipo de relatório não implementado');
