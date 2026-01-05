@@ -42,25 +42,23 @@ export async function registerUser(formData: FormData) {
   const supabaseAdmin = createAdminClient();
 
   try {
-    // Determinar URL base para redirecionamento
-    // Prioridade: NEXT_PUBLIC_SITE_URL > VERCEL_URL > localhost
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
-      || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null)
-      || "http://localhost:3000";
-
-    // 1. Criar usuário no Supabase Auth
-    const { data: authData, error: authError } = await supabase.auth.signUp({
+    // 1. Criar usuário usando ADMIN CLIENT com email auto-confirmado
+    // Isso permite que o usuário seja logado imediatamente após o cadastro
+    // sem precisar verificar o email (melhor UX para checkout)
+    const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
       email,
       password,
-      options: {
-        data: {
-          full_name: fullName,
-        },
-        emailRedirectTo: `${siteUrl}/auth/callback`,
+      email_confirm: true, // Auto-confirma o email
+      user_metadata: {
+        full_name: fullName,
       },
     });
 
     if (authError) {
+      // Se o email já existe, retornar mensagem amigável
+      if (authError.message.includes("already") || authError.message.includes("exists")) {
+        return { error: "Este email já está cadastrado. Faça login ou use outro email." };
+      }
       return { error: authError.message };
     }
 
@@ -68,7 +66,18 @@ export async function registerUser(formData: FormData) {
       return { error: "Falha ao criar usuário" };
     }
 
-    // 2. Criar organização usando ADMIN CLIENT (bypass RLS)
+    // 2. Fazer login automático do usuário recém-criado
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (signInError) {
+      console.error("[Register] Erro ao fazer login automático:", signInError.message);
+      // Não retornar erro - usuário foi criado, pode fazer login manualmente
+    }
+
+    // 3. Criar organização usando ADMIN CLIENT (bypass RLS)
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     const { data: orgData, error: orgError } = await supabaseAdmin
@@ -85,7 +94,7 @@ export async function registerUser(formData: FormData) {
       return { error: "Erro ao criar organização: " + orgError.message };
     }
 
-    // 3. Criar departamentos padrão (fire and forget - não bloqueia registro)
+    // 4. Criar departamentos padrão (fire and forget - não bloqueia registro)
     const departmentsToInsert = DEFAULT_DEPARTMENTS.map(dept => ({
       organization_id: (orgData as { id: string }).id,
       name: dept.name,
@@ -101,7 +110,7 @@ export async function registerUser(formData: FormData) {
         }
       });
 
-    // 4. Atualizar perfil do usuário usando ADMIN CLIENT (bypass RLS)
+    // 5. Atualizar perfil do usuário usando ADMIN CLIENT (bypass RLS)
     const { error: profileError } = await supabaseAdmin
       .from("user_profiles")
       .update({
