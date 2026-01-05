@@ -29,6 +29,7 @@ import {
   generateRiscosPsicossociaisReport,
   generateClimaMensalReport,
   generatePlanoAcaoReport,
+  generateExecutivoLiderancaReport,
   getReportHistory,
   type AssessmentClosureCheck,
   type GeneratedReport,
@@ -81,7 +82,6 @@ const REPORT_TYPES = [
     frequency: 'Bimestral',
     applicableTo: ['nr1', 'clima'],
     features: ['5 bullets do período', 'Top 3 focos', 'Roteiro de conversa'],
-    comingSoon: true,
   },
   {
     id: 'correlacao' as ReportType,
@@ -155,6 +155,9 @@ export function ReportGenerationPage({
           break;
         case 'plano_acao':
           result = await generatePlanoAcaoReport(assessmentId);
+          break;
+        case 'executivo_lideranca':
+          result = await generateExecutivoLiderancaReport(assessmentId);
           break;
         default:
           throw new Error('Tipo de relatório não implementado');
