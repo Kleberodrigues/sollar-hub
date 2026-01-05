@@ -23,6 +23,7 @@ import {
   ChevronRight,
   Activity,
   MessageSquare,
+  FileBarChart,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { PlanType } from "@/lib/stripe/config";
@@ -31,6 +32,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { SuppressedDataCard } from "./SuppressedDataCard";
 import { ANONYMITY_THRESHOLDS } from "@/lib/constants/anonymity-thresholds";
 import { RISK_CATEGORIES, ALL_CATEGORIES } from "@/types";
+import { ReportGenerationPage } from "@/components/reports";
 
 // Loading skeleton for dynamic tabs
 function TabSkeleton() {
@@ -582,6 +584,31 @@ export function AnalyticsDashboardContent({
             </Card>
           </motion.div>
 
+          {/* Relatórios Avançados NR-1 - NOVO */}
+          <motion.div variants={sollarMotion.fadeUp}>
+            <Card className="bg-white border border-gray-200 border-l-4 border-l-amber-500 hover:shadow-md hover:border-gray-300 transition-all cursor-pointer group"
+              onClick={() => setFullscreenSection("advanced-reports")}
+            >
+              <CardContent className="p-5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center">
+                      <FileBarChart className="w-6 h-6 text-amber-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-display text-lg font-semibold text-text-heading">Relatórios NR-1 Avançados</h3>
+                      <p className="text-sm text-text-muted">COPSOQ II-BR com NLP e PDF profissional</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge className="bg-amber-100 text-amber-700 text-xs border-0">Novo</Badge>
+                    <ChevronRight className="w-5 h-5 text-text-muted group-hover:text-amber-600 transition-colors" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
           {/* Dashboard NR-1 Executivo com Mapa de Calor Profissional */}
           <motion.div variants={sollarMotion.fadeUp}>
             <NR1ExecutiveDashboard
@@ -710,6 +737,19 @@ export function AnalyticsDashboardContent({
         icon={Sparkles}
       >
         <ActionPlanTab assessmentId={assessmentId} currentPlan={currentPlan} highRiskCategories={highRiskCategories} />
+      </FullscreenModal>
+
+      <FullscreenModal
+        isOpen={fullscreenSection === "advanced-reports"}
+        onClose={() => setFullscreenSection(null)}
+        title="Relatórios NR-1 Avançados"
+        icon={FileBarChart}
+      >
+        <ReportGenerationPage
+          assessmentId={assessmentId}
+          assessmentTitle={assessmentTitle}
+          questionnaireType={assessmentType === 'pulse' ? 'clima' : 'nr1'}
+        />
       </FullscreenModal>
 
       {isPulse && (
