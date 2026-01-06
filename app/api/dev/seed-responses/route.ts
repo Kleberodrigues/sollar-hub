@@ -76,11 +76,11 @@ export async function POST(request: NextRequest) {
     const supabase = await createClient();
 
     // 1. Get assessment details
-    const { data: assessment, error: assessmentError } = await supabase
+    const { data: assessment, error: assessmentError } = await (supabase
       .from('assessments')
       .select('id, title, questionnaire_id')
       .eq('id', assessmentId)
-      .single();
+      .single() as unknown as Promise<{ data: { id: string; title: string; questionnaire_id: string } | null; error: Error | null }>);
 
     if (assessmentError || !assessment) {
       return NextResponse.json(
@@ -90,11 +90,11 @@ export async function POST(request: NextRequest) {
     }
 
     // 2. Get questions for this questionnaire
-    const { data: questions, error: questionsError } = await supabase
+    const { data: questions, error: questionsError } = await (supabase
       .from('questions')
       .select('id, text, type, category')
       .eq('questionnaire_id', assessment.questionnaire_id)
-      .order('order_index');
+      .order('order_index') as unknown as Promise<{ data: Array<{ id: string; text: string; type: string; category: string }> | null; error: Error | null }>);
 
     if (questionsError || !questions || questions.length === 0) {
       return NextResponse.json(
@@ -107,9 +107,17 @@ export async function POST(request: NextRequest) {
     let totalResponses = 0;
     let successfulParticipants = 0;
 
+    interface ResponseInsert {
+      assessment_id: string;
+      question_id: string;
+      anonymous_id: string;
+      value: string;
+      created_at: string;
+    }
+
     for (let p = 0; p < participantCount; p++) {
       const anonymousId = `test-participant-${Date.now()}-${p}-${Math.random().toString(36).slice(2, 8)}`;
-      const responses = [];
+      const responses: ResponseInsert[] = [];
 
       for (const question of questions) {
         let value: string;
@@ -145,9 +153,9 @@ export async function POST(request: NextRequest) {
       }
 
       // Insert responses for this participant
-      const { error: insertError } = await supabase
+      const { error: insertError } = await (supabase
         .from('responses')
-        .insert(responses);
+        .insert(responses as unknown as never[]) as unknown as Promise<{ error: Error | null }>);
 
       if (!insertError) {
         totalResponses += responses.length;
@@ -190,11 +198,18 @@ export async function GET() {
   try {
     const supabase = await createClient();
 
-    const { data: assessments, error } = await supabase
+    interface AssessmentRow {
+      id: string;
+      title: string;
+      status: string;
+      questionnaire_id: string;
+    }
+
+    const { data: assessments, error } = await (supabase
       .from('assessments')
       .select('id, title, status, questionnaire_id')
       .order('created_at', { ascending: false })
-      .limit(10);
+      .limit(10) as unknown as Promise<{ data: AssessmentRow[] | null; error: Error | null }>);
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
@@ -202,11 +217,11 @@ export async function GET() {
 
     // Get response counts
     const assessmentsWithCounts = await Promise.all(
-      (assessments || []).map(async (a) => {
-        const { count } = await supabase
+      (assessments || []).map(async (a: AssessmentRow) => {
+        const { count } = await (supabase
           .from('responses')
           .select('*', { count: 'exact', head: true })
-          .eq('assessment_id', a.id);
+          .eq('assessment_id', a.id) as unknown as Promise<{ count: number | null }>);
         return { ...a, responseCount: count || 0 };
       })
     );

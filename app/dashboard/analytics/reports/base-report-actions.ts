@@ -360,7 +360,7 @@ export async function getResponsesForAnalysis(
 ): Promise<ResponseData[]> {
   const supabase = await createClient();
 
-  const query = supabase
+  let query = supabase
     .from('responses')
     .select(
       `
