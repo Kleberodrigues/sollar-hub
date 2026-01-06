@@ -360,7 +360,7 @@ export async function getResponsesForAnalysis(
 ): Promise<ResponseData[]> {
   const supabase = await createClient();
 
-  let query = supabase
+  const query = supabase
     .from('responses')
     .select(
       `
@@ -426,7 +426,7 @@ export async function getOpenResponses(
 ): Promise<{ questionId: string; questionText: string; responses: string[] }[]> {
   const supabase = await createClient();
 
-  let query = supabase
+  const query = supabase
     .from('responses')
     .select(
       `

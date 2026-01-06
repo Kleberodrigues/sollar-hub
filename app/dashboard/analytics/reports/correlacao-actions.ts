@@ -27,7 +27,7 @@ import type {
 // Mapeamento de Métricas
 // ==========================================
 
-const CLIMA_METRICS = [
+const _CLIMA_METRICS = [
   { id: 'engagement', name: 'Engajamento', category: 'climate' },
   { id: 'satisfaction', name: 'Satisfação Geral', category: 'climate' },
   { id: 'communication', name: 'Comunicação', category: 'climate' },
@@ -51,8 +51,8 @@ const ANCHOR_METRICS = [
   { id: 'health', name: 'Percepção de Saúde', category: 'anchor' },
 ];
 
-// Expected theoretical correlations
-const EXPECTED_CORRELATIONS = [
+// Expected theoretical correlations (reserved for future validation)
+const _EXPECTED_CORRELATIONS = [
   { question: 'Exigências excessivas', expectedWith: 'Intenção de Permanência', expectedSign: -1 },
   { question: 'Qualidade da Liderança', expectedWith: 'NPS', expectedSign: 1 },
   { question: 'Autonomia', expectedWith: 'Satisfação', expectedSign: 1 },
@@ -191,7 +191,7 @@ export async function generateCorrelacaoReport(
 async function calculateCorrelations(
   categoryScores: CategoryRiskScore[],
   allResponses: Awaited<ReturnType<typeof getResponsesForAnalysis>>,
-  participantCount: number
+  _participantCount: number
 ): Promise<CorrelationPoint[]> {
   const correlationPoints: CorrelationPoint[] = [];
 
@@ -252,12 +252,12 @@ async function calculateCorrelations(
 
     // Encontrar nomes das métricas
     const riskMetric = RISK_METRICS.find((m) => m.id === riskCat);
-    const anchorMetric = ANCHOR_METRICS[0]; // NPS como principal âncora
+    const anchorMetricName = ANCHOR_METRICS[0]?.name || 'Indicadores de Efeito';
 
     correlationPoints.push({
       climaMetric: riskMetric?.name || riskCat,
       riskMetric: riskMetric?.name || riskCat,
-      anchorMetric: 'Indicadores de Efeito',
+      anchorMetric: anchorMetricName,
       correlationStrength: Math.round(correlation * 100) / 100,
       interpretation: interpretCorrelation(correlation, riskMetric?.name || riskCat),
     });
@@ -307,7 +307,7 @@ function interpretCorrelation(r: number, metricName: string): string {
 
 async function calculateExpectedCorrelations(
   categoryScores: CategoryRiskScore[],
-  allResponses: Awaited<ReturnType<typeof getResponsesForAnalysis>>
+  _allResponses: Awaited<ReturnType<typeof getResponsesForAnalysis>>
 ): Promise<{ question: string; expectedWith: string; actualCorrelation: number }[]> {
   const results: { question: string; expectedWith: string; actualCorrelation: number }[] = [];
 

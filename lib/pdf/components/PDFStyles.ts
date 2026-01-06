@@ -5,7 +5,7 @@
  * Baseado nas cores e tipografia da marca Sollar
  */
 
-import { StyleSheet, Font } from '@react-pdf/renderer';
+import { StyleSheet } from '@react-pdf/renderer';
 
 // Cores da marca Sollar
 export const COLORS = {

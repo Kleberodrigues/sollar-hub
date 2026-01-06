@@ -115,7 +115,7 @@ interface ReportGenerationPageProps {
 
 export function ReportGenerationPage({
   assessmentId,
-  assessmentTitle,
+  assessmentTitle: _assessmentTitle,
   questionnaireType,
 }: ReportGenerationPageProps) {
   const [closureStatus, setClosureStatus] = useState<AssessmentClosureCheck | null>(null);

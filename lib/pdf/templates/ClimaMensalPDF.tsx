@@ -132,7 +132,7 @@ export const ClimaMensalPDF: React.FC<ClimaMensalPDFProps> = ({ data }) => {
         <PDFHeader title="Análise por Eixo" />
 
         <View style={styles.section}>
-          {data.axes.map((axis, idx) => (
+          {data.axes.map((axis) => (
             <View key={axis.axisId} style={styles.card}>
               <View style={[styles.row, styles.spaceBetween, styles.alignCenter]}>
                 <Text style={styles.cardTitle}>{axis.axisName}</Text>

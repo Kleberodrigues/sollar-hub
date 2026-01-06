@@ -7,7 +7,6 @@
  * Inclui análise por bloco, NLP de respostas abertas e hipóteses organizacionais
  */
 
-import { createClient } from '@/lib/supabase/server';
 import {
   getAssessmentData,
   getResponsesForAnalysis,
