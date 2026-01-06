@@ -134,7 +134,8 @@ export async function POST(request: NextRequest) {
       assessment_id: string;
       question_id: string;
       anonymous_id: string;
-      value: string;
+      value: string | null;
+      response_text: string | null;
       created_at: string;
     }
 
@@ -144,34 +145,38 @@ export async function POST(request: NextRequest) {
       const responses: ResponseInsert[] = [];
 
       for (const question of questions) {
-        let value: string;
+        // The value column is integer in the DB, response_text is for text responses
+        let numericValue: number | null = null;
+        let textValue: string | null = null;
 
         switch (question.type) {
           case 'likert_scale':
-            value = String(randomLikert());
+            numericValue = randomLikert();
             break;
           case 'nps':
-            value = String(randomNPS());
+            numericValue = randomNPS();
             break;
           case 'text':
           case 'long_text':
-            value = randomText();
+          case 'open_text':
+            textValue = randomText();
             break;
           case 'single_choice':
-            value = Math.random() > 0.5 ? 'Sim' : 'Não';
+            numericValue = Math.random() > 0.5 ? 1 : 0; // 1 = Yes, 0 = No
             break;
           case 'multiple_choice':
-            value = JSON.stringify(['Opção A', 'Opção B']);
+            numericValue = Math.floor(Math.random() * 3) + 1; // Option index 1-3
             break;
           default:
-            value = String(randomLikert());
+            numericValue = randomLikert();
         }
 
         responses.push({
           assessment_id: assessmentId,
           question_id: question.id,
           anonymous_id: anonymousId,
-          value: value,
+          value: numericValue !== null ? String(numericValue) : null,
+          response_text: textValue,
           created_at: new Date().toISOString(),
         });
       }
