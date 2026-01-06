@@ -209,7 +209,7 @@ export const RiscosPsicossociaisPDF: React.FC<RiscosPsicossociaisPDFProps> = ({
             {block.questions
               .sort((a, b) => a.avgScore - b.avgScore)
               .slice(0, 5)
-              .map((q, idx) => (
+              .map((q) => (
                 <View key={q.questionId} style={styles.card}>
                   <View
                     style={[styles.row, styles.spaceBetween, styles.alignCenter]}

@@ -285,7 +285,7 @@ export const ExecutivoLiderancaPDF: React.FC<ExecutivoLiderancaPDFProps> = ({ da
                     </Text>
                   </View>
                   <Text style={[styles.cardContent, { flex: 1, fontStyle: 'italic' }]}>
-                    "{question}"
+                    &ldquo;{question}&rdquo;
                   </Text>
                 </View>
               ))}

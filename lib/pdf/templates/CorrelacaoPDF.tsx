@@ -291,7 +291,7 @@ export const CorrelacaoPDF: React.FC<CorrelacaoPDFProps> = ({ data }) => {
 
             {data.expectedCorrelations.map((exp, idx) => {
               const isConfirmed = Math.abs(exp.actualCorrelation) >= 0.2;
-              const direction = exp.actualCorrelation >= 0 ? 'positiva' : 'negativa';
+              const _direction = exp.actualCorrelation >= 0 ? 'positiva' : 'negativa';
 
               return (
                 <View
