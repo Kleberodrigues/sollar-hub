@@ -139,7 +139,8 @@ export async function POST(request: NextRequest) {
     }
 
     for (let p = 0; p < participantCount; p++) {
-      const anonymousId = `test-participant-${Date.now()}-${p}-${Math.random().toString(36).slice(2, 8)}`;
+      // Generate proper UUID for anonymous_id
+      const anonymousId = crypto.randomUUID();
       const responses: ResponseInsert[] = [];
 
       for (const question of questions) {
