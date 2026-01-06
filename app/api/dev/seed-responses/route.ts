@@ -9,6 +9,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 
 // Sample text responses for open questions
 const TEXT_RESPONSES = [
@@ -94,7 +95,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabase = await createClient();
+    // Use admin client to bypass RLS for seeding
+    const supabase = createAdminClient();
 
     // 1. Get assessment details
     const { data: assessment, error: assessmentError } = await (supabase
@@ -173,10 +175,11 @@ export async function POST(request: NextRequest) {
         });
       }
 
-      // Insert responses for this participant
-      const { error: insertError } = await (supabase
-        .from('responses')
-        .insert(responses as unknown as never[]) as unknown as Promise<{ error: Error | null }>);
+      // Insert responses for this participant - use any to bypass type issues
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const insertResult = await (supabase.from('responses').insert(responses) as any);
+      const insertError = insertResult?.error;
+      const insertData = insertResult?.data;
 
       if (insertError) {
         console.error(`[Seed] Insert error for participant ${p}:`, insertError);
@@ -189,12 +192,17 @@ export async function POST(request: NextRequest) {
               assessmentId,
               questionCount: questions.length,
               sampleResponse: responses[0],
+              insertResult: JSON.stringify(insertResult),
             },
           }, { status: 500 });
         }
       } else {
         totalResponses += responses.length;
         successfulParticipants++;
+        // Debug: log first successful insert
+        if (p === 0) {
+          console.log('[Seed] First insert successful:', { insertData, responseCount: responses.length });
+        }
       }
     }
 
