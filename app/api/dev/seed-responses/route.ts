@@ -134,8 +134,8 @@ export async function POST(request: NextRequest) {
       assessment_id: string;
       question_id: string;
       anonymous_id: string;
-      value: string | null;
-      response_text: string | null;
+      value: string;
+      response_text: string;
       created_at: string;
     }
 
@@ -175,8 +175,8 @@ export async function POST(request: NextRequest) {
           assessment_id: assessmentId,
           question_id: question.id,
           anonymous_id: anonymousId,
-          value: numericValue !== null ? String(numericValue) : null,
-          response_text: textValue,
+          value: numericValue !== null ? String(numericValue) : '',
+          response_text: textValue || '',
           created_at: new Date().toISOString(),
         });
       }
