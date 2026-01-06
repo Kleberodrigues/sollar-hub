@@ -178,7 +178,21 @@ export async function POST(request: NextRequest) {
         .from('responses')
         .insert(responses as unknown as never[]) as unknown as Promise<{ error: Error | null }>);
 
-      if (!insertError) {
+      if (insertError) {
+        console.error(`[Seed] Insert error for participant ${p}:`, insertError);
+        // Return error details on first failure for debugging
+        if (successfulParticipants === 0 && p === 0) {
+          return NextResponse.json({
+            success: false,
+            error: `Insert failed: ${insertError.message || JSON.stringify(insertError)}`,
+            details: {
+              assessmentId,
+              questionCount: questions.length,
+              sampleResponse: responses[0],
+            },
+          }, { status: 500 });
+        }
+      } else {
         totalResponses += responses.length;
         successfulParticipants++;
       }
