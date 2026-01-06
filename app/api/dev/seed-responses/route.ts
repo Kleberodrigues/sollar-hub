@@ -130,13 +130,13 @@ export async function POST(request: NextRequest) {
     let totalResponses = 0;
     let successfulParticipants = 0;
 
+    // Only include required fields - let DB handle defaults
     interface ResponseInsert {
       assessment_id: string;
       question_id: string;
       anonymous_id: string;
-      value: string;
-      response_text: string;
-      created_at: string;
+      value?: string | null;
+      response_text?: string | null;
     }
 
     for (let p = 0; p < participantCount; p++) {
@@ -171,14 +171,21 @@ export async function POST(request: NextRequest) {
             numericValue = randomLikert();
         }
 
-        responses.push({
+        const responseRow: ResponseInsert = {
           assessment_id: assessmentId,
           question_id: question.id,
           anonymous_id: anonymousId,
-          value: numericValue !== null ? String(numericValue) : '',
-          response_text: textValue || '',
-          created_at: new Date().toISOString(),
-        });
+        };
+
+        // Only set value/response_text if we have data
+        if (numericValue !== null) {
+          responseRow.value = String(numericValue);
+        }
+        if (textValue) {
+          responseRow.response_text = textValue;
+        }
+
+        responses.push(responseRow);
       }
 
       // Insert responses for this participant - use any to bypass type issues
