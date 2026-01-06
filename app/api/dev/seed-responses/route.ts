@@ -171,21 +171,14 @@ export async function POST(request: NextRequest) {
             numericValue = randomLikert();
         }
 
-        const responseRow: ResponseInsert = {
+        // response_text has NOT NULL constraint, always set it
+        responses.push({
           assessment_id: assessmentId,
           question_id: question.id,
           anonymous_id: anonymousId,
-        };
-
-        // Only set value/response_text if we have data
-        if (numericValue !== null) {
-          responseRow.value = String(numericValue);
-        }
-        if (textValue) {
-          responseRow.response_text = textValue;
-        }
-
-        responses.push(responseRow);
+          value: numericValue !== null ? String(numericValue) : null,
+          response_text: textValue || '', // Empty string for non-text questions
+        });
       }
 
       // Insert responses for this participant - use any to bypass type issues
