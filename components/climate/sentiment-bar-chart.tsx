@@ -40,7 +40,7 @@ export function SentimentBarChart({
       </div>
 
       {/* Chart */}
-      <div className="relative flex justify-around gap-2">
+      <div className="relative flex justify-around gap-2 pt-8">
         {data.map((item, index) => {
           const height =
             maxCount > 0 ? (item.count / maxCount) * 100 : 0;
@@ -56,7 +56,7 @@ export function SentimentBarChart({
               className="flex-1 flex flex-col items-center"
             >
               {/* Bar container - fixed height, bars align at bottom */}
-              <div className="relative w-full h-[180px] flex items-end justify-center gap-1">
+              <div className="relative w-full h-[140px] flex items-end justify-center gap-1">
                 {/* Main bar */}
                 <div
                   className="w-10 rounded-t-lg transition-all duration-500 hover:opacity-80 relative group"
@@ -71,7 +71,7 @@ export function SentimentBarChart({
                     {item.count} ({percentage}%)
                   </div>
                   {/* Count label */}
-                  <span className="absolute -top-7 left-1/2 -translate-x-1/2 text-sm font-semibold text-text-primary whitespace-nowrap">
+                  <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-sm font-semibold text-text-primary whitespace-nowrap">
                     {item.count}
                   </span>
                 </div>
@@ -92,7 +92,7 @@ export function SentimentBarChart({
               </div>
 
               {/* Label - fixed height container for alignment */}
-              <div className="h-12 flex items-start justify-center pt-3">
+              <div className="h-10 flex items-start justify-center pt-2">
                 <span className="text-xs text-text-muted text-center leading-tight">
                   {item.label}
                 </span>
