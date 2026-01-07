@@ -109,18 +109,18 @@ export function SatisfactionGauge({
             }}
           >
             <div
-              className="w-1 h-16 rounded-full"
+              className="w-1 h-12 rounded-full"
               style={{ backgroundColor: getScoreColor(score) }}
             />
             <div
-              className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full border-2 border-white"
+              className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full border-2 border-white"
               style={{ backgroundColor: getScoreColor(score) }}
             />
           </div>
         </div>
 
         {/* Score display */}
-        <div className="text-center -mt-2">
+        <div className="text-center mt-4">
           <div className="flex items-baseline justify-center gap-1">
             <span
               className="text-4xl font-bold"
