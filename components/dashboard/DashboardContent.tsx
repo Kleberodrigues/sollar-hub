@@ -5,7 +5,6 @@ import Link from "next/link";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
-  FileText,
   ClipboardList,
   BarChart3,
   Users,
@@ -14,7 +13,7 @@ import {
   Target
 } from "lucide-react";
 interface DashboardMetrics {
-  questionnairesCount: number;
+  questionnairesCount?: number; // deprecated - not shown
   assessmentsCount: number;
   responsesCount: number;
   teamCount: number;
@@ -33,14 +32,6 @@ interface DashboardContentProps {
   userEmail: string;
 }
 const metricsConfig = [
-  {
-    key: "questionnairesCount",
-    title: "Questionários",
-    icon: FileText,
-    color: "text-pm-olive",
-    bgColor: "bg-pm-olive/10",
-    borderColor: "hover:border-pm-olive",
-  },
   {
     key: "assessmentsCount",
     title: "Avaliações Ativas",
@@ -118,7 +109,7 @@ export function DashboardContent({ metrics, profile, userEmail }: DashboardConte
         </div>
       </motion.div>
       {/* Metrics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {metricsConfig.map((metric, index) => {
           const Icon = metric.icon;
           const value = metrics[metric.key as keyof DashboardMetrics] || 0;
