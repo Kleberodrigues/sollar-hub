@@ -124,7 +124,6 @@ function QuestionCard({ question }: { question: ClimaQuestionData }) {
       <div className="flex items-start justify-between gap-4 mb-3">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
-            <Badge variant="outline" className="text-xs">Q{question.questionNumber}</Badge>
             <Badge className={cn('text-xs border-0', colors.bg, colors.text)}>
               {question.themeLabel}
             </Badge>
@@ -214,7 +213,7 @@ function NPSSection({ question }: { question: ClimaQuestionData }) {
             </div>
             <div>
               <CardTitle className="text-base font-semibold text-text-heading">
-                Q9 - Satisfação Geral
+                Satisfação Geral
               </CardTitle>
               <p className="text-xs text-text-muted">{question.questionText}</p>
             </div>
@@ -304,7 +303,7 @@ function OpenResponsesSection({ textResponses }: { textResponses: { text: string
           </div>
           <div>
             <CardTitle className="text-base font-semibold text-text-heading">
-              Q10 - Feedback Aberto
+              Feedback Aberto
             </CardTitle>
             <p className="text-xs text-text-muted">{textResponses.length} respostas</p>
           </div>
@@ -437,7 +436,7 @@ export function ClimaSurveyDashboard({ assessmentId }: ClimaSurveyDashboardProps
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-base font-semibold text-text-heading">
-            Detalhamento por Pergunta (Q1-Q8)
+            Detalhamento por Pergunta
           </CardTitle>
           <p className="text-xs text-text-muted">Escala 1-5: Nunca → Sempre</p>
         </CardHeader>

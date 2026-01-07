@@ -57,17 +57,13 @@ export function LikertStackedBars({ data }: LikertStackedBarsProps) {
 
       {/* Bars */}
       <div className="space-y-5">
-        {data.map((question, index) => {
+        {data.map((question) => {
           const grouped = groupDistribution(question.distribution);
-          const questionNumber = index + 2; // Q2 to Q8
 
           return (
             <div key={question.questionId} className="space-y-2">
               {/* Question text */}
               <p className="text-sm text-text-primary leading-relaxed">
-                <span className="font-bold text-pm-terracotta mr-2">
-                  Q{questionNumber}
-                </span>
                 {question.questionText}
               </p>
 

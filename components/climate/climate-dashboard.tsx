@@ -462,13 +462,13 @@ export function ClimateDashboard({
           {/* Top Row - Q1 and Q9 side by side */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Q1 - Sentiment Chart */}
-            <Card>
+            <Card className="h-full">
               <CardHeader className="pb-2">
                 <CardTitle className="text-lg font-display text-sollar-terracotta-600">
-                  Q1 - Como você está se sentindo no trabalho este mês?
+                  Como você está se sentindo no trabalho este mês?
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="min-h-[340px]">
                 <SentimentBarChart
                   data={climateData.q1Responses}
                   compareData={compareData?.q1Responses}
@@ -482,13 +482,13 @@ export function ClimateDashboard({
             </Card>
 
             {/* Q9 - Satisfaction Gauge */}
-            <Card>
+            <Card className="h-full">
               <CardHeader className="pb-2">
                 <CardTitle className="text-lg font-display text-sollar-terracotta-600">
-                  Q9 - De 0 a 10, quão satisfeito(a) você está?
+                  De 0 a 10, quão satisfeito(a) você está?
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="min-h-[340px]">
                 <SatisfactionGauge
                   score={climateData.q9Score}
                   distribution={climateData.q9Distribution}
@@ -503,7 +503,7 @@ export function ClimateDashboard({
           <Card>
             <CardHeader className="pb-4">
               <CardTitle className="text-lg font-display text-sollar-terracotta-600">
-                Q2 a Q8 - Avaliação por Dimensão
+                Avaliação por Dimensão
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-0">
@@ -516,7 +516,7 @@ export function ClimateDashboard({
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-lg font-display text-sollar-terracotta-600">
-                  Q10 - Motivos das notas (temas identificados)
+                  Motivos das notas (temas identificados)
                 </CardTitle>
               </CardHeader>
               <CardContent>
