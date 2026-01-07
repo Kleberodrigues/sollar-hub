@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState, useEffect } from "react";
+import { Suspense, useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,8 @@ function ResetPasswordForm() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [passwordMatch, setPasswordMatch] = useState(true);
+  const [isValidToken, setIsValidToken] = useState(false);
+  const [checking, setChecking] = useState(true);
   const [formData, setFormData] = useState({
     password: "",
     confirmPassword: "",
@@ -30,15 +32,85 @@ function ResetPasswordForm() {
 
   const supabase = createClient();
 
-  // Verificar se há access_token na URL (vindo do email)
-  useEffect(() => {
-    const accessToken = searchParams.get("access_token");
-    if (!accessToken) {
-      setError(
-        "Link de recuperação inválido ou expirado. Solicite um novo link."
-      );
+  // Função para verificar autenticação
+  const checkAuth = useCallback(async () => {
+    setChecking(true);
+
+    try {
+      // 1. Verificar se já existe uma sessão válida (pode ter sido estabelecida pelo hash)
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (session) {
+        setIsValidToken(true);
+        setError(null);
+        setChecking(false);
+        return;
+      }
+
+      // 2. Verificar hash fragment (onde o Supabase envia o token)
+      if (typeof window !== "undefined" && window.location.hash) {
+        const hashParams = new URLSearchParams(window.location.hash.substring(1));
+        const accessToken = hashParams.get("access_token");
+        const type = hashParams.get("type");
+
+        if (accessToken && type === "recovery") {
+          // Token encontrado no hash - o Supabase deve processar automaticamente
+          // Aguardar um momento para o Supabase processar o hash
+          await new Promise(resolve => setTimeout(resolve, 500));
+
+          // Verificar sessão novamente
+          const { data: { session: newSession } } = await supabase.auth.getSession();
+          if (newSession) {
+            setIsValidToken(true);
+            setError(null);
+            setChecking(false);
+            return;
+          }
+        }
+      }
+
+      // 3. Verificar query params como fallback
+      const accessToken = searchParams.get("access_token");
+      if (accessToken) {
+        setIsValidToken(true);
+        setError(null);
+        setChecking(false);
+        return;
+      }
+
+      // Nenhum token válido encontrado
+      setError("Link de recuperação inválido ou expirado. Solicite um novo link.");
+      setIsValidToken(false);
+    } catch (err) {
+      console.error("Erro ao verificar autenticação:", err);
+      setError("Erro ao verificar link de recuperação.");
+      setIsValidToken(false);
+    } finally {
+      setChecking(false);
     }
-  }, [searchParams]);
+  }, [supabase, searchParams]);
+
+  // Verificar autenticação e ouvir eventos de recuperação de senha
+  useEffect(() => {
+    checkAuth();
+
+    // Ouvir eventos de autenticação (incluindo PASSWORD_RECOVERY)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "PASSWORD_RECOVERY") {
+        setIsValidToken(true);
+        setError(null);
+        setChecking(false);
+      } else if (event === "SIGNED_IN" && session) {
+        setIsValidToken(true);
+        setError(null);
+        setChecking(false);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [checkAuth, supabase.auth]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,6 +154,25 @@ function ResetPasswordForm() {
       setLoading(false);
     }
   };
+
+  // Estado de verificação inicial
+  if (checking) {
+    return (
+      <div className="w-full max-w-md">
+        <Card>
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl">Verificando Link...</CardTitle>
+            <CardDescription>
+              Aguarde enquanto validamos seu link de recuperação
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex justify-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pm-green-dark"></div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   if (success) {
     return (
@@ -155,7 +246,7 @@ function ResetPasswordForm() {
                   setFormData({ ...formData, password: e.target.value });
                   setPasswordMatch(true);
                 }}
-                disabled={loading}
+                disabled={loading || !isValidToken}
               />
               <p className="text-xs text-text-muted">
                 Escolha uma senha forte com pelo menos 6 caracteres
@@ -177,7 +268,7 @@ function ResetPasswordForm() {
                   });
                   setPasswordMatch(true);
                 }}
-                disabled={loading}
+                disabled={loading || !isValidToken}
                 className={!passwordMatch ? "border-risk-high" : ""}
               />
             </div>
@@ -186,7 +277,7 @@ function ResetPasswordForm() {
               type="submit"
               className="w-full"
               size="lg"
-              disabled={loading}
+              disabled={loading || !isValidToken}
             >
               {loading ? "Redefinindo..." : "Redefinir Senha"}
             </Button>
