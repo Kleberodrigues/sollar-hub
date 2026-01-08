@@ -183,10 +183,22 @@ export function ParticipantImportDialog({
     setFile(uploadedFile);
 
     try {
-      // Ler arquivo com UTF-8 explícito
+      // Ler arquivo e detectar encoding
       const arrayBuffer = await uploadedFile.arrayBuffer();
-      const decoder = new TextDecoder('utf-8');
-      const content = decoder.decode(arrayBuffer);
+
+      // Tentar UTF-8 primeiro
+      let content = new TextDecoder('utf-8').decode(arrayBuffer);
+
+      // Se conter caractere de substituição (�), tentar Windows-1252
+      if (content.includes('\uFFFD') || content.includes('�')) {
+        try {
+          content = new TextDecoder('windows-1252').decode(arrayBuffer);
+        } catch {
+          // Fallback para ISO-8859-1
+          content = new TextDecoder('iso-8859-1').decode(arrayBuffer);
+        }
+      }
+
       const result = parseCSV(content);
       setParseResult(result);
       setStep('preview');
