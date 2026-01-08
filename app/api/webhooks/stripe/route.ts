@@ -2,6 +2,7 @@
 /**
  * Stripe Webhook Handler
  * Processes subscription and payment events from Stripe
+ * Updated: Handles new user creation for payment-first signup flow
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -14,7 +15,22 @@ import {
   handleSubscriptionDeleted,
 } from "@/lib/stripe";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { dispatchEvent } from "@/lib/events";
+
+// Departamentos padrão criados automaticamente para novas organizações
+const DEFAULT_DEPARTMENTS = [
+  { name: "Recursos Humanos", description: "Gestão de pessoas e desenvolvimento organizacional" },
+  { name: "Administrativo", description: "Suporte administrativo e facilities" },
+  { name: "Financeiro", description: "Gestão financeira e contabilidade" },
+  { name: "Comercial", description: "Vendas e relacionamento com clientes" },
+  { name: "Operações", description: "Processos operacionais e produção" },
+  { name: "TI", description: "Tecnologia da informação e sistemas" },
+  { name: "Marketing", description: "Marketing e comunicação" },
+  { name: "Jurídico", description: "Assessoria jurídica e compliance" },
+  { name: "Logística", description: "Logística e cadeia de suprimentos" },
+  { name: "Qualidade", description: "Gestão da qualidade e processos" },
+];
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -219,6 +235,15 @@ async function handleCheckoutCompleted(
   supabase: Awaited<ReturnType<typeof createClient>>,
   session: Stripe.Checkout.Session
 ) {
+  const isNewSignup = session.metadata?.is_new_signup === "true";
+
+  // Handle NEW USER signup (payment-first flow)
+  if (isNewSignup) {
+    await handleNewUserSignup(session);
+    return;
+  }
+
+  // Handle existing user upgrade (original flow)
   const organizationId = session.metadata?.organization_id;
   const plan = session.metadata?.plan;
   const interval = session.metadata?.interval;
@@ -238,11 +263,176 @@ async function handleCheckoutCompleted(
     eventType: "subscription.created",
     data: {
       session_id: session.id,
-      // customer_email removed - PII should not be in event payload
-      plan: plan || "pro",
-      interval: interval || "monthly",
+      plan: plan || "base",
+      interval: interval || "yearly",
     },
   });
+}
+
+/**
+ * Handle new user signup after successful payment
+ * Creates user, organization, subscription, and sends password setup email
+ */
+async function handleNewUserSignup(session: Stripe.Checkout.Session) {
+  const email = session.metadata?.email;
+  const fullName = session.metadata?.full_name;
+  const companyName = session.metadata?.company_name;
+  const industry = session.metadata?.industry;
+  const size = session.metadata?.size;
+  const plan = session.metadata?.plan || "base";
+  const stripeCustomerId = session.customer as string;
+
+  if (!email || !fullName || !companyName) {
+    console.error("[Stripe Webhook] Missing required metadata for new signup:", {
+      hasEmail: !!email,
+      hasFullName: !!fullName,
+      hasCompanyName: !!companyName,
+    });
+    return;
+  }
+
+  console.log(`[Stripe Webhook] Processing new signup for: ${email}`);
+
+  const supabaseAdmin = createAdminClient();
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://psicomapa.cloud";
+
+  try {
+    // 1. Create user WITHOUT password (user will set it via email link)
+    const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
+      email,
+      email_confirm: true,
+      user_metadata: {
+        full_name: fullName,
+      },
+    });
+
+    if (authError) {
+      // If user already exists, try to find their org and update subscription
+      if (authError.message.includes("already") || authError.message.includes("exists")) {
+        console.log("[Stripe Webhook] User already exists, attempting to link subscription");
+        // TODO: Handle existing user case - maybe send them to login
+        return;
+      }
+      console.error("[Stripe Webhook] Failed to create user:", authError.message);
+      return;
+    }
+
+    if (!authData.user) {
+      console.error("[Stripe Webhook] No user returned after creation");
+      return;
+    }
+
+    console.log(`[Stripe Webhook] User created: ${authData.user.id}`);
+
+    // 2. Create organization
+    const { data: orgData, error: orgError } = await supabaseAdmin
+      .from("organizations")
+      .insert({
+        name: companyName,
+        industry: industry || null,
+        size: size || null,
+      })
+      .select()
+      .single();
+
+    if (orgError || !orgData) {
+      console.error("[Stripe Webhook] Failed to create organization:", orgError?.message);
+      return;
+    }
+
+    const organizationId = (orgData as { id: string }).id;
+    console.log(`[Stripe Webhook] Organization created: ${organizationId}`);
+
+    // 3. Update user profile with organization
+    const { error: profileError } = await supabaseAdmin
+      .from("user_profiles")
+      .update({
+        organization_id: organizationId,
+        role: "responsavel_empresa",
+      })
+      .eq("id", authData.user.id);
+
+    if (profileError) {
+      console.error("[Stripe Webhook] Failed to update profile:", profileError.message);
+    }
+
+    // 4. Create billing customer record
+    const { error: customerError } = await supabaseAdmin
+      .from("billing_customers")
+      .insert({
+        organization_id: organizationId,
+        stripe_customer_id: stripeCustomerId,
+        email: email,
+        name: fullName,
+      });
+
+    if (customerError) {
+      console.error("[Stripe Webhook] Failed to create billing customer:", customerError.message);
+    }
+
+    // 5. Create subscription record
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error: subscriptionError } = await (supabaseAdmin as any)
+      .from("subscriptions")
+      .insert({
+        organization_id: organizationId,
+        plan: plan,
+        status: "active",
+      });
+
+    if (subscriptionError) {
+      console.error("[Stripe Webhook] Failed to create subscription:", subscriptionError.message);
+    }
+
+    // 6. Create default departments (fire and forget)
+    const departmentsToInsert = DEFAULT_DEPARTMENTS.map(dept => ({
+      organization_id: organizationId,
+      name: dept.name,
+      description: dept.description,
+    }));
+
+    supabaseAdmin
+      .from("departments")
+      .insert(departmentsToInsert)
+      .then(({ error: deptError }) => {
+        if (deptError) {
+          console.error("[Stripe Webhook] Failed to create departments:", deptError.message);
+        }
+      });
+
+    // 7. Generate password reset link and send email
+    const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
+      type: "recovery",
+      email: email,
+      options: {
+        redirectTo: `${appUrl}/set-password`,
+      },
+    });
+
+    if (linkError) {
+      console.error("[Stripe Webhook] Failed to generate password link:", linkError.message);
+    } else {
+      console.log("[Stripe Webhook] Password setup link generated successfully");
+      // The email is sent automatically by Supabase
+    }
+
+    // 8. Dispatch event for new signup
+    await dispatchEvent({
+      organizationId,
+      eventType: "subscription.created",
+      data: {
+        session_id: session.id,
+        plan: plan,
+        interval: "yearly",
+        is_new_signup: true,
+      },
+    });
+
+    console.log(`[Stripe Webhook] New signup completed successfully for ${email}`);
+
+  } catch (error) {
+    console.error("[Stripe Webhook] Error in handleNewUserSignup:", error);
+  }
 }
 
 async function handleInvoicePaid(

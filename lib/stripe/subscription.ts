@@ -145,6 +145,103 @@ export async function createCheckoutSession({
 }
 
 // ============================================
+// Public Checkout Session (No Auth Required)
+// ============================================
+
+interface CreatePublicCheckoutParams {
+  email: string;
+  fullName: string;
+  companyName: string;
+  industry?: string;
+  size?: string;
+  plan: PlanType;
+  termsAcceptedAt: string;
+}
+
+/**
+ * Create Stripe Checkout Session for NEW users (payment-first flow)
+ * Does NOT require authentication - user/org created after payment via webhook
+ */
+export async function createPublicCheckoutSession({
+  email,
+  fullName,
+  companyName,
+  industry,
+  size,
+  plan,
+  termsAcceptedAt,
+}: CreatePublicCheckoutParams): Promise<CreateCheckoutResult> {
+  if (!stripe) {
+    return { url: null, error: "Stripe not configured" };
+  }
+
+  const priceId = getPriceId(plan);
+  if (!priceId) {
+    return { url: null, error: "Invalid plan" };
+  }
+
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://psicomapa.cloud";
+
+  try {
+    // Create new Stripe customer (no Supabase org yet)
+    const stripeCustomer = await stripe.customers.create({
+      email,
+      name: fullName,
+      metadata: {
+        company_name: companyName,
+        source: "sollar-public-checkout",
+      },
+    });
+
+    // Create checkout session with all user data in metadata
+    // Webhook will use this data to create user + org after payment
+    const session = await stripe.checkout.sessions.create({
+      customer: stripeCustomer.id,
+      mode: "subscription",
+      payment_method_types: ["card"],
+      line_items: [
+        {
+          price: priceId,
+          quantity: 1,
+        },
+      ],
+      success_url: `${appUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${appUrl}/checkout/${plan}`,
+      subscription_data: {
+        metadata: {
+          plan,
+          interval: "yearly",
+          // organization_id will be added after creation
+        },
+      },
+      allow_promotion_codes: true,
+      billing_address_collection: "required",
+      locale: "pt-BR",
+      metadata: {
+        // Flag to indicate this is a new signup (not an upgrade)
+        is_new_signup: "true",
+        // User data for account creation
+        email,
+        full_name: fullName,
+        company_name: companyName,
+        industry: industry || "",
+        size: size || "",
+        plan,
+        terms_accepted_at: termsAcceptedAt,
+      },
+    });
+
+    return { url: session.url, sessionId: session.id };
+  } catch (error) {
+    console.error("[Stripe] Public checkout session creation failed:", error);
+    return {
+      url: null,
+      error: error instanceof Error ? error.message : "Failed to create checkout",
+    };
+  }
+}
+
+// ============================================
 // Customer Portal
 // ============================================
 

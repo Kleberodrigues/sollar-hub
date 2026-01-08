@@ -43,8 +43,13 @@ export async function updateSession(request: NextRequest) {
     "/register",
     "/forgot-password",
     "/reset-password",
+    "/set-password",
+    "/checkout",
+    "/subscription-required",
     "/responder",
     "/privacidade",
+    "/termos",
+    "/lgpd",
     "/_next",
     "/favicon.ico",
   ];
@@ -67,6 +72,34 @@ export async function updateSession(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
+  }
+
+  // VERIFICAÇÃO DE ASSINATURA: Usuários autenticados precisam ter subscription ativa
+  // para acessar o dashboard (exceto a página de billing para poder assinar)
+  if (user && pathname.startsWith("/dashboard") && !pathname.startsWith("/dashboard/configuracoes/billing")) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: profile } = await (supabase as any)
+      .from("user_profiles")
+      .select("organization_id, is_super_admin")
+      .eq("id", user.id)
+      .single();
+
+    // Super admins podem acessar sem subscription
+    if (profile && !profile.is_super_admin && profile.organization_id) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: subscription } = await (supabase as any)
+        .from("subscriptions")
+        .select("status")
+        .eq("organization_id", profile.organization_id)
+        .single();
+
+      // Se não tem subscription ou está cancelada, redirecionar
+      if (!subscription || subscription.status === "canceled") {
+        const url = request.nextUrl.clone();
+        url.pathname = "/subscription-required";
+        return NextResponse.redirect(url);
+      }
+    }
   }
 
   // Se usuário está autenticado, verificar role-based access

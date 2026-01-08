@@ -20,6 +20,7 @@ export {
 // Subscription management
 export {
   createCheckoutSession,
+  createPublicCheckoutSession,
   createPortalSession,
   getSubscription,
   cancelSubscription,

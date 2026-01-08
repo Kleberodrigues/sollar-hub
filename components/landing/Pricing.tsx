@@ -171,7 +171,7 @@ export function Pricing() {
 
                 {/* CTA Button */}
                 <Link
-                  href={`/register?plan=${plan.id}`}
+                  href={`/checkout/${plan.id}`}
                   className={`block w-full text-center py-3 px-6 rounded-lg font-medium transition-colors mt-auto ${colors.button}`}
                 >
                   Assinar {plan.name}
