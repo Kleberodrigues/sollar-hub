@@ -80,9 +80,17 @@ export function parseCSV(content: string): ParseResult {
   const data: ImportRow[] = [];
 
   try {
-    const result = Papa.parse(content, {
+    // Remove BOM se presente
+    const cleanContent = content.replace(/^\uFEFF/, '');
+
+    // Detectar separador (ponto-e-vírgula ou vírgula)
+    const firstDataLine = cleanContent.split(/\r?\n/).find(line => !line.startsWith('#') && line.trim());
+    const delimiter = firstDataLine?.includes(';') ? ';' : ',';
+
+    const result = Papa.parse(cleanContent, {
       header: true,
       skipEmptyLines: true,
+      delimiter, // Usar separador detectado
       transformHeader: (header) => header.toLowerCase().trim(),
     });
 
@@ -204,6 +212,7 @@ export function validateImportData(
  * Gera template CSV para download
  */
 export function generateCSVTemplate(questions: Array<{ id: string; text: string; category: string }>): string {
+  // Usar ponto-e-vírgula para Excel em português
   const headers = ['question_id', 'response_text', 'anonymous_id', 'created_at'];
   const exampleRows = questions.slice(0, 3).map((q, i) => [
     q.id,
@@ -226,10 +235,11 @@ export function generateCSVTemplate(questions: Array<{ id: string; text: string;
   ];
 
   const BOM = '\uFEFF';
+  // Usar ponto-e-vírgula como separador para Excel em português
   const csvContent = [
     ...instructions,
-    headers.join(','),
-    ...exampleRows.map((row) => row.join(',')),
+    headers.join(';'),
+    ...exampleRows.map((row) => row.join(';')),
   ].join('\n');
 
   return BOM + csvContent;
