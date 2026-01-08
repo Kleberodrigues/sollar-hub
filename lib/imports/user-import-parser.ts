@@ -112,9 +112,14 @@ export function parseUserImportCSV(content: string): UserParseResult {
     // Remove BOM se presente
     const cleanContent = content.replace(/^\uFEFF/, "");
 
+    // Detectar separador (ponto-e-vírgula ou vírgula)
+    const firstDataLine = cleanContent.split(/\r?\n/).find(line => !line.startsWith("#") && line.trim());
+    const delimiter = firstDataLine?.includes(";") ? ";" : ",";
+
     const result = Papa.parse(cleanContent, {
       header: true,
       skipEmptyLines: true,
+      delimiter, // Usar separador detectado
       transformHeader: (header) => header.trim(),
     });
 
@@ -436,6 +441,7 @@ export function generateUserImportCSVTemplate(
     "#",
   ];
 
+  // Usar ponto-e-vírgula para Excel em português
   const headers = ["email", "nome", "departamento", "cargo"];
 
   const exampleRows = [
@@ -446,9 +452,9 @@ export function generateUserImportCSVTemplate(
 
   const csvContent = [
     ...instructions,
-    headers.join(","),
+    headers.join(";"),
     ...exampleRows.map((row) =>
-      row.map((cell) => (cell.includes(",") ? `"${cell}"` : cell)).join(",")
+      row.map((cell) => (cell.includes(";") ? `"${cell}"` : cell)).join(";")
     ),
   ].join("\n");
 

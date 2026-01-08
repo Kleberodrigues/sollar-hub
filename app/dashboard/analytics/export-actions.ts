@@ -306,7 +306,7 @@ export async function exportResponsesCSV(assessmentId: string): Promise<ExportRe
     };
   }
 
-  // Gerar CSV
+  // Gerar CSV com ponto-e-vírgula para Excel em português
   const headers = [
     'ID Resposta',
     'ID Anônimo',
@@ -331,22 +331,22 @@ export async function exportResponsesCSV(assessmentId: string): Promise<ExportRe
     ];
   });
 
-  // Montar CSV
+  // Montar CSV com ponto-e-vírgula como separador
   const csvContent = [
-    headers.join(','),
+    headers.join(';'),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ...rows.map((row: any) =>
       row
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .map((cell: any) => {
-          // Escapar vírgulas e aspas
+          // Escapar ponto-e-vírgulas e aspas
           const cellStr = String(cell);
-          if (cellStr.includes(',') || cellStr.includes('"') || cellStr.includes('\n')) {
+          if (cellStr.includes(';') || cellStr.includes('"') || cellStr.includes('\n')) {
             return `"${cellStr.replace(/"/g, '""')}"`;
           }
           return cellStr;
         })
-        .join(',')
+        .join(';')
     ),
   ].join('\n');
 
@@ -373,6 +373,7 @@ export async function exportAnalyticsSummaryCSV(assessmentId: string): Promise<E
   // Type assertion para dados válidos
   const reportData = data as Exclude<typeof data, ExportResult>;
 
+  // Usar ponto-e-vírgula para Excel em português
   const headers = [
     'Categoria',
     'Pontuação Média',
@@ -401,10 +402,11 @@ export async function exportAnalyticsSummaryCSV(assessmentId: string): Promise<E
     ['ANÁLISE POR CATEGORIA', '', '', '', ''],
   ];
 
+  // Usar ponto-e-vírgula como separador para Excel em português
   const csvContent = [
-    ...summaryRows.map((row) => row.join(',')),
-    headers.join(','),
-    ...rows.map((row) => row.join(',')),
+    ...summaryRows.map((row) => row.join(';')),
+    headers.join(';'),
+    ...rows.map((row) => row.join(';')),
   ].join('\n');
 
   // Adicionar BOM para UTF-8 no Excel

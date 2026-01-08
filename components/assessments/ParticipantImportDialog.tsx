@@ -75,8 +75,12 @@ function parseCSV(content: string): ParseResult {
     return { rows: [], validCount: 0, invalidCount: 0, errors: ['Arquivo vazio'] };
   }
 
+  // Detectar separador (ponto-e-vírgula ou vírgula)
+  const firstLine = lines[0];
+  const separator = firstLine.includes(';') ? ';' : ',';
+
   // Parse header
-  const header = lines[0].toLowerCase().split(',').map(h => h.trim());
+  const header = firstLine.toLowerCase().split(separator).map(h => h.trim());
   const emailIdx = header.findIndex(h => h === 'email' || h === 'e-mail');
   const nameIdx = header.findIndex(h => h === 'nome' || h === 'name');
   const deptIdx = header.findIndex(h => h === 'departamento' || h === 'department' || h === 'depto');
@@ -95,7 +99,7 @@ function parseCSV(content: string): ParseResult {
 
   // Parse data rows
   for (let i = 1; i < lines.length; i++) {
-    const values = lines[i].split(',').map(v => v.trim());
+    const values = lines[i].split(separator).map(v => v.trim());
     const rowErrors: string[] = [];
 
     const email = values[emailIdx] || '';
