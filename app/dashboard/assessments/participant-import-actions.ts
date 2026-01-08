@@ -300,7 +300,7 @@ export async function generateParticipantTemplate(): Promise<{
   error?: string;
 }> {
   // Usar ponto-e-vírgula como separador para Excel em português
-  const csvContent = `email;nome;departamento;lideranca
+  const csvContent = `email;nome;departamento;cargo
 joao.silva@empresa.com;João Silva;TI;Não Liderança
 maria.santos@empresa.com;Maria Santos;RH;Não Liderança
 pedro.oliveira@empresa.com;Pedro Oliveira;Financeiro;Liderança
