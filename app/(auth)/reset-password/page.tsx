@@ -33,52 +33,57 @@ function ResetPasswordForm() {
   const supabase = createClient();
 
   // Função para verificar autenticação
+  // Suporta tanto PKCE (sessão via cookies) quanto implicit flow (hash fragments)
   const checkAuth = useCallback(async () => {
     setChecking(true);
 
     try {
-      // 1. Verificar se já existe uma sessão válida (pode ter sido estabelecida pelo hash)
-      const { data: { session } } = await supabase.auth.getSession();
+      // 1. Primeiro verificar se já existe sessão (PKCE flow - veio do /auth/callback)
+      const { data: { session: existingSession } } = await supabase.auth.getSession();
 
-      if (session) {
+      if (existingSession) {
+        console.log("Sessão válida encontrada via cookies!");
         setIsValidToken(true);
         setError(null);
         setChecking(false);
         return;
       }
 
-      // 2. Verificar hash fragment (onde o Supabase envia o token)
+      // 2. Verificar hash fragment (implicit flow - veio direto do email)
       if (typeof window !== "undefined" && window.location.hash) {
-        const hashParams = new URLSearchParams(window.location.hash.substring(1));
+        const hash = window.location.hash.substring(1);
+        const hashParams = new URLSearchParams(hash);
         const accessToken = hashParams.get("access_token");
+        const refreshToken = hashParams.get("refresh_token");
         const type = hashParams.get("type");
 
-        if (accessToken && type === "recovery") {
-          // Token encontrado no hash - o Supabase deve processar automaticamente
-          // Aguardar um momento para o Supabase processar o hash
-          await new Promise(resolve => setTimeout(resolve, 500));
+        console.log("Hash encontrado:", { hasAccessToken: !!accessToken, type });
 
-          // Verificar sessão novamente
-          const { data: { session: newSession } } = await supabase.auth.getSession();
-          if (newSession) {
+        if (accessToken && type === "recovery") {
+          console.log("Token de recuperação encontrado no hash, estabelecendo sessão...");
+
+          // Estabelecer sessão com os tokens do hash
+          const { data, error: sessionError } = await supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken || accessToken,
+          });
+
+          if (data.session && !sessionError) {
+            console.log("Sessão estabelecida com sucesso!");
             setIsValidToken(true);
             setError(null);
+            // Limpar hash da URL
+            window.history.replaceState(null, "", window.location.pathname);
             setChecking(false);
             return;
+          } else {
+            console.error("Erro ao estabelecer sessão:", sessionError?.message);
           }
         }
       }
 
-      // 3. Verificar query params como fallback
-      const accessToken = searchParams.get("access_token");
-      if (accessToken) {
-        setIsValidToken(true);
-        setError(null);
-        setChecking(false);
-        return;
-      }
-
-      // Nenhum token válido encontrado
+      // 3. Nenhum método funcionou
+      console.log("Nenhuma sessão ou token válido encontrado");
       setError("Link de recuperação inválido ou expirado. Solicite um novo link.");
       setIsValidToken(false);
     } catch (err) {
@@ -88,7 +93,7 @@ function ResetPasswordForm() {
     } finally {
       setChecking(false);
     }
-  }, [supabase, searchParams]);
+  }, [supabase]);
 
   // Verificar autenticação e ouvir eventos de recuperação de senha
   useEffect(() => {

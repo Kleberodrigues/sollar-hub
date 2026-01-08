@@ -16,7 +16,13 @@ export async function GET(request: NextRequest) {
   // Get the code and type from URL params
   const code = searchParams.get("code");
   const type = searchParams.get("type");
-  const next = searchParams.get("next") ?? "/dashboard";
+
+  // Determine redirect destination based on type
+  // For password recovery, always go to reset-password page
+  let next = searchParams.get("next") ?? "/dashboard";
+  if (type === "recovery") {
+    next = "/reset-password";
+  }
 
   // Handle errors from Supabase
   const error = searchParams.get("error");
