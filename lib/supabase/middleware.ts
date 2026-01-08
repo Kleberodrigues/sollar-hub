@@ -45,6 +45,7 @@ export async function updateSession(request: NextRequest) {
     "/reset-password",
     "/set-password",
     "/checkout",
+    "/pagamento-confirmado",
     "/subscription-required",
     "/responder",
     "/privacidade",

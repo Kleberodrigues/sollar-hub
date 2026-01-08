@@ -139,7 +139,7 @@ function LoadingFallback() {
   );
 }
 
-export default function CheckoutSuccessPage() {
+export default function PagamentoConfirmadoPage() {
   return (
     <Suspense fallback={<LoadingFallback />}>
       <SuccessContent />

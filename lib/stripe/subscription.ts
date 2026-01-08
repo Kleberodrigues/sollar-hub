@@ -205,7 +205,7 @@ export async function createPublicCheckoutSession({
           quantity: 1,
         },
       ],
-      success_url: `${appUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${appUrl}/pagamento-confirmado?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${appUrl}/checkout/${plan}`,
       subscription_data: {
         metadata: {
