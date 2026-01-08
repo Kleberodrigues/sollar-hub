@@ -361,7 +361,7 @@ export function PricingCards({ organizationId, currentPlan, autoCheckoutPlan }: 
                   >
                     Termos de Uso
                   </Link>{" "}
-                  da plataforma Sollar Insight Hub.
+                  da plataforma PsicoMapa.
                 </p>
               </div>
             </div>
