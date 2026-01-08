@@ -113,6 +113,8 @@ export function ActionPlanTab({
       if (result.success && result.actions) {
         setAiActions(result.actions);
         toast.success('Plano de ação gerado com sucesso!');
+      } else if (result.error === 'INSUFFICIENT_DATA') {
+        setError("Esta avaliação ainda não possui respostas suficientes para gerar um plano de ação. Aguarde os participantes responderem o questionário.");
       } else {
         setError(result.error || "Erro ao gerar plano de ação. Tente novamente.");
       }

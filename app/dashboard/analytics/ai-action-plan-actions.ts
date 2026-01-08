@@ -56,9 +56,18 @@ export async function generateAIActionPlan(
   }
 
   try {
-    // Buscar dados do assessment
+    // Buscar dados do assessment e verificar se há respostas
     const assessmentData = await getAssessmentContext(assessmentId);
     console.log('[AI Action Plan] Assessment data:', assessmentData);
+
+    // Verificar se há respostas suficientes para análise
+    if (assessmentData.responseCount === 0) {
+      console.log('[AI Action Plan] No responses found');
+      return {
+        success: false,
+        error: 'INSUFFICIENT_DATA',
+      };
+    }
 
     // Verificar se API key está configurada
     const openaiKey = process.env.OPENAI_API_KEY;
@@ -113,10 +122,18 @@ async function getAssessmentContext(assessmentId: string) {
     .eq('id', assessment?.organization_id)
     .single() as any);
 
+  // Contar respostas do assessment
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { count: responseCount } = await (supabase
+    .from('responses')
+    .select('id', { count: 'exact', head: true })
+    .eq('assessment_id', assessmentId) as any);
+
   return {
     assessmentTitle: assessment?.title || 'Assessment',
     organizationName: org?.name || 'Organização',
     employeeCount: org?.employee_count || 0,
+    responseCount: responseCount || 0,
   };
 }
 

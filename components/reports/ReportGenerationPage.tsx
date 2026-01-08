@@ -183,6 +183,8 @@ export function ReportGenerationPage({
         // Recarregar histórico
         const newHistory = await getReportHistory(assessmentId);
         setHistory(newHistory);
+      } else if (result.error === 'INSUFFICIENT_DATA') {
+        setError('Esta avaliação ainda não possui respostas suficientes para gerar um relatório. Aguarde os participantes responderem o questionário.');
       } else {
         setError(result.error || 'Erro ao gerar relatório');
       }

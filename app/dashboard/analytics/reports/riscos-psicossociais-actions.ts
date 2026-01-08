@@ -103,6 +103,14 @@ export async function generateRiscosPsicossociaisReport(
     };
   }
 
+  // Verificar se há respostas suficientes para análise
+  if (assessmentData.totalParticipants === 0) {
+    return {
+      success: false,
+      error: 'INSUFFICIENT_DATA',
+    };
+  }
+
   // Verificar mínimo de participantes para anonimato
   if (assessmentData.totalParticipants < 3) {
     return {

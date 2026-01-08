@@ -286,7 +286,7 @@ export async function generateClimaMensalReport(
     }
 
     if (climaData.totalParticipants === 0) {
-      return { success: false, error: 'Nenhuma resposta encontrada' };
+      return { success: false, error: 'INSUFFICIENT_DATA' };
     }
 
     // Calcular taxa de resposta (estimativa)

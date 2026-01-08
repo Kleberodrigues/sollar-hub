@@ -469,6 +469,14 @@ export async function generateExecutivoLiderancaReport(
 
     const uniqueParticipants = new Set(responses?.map((r: any) => r.anonymous_id) || []).size;
 
+    // Verificar se há respostas suficientes para análise
+    if (uniqueParticipants === 0) {
+      return {
+        success: false,
+        error: 'INSUFFICIENT_DATA',
+      };
+    }
+
     const { count: participantCount } = await (supabase
       .from('assessment_participants')
       .select('*', { count: 'exact', head: true })
