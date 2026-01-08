@@ -306,7 +306,7 @@ export function ParticipantImportDialog({
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-4xl">
         <DialogHeader>
           <DialogTitle>
             {step === 'upload' && 'Importar Participantes'}
@@ -439,17 +439,17 @@ export function ParticipantImportDialog({
 
             {/* Preview Table */}
             {parseResult.rows.length > 0 && (
-              <div className="border rounded-lg">
-                <ScrollArea className="h-56">
+              <div className="border rounded-lg overflow-x-auto">
+                <ScrollArea className="h-56 min-w-full">
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead className="w-8">#</TableHead>
-                        <TableHead>Email</TableHead>
-                        <TableHead>Nome</TableHead>
-                        <TableHead>Departamento</TableHead>
-                        <TableHead>Cargo</TableHead>
-                        <TableHead className="w-12">Status</TableHead>
+                        <TableHead className="w-10">#</TableHead>
+                        <TableHead className="min-w-[200px]">Email</TableHead>
+                        <TableHead className="min-w-[120px]">Nome</TableHead>
+                        <TableHead className="min-w-[100px]">Depto</TableHead>
+                        <TableHead className="min-w-[120px]">Cargo</TableHead>
+                        <TableHead className="w-16 text-center">Status</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -461,23 +461,23 @@ export function ParticipantImportDialog({
                           <TableCell className="text-muted-foreground text-xs">
                             {i + 1}
                           </TableCell>
-                          <TableCell className="font-mono text-xs">
+                          <TableCell className="font-mono text-xs truncate max-w-[200px]">
                             {row.email || '-'}
                           </TableCell>
-                          <TableCell className="text-sm">
+                          <TableCell className="text-sm truncate max-w-[120px]">
                             {row.name || '-'}
                           </TableCell>
-                          <TableCell className="text-sm text-muted-foreground">
+                          <TableCell className="text-sm text-muted-foreground truncate max-w-[100px]">
                             {row.department || '-'}
                           </TableCell>
-                          <TableCell className="text-sm text-muted-foreground">
+                          <TableCell className="text-sm text-muted-foreground truncate max-w-[120px]">
                             {row.role || '-'}
                           </TableCell>
-                          <TableCell>
+                          <TableCell className="text-center">
                             {row.valid ? (
-                              <CheckCircle className="h-4 w-4 text-green-500" />
+                              <CheckCircle className="h-4 w-4 text-green-500 mx-auto" />
                             ) : (
-                              <XCircle className="h-4 w-4 text-red-500" />
+                              <XCircle className="h-4 w-4 text-red-500 mx-auto" />
                             )}
                           </TableCell>
                         </TableRow>
