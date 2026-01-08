@@ -1,7 +1,7 @@
 /**
  * Stripe subscription management functions
  * Updated: 2025-12-14 - New plan structure (Base/Intermediario/Avancado)
- * Updated: 2026-01-08 - Fixed NEXT_PUBLIC_APP_URL for production
+ * Updated: 2026-01-08 - Fixed NEXT_PUBLIC_APP_URL for production (removed newline)
  */
 
 import {
