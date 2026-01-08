@@ -80,7 +80,7 @@ function parseCSV(content: string): ParseResult {
   const emailIdx = header.findIndex(h => h === 'email' || h === 'e-mail');
   const nameIdx = header.findIndex(h => h === 'nome' || h === 'name');
   const deptIdx = header.findIndex(h => h === 'departamento' || h === 'department' || h === 'depto');
-  const roleIdx = header.findIndex(h => h === 'cargo' || h === 'role' || h === 'funcao' || h === 'função');
+  const roleIdx = header.findIndex(h => h === 'lideranca' || h === 'liderança' || h === 'cargo' || h === 'role');
 
   if (emailIdx === -1) {
     errors.push('Coluna "email" não encontrada no cabeçalho');
@@ -373,7 +373,7 @@ export function ParticipantImportDialog({
                 <li>• <strong>email</strong> - Email do participante (obrigatório)</li>
                 <li>• <strong>nome</strong> - Nome completo (obrigatório)</li>
                 <li>• <strong>departamento</strong> - Departamento (opcional)</li>
-                <li>• <strong>cargo</strong> - Cargo/função (opcional)</li>
+                <li>• <strong>lideranca</strong> - Liderança ou Não Liderança (opcional)</li>
               </ul>
             </div>
 
@@ -439,7 +439,7 @@ export function ParticipantImportDialog({
                         <TableHead>Email</TableHead>
                         <TableHead>Nome</TableHead>
                         <TableHead>Departamento</TableHead>
-                        <TableHead>Cargo</TableHead>
+                        <TableHead>Liderança</TableHead>
                         <TableHead className="w-12">Status</TableHead>
                       </TableRow>
                     </TableHeader>

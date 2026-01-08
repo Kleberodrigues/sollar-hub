@@ -299,10 +299,10 @@ export async function generateParticipantTemplate(): Promise<{
   filename?: string;
   error?: string;
 }> {
-  const csvContent = `email,nome,departamento,cargo
-joao.silva@empresa.com,João Silva,TI,Desenvolvedor
-maria.santos@empresa.com,Maria Santos,RH,Analista
-pedro.oliveira@empresa.com,Pedro Oliveira,Financeiro,Gerente
+  const csvContent = `email,nome,departamento,lideranca
+joao.silva@empresa.com,João Silva,TI,Não Liderança
+maria.santos@empresa.com,Maria Santos,RH,Não Liderança
+pedro.oliveira@empresa.com,Pedro Oliveira,Financeiro,Liderança
 `;
 
   return {
