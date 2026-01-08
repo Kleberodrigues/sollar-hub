@@ -2,9 +2,10 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect, notFound } from "next/navigation";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Edit, BarChart3, Users } from "lucide-react";
+import { ArrowLeft, Edit, BarChart3 } from "lucide-react";
 import Link from "next/link";
 import { ParticipantImportDialog } from "@/components/assessments/ParticipantImportDialog";
+import { ParticipantsList } from "@/components/assessments/ParticipantsList";
 import { getParticipants } from "../participant-import-actions";
 import { getQuestionnaireSlug } from "@/lib/constants/questionnaire-templates";
 
@@ -248,52 +249,7 @@ export default async function AssessmentPage({
 
       {/* Participantes Importados */}
       {participantCount > 0 && (
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2">
-                <Users className="w-5 h-5" />
-                Participantes Importados
-              </CardTitle>
-              <span className="text-sm text-muted-foreground">
-                {participantCount} participante(s)
-              </span>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <div className="grid grid-cols-4 gap-4 text-xs font-medium text-muted-foreground uppercase border-b pb-2">
-                <span>Nome</span>
-                <span>Email</span>
-                <span>Departamento</span>
-                <span>Status</span>
-              </div>
-              {participants.slice(0, 10).map((p) => (
-                <div key={p.id} className="grid grid-cols-4 gap-4 text-sm py-2 border-b border-border/50">
-                  <span className="font-medium">{p.name}</span>
-                  <span className="text-muted-foreground">{p.email}</span>
-                  <span className="text-muted-foreground">{p.department || '-'}</span>
-                  <span className={`capitalize ${
-                    p.status === 'responded' ? 'text-green-600' :
-                    p.status === 'sent' ? 'text-blue-600' :
-                    p.status === 'bounced' ? 'text-red-600' :
-                    'text-yellow-600'
-                  }`}>
-                    {p.status === 'pending' ? 'Pendente' :
-                     p.status === 'sent' ? 'Enviado' :
-                     p.status === 'responded' ? 'Respondido' :
-                     p.status === 'bounced' ? 'Erro' : p.status}
-                  </span>
-                </div>
-              ))}
-              {participantCount > 10 && (
-                <p className="text-xs text-muted-foreground text-center py-2">
-                  E mais {participantCount - 10} participante(s)...
-                </p>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+        <ParticipantsList participants={participants} />
       )}
 
       {/* Ações rápidas */}

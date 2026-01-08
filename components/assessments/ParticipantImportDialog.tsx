@@ -67,7 +67,9 @@ interface ParseResult {
 }
 
 function parseCSV(content: string): ParseResult {
-  const lines = content.split(/\r?\n/).filter(line => line.trim());
+  // Remove BOM (Byte Order Mark) se presente
+  const cleanContent = content.replace(/^\uFEFF/, '');
+  const lines = cleanContent.split(/\r?\n/).filter(line => line.trim());
   const rows: ParsedRow[] = [];
   const errors: string[] = [];
 
@@ -181,7 +183,10 @@ export function ParticipantImportDialog({
     setFile(uploadedFile);
 
     try {
-      const content = await uploadedFile.text();
+      // Ler arquivo com UTF-8 explícito
+      const arrayBuffer = await uploadedFile.arrayBuffer();
+      const decoder = new TextDecoder('utf-8');
+      const content = decoder.decode(arrayBuffer);
       const result = parseCSV(content);
       setParseResult(result);
       setStep('preview');
