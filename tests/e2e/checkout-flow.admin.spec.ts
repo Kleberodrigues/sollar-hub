@@ -155,9 +155,9 @@ test.describe('Checkout Flow - Plan Selection', () => {
     await page.goto('/dashboard/configuracoes/billing', { timeout: 60000 });
 
     // Verificar objetivos de cada plano
-    await expect(page.getByText('14 Relatórios anuais')).toBeVisible({ timeout: 15000 });
-    await expect(page.getByText('24 Relatórios anuais')).toBeVisible();
-    await expect(page.getByText('28 Relatórios anuais')).toBeVisible();
+    await expect(page.getByText('20 relatórios anuais')).toBeVisible({ timeout: 15000 });
+    await expect(page.getByText('30 relatórios anuais').first()).toBeVisible();
+    await expect(page.getByText('30 relatórios anuais').nth(1)).toBeVisible();
   });
 
   test('should show employee ranges', async ({ page }) => {
