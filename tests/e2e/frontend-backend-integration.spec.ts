@@ -210,10 +210,12 @@ test.describe('Performance', () => {
     expect(loadTime).toBeLessThan(5000);
     console.log(`Landing page load time: ${loadTime}ms`);
   });
+});
+
+test.describe('Performance - Authenticated', () => {
+  test.use({ storageState: 'tests/e2e/.auth/admin.json' });
 
   test('dashboard loads within acceptable time', async ({ page }) => {
-    test.use({ storageState: 'tests/e2e/.auth/admin.json' });
-
     const startTime = Date.now();
     await page.goto(`${BASE_URL}/dashboard`);
     await page.waitForLoadState('domcontentloaded');
@@ -275,18 +277,21 @@ test.describe('Responsive Design', () => {
     // Content should be visible
     await expect(page.locator('h1').first()).toBeVisible();
   });
+});
+
+test.describe('Responsive Design - Authenticated', () => {
+  test.use({ storageState: 'tests/e2e/.auth/admin.json' });
 
   test('dashboard is responsive on mobile', async ({ page }) => {
-    test.use({ storageState: 'tests/e2e/.auth/admin.json' });
-
     await page.setViewportSize({ width: 375, height: 667 });
     await page.goto(`${BASE_URL}/dashboard`);
 
     await page.waitForLoadState('networkidle');
 
-    // Dashboard should load
+    // Dashboard should load without server errors
     const pageContent = await page.content();
-    expect(pageContent).not.toContain('500');
+    expect(pageContent).not.toContain('Internal Server Error');
+    expect(pageContent).not.toContain('500 Error');
   });
 });
 

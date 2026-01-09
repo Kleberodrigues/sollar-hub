@@ -9,6 +9,9 @@ import { test, expect } from '@playwright/test';
 const PROD_URL = 'https://psicomapa.cloud';
 
 test.describe('Production Report Download Test', () => {
+  // Skip this entire suite in CI - it tests production server
+  test.skip(!!process.env.CI, 'Production tests skipped in CI');
+
   test.setTimeout(120000); // 2 minutes timeout
 
   test('should login and test report functionality', async ({ page }) => {
