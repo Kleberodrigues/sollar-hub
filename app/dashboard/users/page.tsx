@@ -28,7 +28,13 @@ export default async function UsersPage() {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const profileData = profile as any;
-  if (!profileData || (profileData.role !== "responsavel_empresa" && !profileData.is_super_admin)) {
+  // Permitir acesso para responsavel_empresa, membro e super_admin
+  const canAccessUsersPage = profileData && (
+    profileData.role === "responsavel_empresa" ||
+    profileData.role === "membro" ||
+    profileData.is_super_admin
+  );
+  if (!canAccessUsersPage) {
     redirect("/dashboard");
   }
 
@@ -62,11 +68,14 @@ export default async function UsersPage() {
   const memberCount = users.filter((u: { role: string }) => u.role === "membro").length;
   const managerCount = users.filter((u: { role: string }) => u.role === "responsavel_empresa").length;
 
+  // Apenas responsavel_empresa e super_admin podem convidar novos usuários
+  const canInviteUsers = profileData.role === "responsavel_empresa" || profileData.is_super_admin;
+
   return (
     <UsersPageContent
       users={users}
       organizationName={organizationName}
-      inviteDialog={<InviteUserDialog memberCount={memberCount} managerCount={managerCount} currentPlan={currentPlan} />}
+      inviteDialog={canInviteUsers ? <InviteUserDialog memberCount={memberCount} managerCount={managerCount} currentPlan={currentPlan} /> : null}
       userList={<UserList users={users} />}
     />
   );

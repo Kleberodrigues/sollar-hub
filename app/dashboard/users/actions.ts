@@ -47,13 +47,15 @@ export async function listOrganizationUsers() {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const profile = currentProfile as any;
+  // Permitir acesso para responsavel_empresa, membro (pode gerenciar) e super_admin
   const isAuthorized = profile && (
     profile.role === "responsavel_empresa" ||
+    profile.role === "membro" ||
     profile.role === "admin" ||
     profile.is_super_admin
   );
   if (!isAuthorized) {
-    return { error: "Apenas responsáveis podem gerenciar usuários" };
+    return { error: "Você não tem permissão para gerenciar usuários" };
   }
 
   // Listar usuários da organização (RLS garante isolamento)
@@ -319,13 +321,15 @@ export async function updateUserRole(userId: string, newRole: UserRole) {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const roleProfile = currentProfile as any;
+  // Permitir que membro também possa alterar roles (gerenciar)
   const canUpdateRole = roleProfile && (
     roleProfile.role === "responsavel_empresa" ||
+    roleProfile.role === "membro" ||
     roleProfile.role === "admin" ||
     roleProfile.is_super_admin
   );
   if (!canUpdateRole) {
-    return { error: "Apenas responsáveis podem alterar roles" };
+    return { error: "Você não tem permissão para alterar roles" };
   }
 
   // Não permitir alterar próprio role
@@ -430,13 +434,15 @@ export async function deactivateUser(userId: string) {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const deactivateProfile = currentProfile as any;
+  // Permitir que membro também possa desativar usuários
   const canDeactivate = deactivateProfile && (
     deactivateProfile.role === "responsavel_empresa" ||
+    deactivateProfile.role === "membro" ||
     deactivateProfile.role === "admin" ||
     deactivateProfile.is_super_admin
   );
   if (!canDeactivate) {
-    return { error: "Apenas responsáveis podem desativar usuários" };
+    return { error: "Você não tem permissão para desativar usuários" };
   }
 
   // Não permitir desativar a si mesmo
@@ -501,13 +507,15 @@ export async function reactivateUser(userId: string) {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const reactivateProfile = currentProfile as any;
+  // Permitir que membro também possa reativar usuários
   const canReactivate = reactivateProfile && (
     reactivateProfile.role === "responsavel_empresa" ||
+    reactivateProfile.role === "membro" ||
     reactivateProfile.role === "admin" ||
     reactivateProfile.is_super_admin
   );
   if (!canReactivate) {
-    return { error: "Apenas responsáveis podem reativar usuários" };
+    return { error: "Você não tem permissão para reativar usuários" };
   }
 
   try {

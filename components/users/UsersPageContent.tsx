@@ -28,7 +28,7 @@ interface User {
 interface UsersPageContentProps {
   users: User[];
   organizationName: string;
-  inviteDialog: ReactNode;
+  inviteDialog: ReactNode | null;
   userList: ReactNode;
 }
 
@@ -99,9 +99,11 @@ export function UsersPageContent({
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          {inviteDialog}
-        </div>
+        {inviteDialog && (
+          <div className="flex items-center gap-2">
+            {inviteDialog}
+          </div>
+        )}
       </motion.div>
 
       {/* Stats Cards */}

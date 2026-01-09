@@ -193,8 +193,8 @@ export function InviteUserDialog({
                   </SelectContent>
                 </Select>
                 <p className="text-xs text-text-muted">
-                  <strong>Responsável:</strong> Acesso completo, gerencia usuários e diagnósticos |{" "}
-                  <strong>Membro:</strong> Acesso limitado, visualiza relatórios
+                  <strong>Responsável:</strong> Acesso completo, convida usuários e gerencia diagnósticos |{" "}
+                  <strong>Membro:</strong> Gerencia usuários e visualiza relatórios
                 </p>
                 <div className="flex items-center justify-between text-xs text-text-muted">
                   <span>Membros da equipe: {totalMembers}/{maxTeamMembers === Infinity ? '∞' : maxTeamMembers}</span>
