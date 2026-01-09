@@ -344,17 +344,23 @@ async function handleNewUserSignup(session: Stripe.Checkout.Session) {
     const organizationId = (orgData as { id: string }).id;
     console.log(`[Stripe Webhook] Organization created: ${organizationId}`);
 
-    // 3. Update user profile with organization
+    // 3. Update or create user profile with organization
+    // Using upsert to handle both cases: profile exists (from trigger) or doesn't exist
     const { error: profileError } = await supabaseAdmin
       .from("user_profiles")
-      .update({
+      .upsert({
+        id: authData.user.id,
+        full_name: fullName,
         organization_id: organizationId,
         role: "responsavel_empresa",
-      })
-      .eq("id", authData.user.id);
+      }, {
+        onConflict: 'id'
+      });
 
     if (profileError) {
-      console.error("[Stripe Webhook] Failed to update profile:", profileError.message);
+      console.error("[Stripe Webhook] Failed to upsert profile:", profileError.message);
+    } else {
+      console.log(`[Stripe Webhook] Profile upserted for user ${authData.user.id}`);
     }
 
     // 4. Create billing customer record
