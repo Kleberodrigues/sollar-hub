@@ -1,8 +1,14 @@
 import { chromium } from 'playwright';
 
-const EMAIL = '***REMOVED_EMAIL***';
-const PASSWORD = '***REMOVED***';
+// Credentials from environment variables
+const EMAIL = process.env.PROD_TEST_EMAIL || '';
+const PASSWORD = process.env.PROD_TEST_PASSWORD || '';
 const BASE_URL = 'https://psicomapa.cloud';
+
+if (!EMAIL || !PASSWORD) {
+  console.error('❌ Error: PROD_TEST_EMAIL and PROD_TEST_PASSWORD must be set');
+  process.exit(1);
+}
 
 async function main() {
   console.log('🚀 Iniciando Playwright...');

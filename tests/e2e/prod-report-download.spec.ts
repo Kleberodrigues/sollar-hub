@@ -7,10 +7,13 @@
 import { test, expect } from '@playwright/test';
 
 const PROD_URL = 'https://psicomapa.cloud';
+// Credentials must be set via environment variables
+const PROD_EMAIL = process.env.PROD_TEST_EMAIL || '';
+const PROD_PASSWORD = process.env.PROD_TEST_PASSWORD || '';
 
 test.describe('Production Report Download Test', () => {
-  // Skip this entire suite in CI - it tests production server
-  test.skip(!!process.env.CI, 'Production tests skipped in CI');
+  // Skip this entire suite in CI or if credentials not set
+  test.skip(!!process.env.CI || !PROD_EMAIL || !PROD_PASSWORD, 'Production tests skipped - requires credentials');
 
   test.setTimeout(120000); // 2 minutes timeout
 
@@ -22,9 +25,9 @@ test.describe('Production Report Download Test', () => {
     // Check login page loaded
     await expect(page.locator('input[type="email"]')).toBeVisible({ timeout: 10000 });
 
-    // Login with production credentials
-    await page.fill('input[type="email"]', '***REMOVED_EMAIL***');
-    await page.fill('input[type="password"]', '***REMOVED***');
+    // Login with production credentials from env vars
+    await page.fill('input[type="email"]', PROD_EMAIL);
+    await page.fill('input[type="password"]', PROD_PASSWORD);
     await page.click('button[type="submit"]');
 
     // Wait for redirect to dashboard
@@ -189,8 +192,8 @@ test.describe('Production Report Download Test', () => {
 
     // Navigate to analytics
     await page.goto(`${PROD_URL}/login`);
-    await page.fill('input[type="email"]', '***REMOVED_EMAIL***');
-    await page.fill('input[type="password"]', '***REMOVED***');
+    await page.fill('input[type="email"]', PROD_EMAIL);
+    await page.fill('input[type="password"]', PROD_PASSWORD);
     await page.click('button[type="submit"]');
     await page.waitForURL(/\/dashboard/, { timeout: 30000 });
 
