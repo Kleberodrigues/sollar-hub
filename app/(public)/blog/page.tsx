@@ -35,7 +35,7 @@ export default function BlogPage() {
       {/* Hero Section with Featured Article */}
       <section className="relative overflow-hidden">
         {/* Background Pattern */}
-        <div className="absolute inset-0 bg-gradient-to-br from-pm-olive/5 via-transparent to-pm-terracotta/5" />
+        <div className="absolute inset-0 bg-gradient-to-br from-pm-olive/5 via-transparent to-pm-terracotta/5 pointer-events-none" />
 
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
           <SlideUp className="text-center max-w-3xl mx-auto mb-12">
