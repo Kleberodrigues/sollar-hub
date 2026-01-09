@@ -17,6 +17,7 @@ import {
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { dispatchEvent } from "@/lib/events";
+import { sendWelcomeEmail } from "@/lib/email/resend";
 
 // Departamentos padrão criados automaticamente para novas organizações
 const DEFAULT_DEPARTMENTS = [
@@ -400,7 +401,7 @@ async function handleNewUserSignup(session: Stripe.Checkout.Session) {
         }
       });
 
-    // 7. Generate password reset link and send email
+    // 7. Generate password reset link and send welcome email via Resend
     const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
       type: "recovery",
       email: email,
@@ -411,9 +412,23 @@ async function handleNewUserSignup(session: Stripe.Checkout.Session) {
 
     if (linkError) {
       console.error("[Stripe Webhook] Failed to generate password link:", linkError.message);
-    } else {
-      console.log("[Stripe Webhook] Password setup link generated successfully");
-      // The email is sent automatically by Supabase
+    } else if (linkData?.properties?.action_link) {
+      console.log("[Stripe Webhook] Password setup link generated, sending welcome email...");
+
+      // Send custom welcome email via Resend
+      const emailResult = await sendWelcomeEmail({
+        to: email,
+        name: fullName,
+        companyName: companyName,
+        plan: plan,
+        passwordSetupUrl: linkData.properties.action_link,
+      });
+
+      if (emailResult.success) {
+        console.log(`[Stripe Webhook] Welcome email sent successfully to ${email}`);
+      } else {
+        console.error("[Stripe Webhook] Failed to send welcome email:", emailResult.error);
+      }
     }
 
     // 8. Dispatch event for new signup
