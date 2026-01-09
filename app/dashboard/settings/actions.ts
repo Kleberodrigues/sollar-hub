@@ -126,8 +126,9 @@ export async function updateOrganization(data: {
     return { success: false, error: "Organization not found" };
   }
 
-  if (profile.role !== "admin") {
-    return { success: false, error: "Only admins can update organization settings" };
+  const allowedRoles = ["admin", "responsavel_empresa"];
+  if (!allowedRoles.includes(profile.role)) {
+    return { success: false, error: "Apenas administradores podem atualizar configurações da organização" };
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

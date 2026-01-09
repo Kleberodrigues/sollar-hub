@@ -15,7 +15,7 @@ export default async function SettingsPage() {
     redirect("/login");
   }
 
-  // Verificar se e admin
+  // Verificar se tem permissão (admin ou responsavel_empresa)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: profile } = await (supabase
     .from("user_profiles")
@@ -24,7 +24,8 @@ export default async function SettingsPage() {
     .single() as any);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if (!profile || (profile as any).role !== "admin") {
+  const allowedRoles = ["admin", "responsavel_empresa"];
+  if (!profile || !allowedRoles.includes((profile as any).role)) {
     redirect("/dashboard");
   }
 
