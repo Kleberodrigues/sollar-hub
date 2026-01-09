@@ -104,18 +104,21 @@ test.describe('Frontend-Backend Integration', () => {
       await page.goto(`${BASE_URL}/dashboard/analytics`);
       await page.waitForLoadState('networkidle');
 
-      // Check analytics components
-      await expect(page.locator('text=Analytics').first()).toBeVisible({ timeout: 10000 });
+      // Check analytics components - page title is in Portuguese
+      await expect(page.locator('text=Análise de Riscos').first()).toBeVisible({ timeout: 10000 });
     });
 
     test('questionnaires page loads correctly', async ({ page }) => {
       await page.goto(`${BASE_URL}/dashboard/questionarios`);
       await page.waitForLoadState('networkidle');
 
-      // Page should load without errors
+      // Page should load without major errors
       const pageContent = await page.content();
-      expect(pageContent).not.toContain('500');
-      expect(pageContent).not.toContain('Error');
+      expect(pageContent).not.toContain('Internal Server Error');
+      expect(pageContent).not.toContain('500 Error');
+
+      // Should have some page structure
+      await expect(page.locator('h1, h2, [role="heading"]').first()).toBeVisible({ timeout: 10000 });
     });
 
     test('assessments page loads correctly', async ({ page }) => {

@@ -15,10 +15,10 @@ test.describe("Checkout Flow", () => {
     await page.locator("#planos").scrollIntoViewIfNeeded();
     await page.waitForTimeout(500);
 
-    // Check all 3 plan buttons exist with correct links
-    const baseLink = page.locator('a[href="/register?plan=base"]');
-    const intermediarioLink = page.locator('a[href="/register?plan=intermediario"]');
-    const avancadoLink = page.locator('a[href="/register?plan=avancado"]');
+    // Check all 3 plan buttons exist with correct links (checkout flow)
+    const baseLink = page.locator('a[href="/checkout/base"]');
+    const intermediarioLink = page.locator('a[href="/checkout/intermediario"]');
+    const avancadoLink = page.locator('a[href="/checkout/avancado"]');
 
     await expect(baseLink).toBeVisible();
     await expect(intermediarioLink).toBeVisible();
@@ -30,45 +30,43 @@ test.describe("Checkout Flow", () => {
     await expect(avancadoLink).toContainText("Assinar Avançado");
   });
 
-  test("2. Register page shows selected plan (Base)", async ({ page }) => {
-    await page.goto("/register?plan=base");
+  test("2. Checkout page shows selected plan (Base)", async ({ page }) => {
+    await page.goto("/checkout/base");
 
     // Should show the selected plan
     await expect(page.getByText("Plano Base")).toBeVisible();
-    await expect(page.getByText("R$ 3.970/ano")).toBeVisible();
-    await expect(page.getByText("Selecionado", { exact: true })).toBeVisible();
+    await expect(page.getByText("R$ 3.970")).toBeVisible();
 
-    // Form should be visible
+    // Form should be visible (pre-checkout form)
     await expect(page.getByLabel(/Nome Completo/i)).toBeVisible();
     await expect(page.getByLabel(/Email/i)).toBeVisible();
-    await expect(page.locator('input[name="password"]')).toBeVisible();
     await expect(page.getByLabel(/Nome da Empresa/i)).toBeVisible();
+
+    // Terms checkboxes should be visible
+    await expect(page.getByLabel(/Termos de Uso/i)).toBeVisible();
+    await expect(page.getByLabel(/Privacidade/i)).toBeVisible();
   });
 
-  test("3. Register page shows selected plan (Intermediário)", async ({ page }) => {
-    await page.goto("/register?plan=intermediario");
+  test("3. Checkout page shows selected plan (Intermediário)", async ({ page }) => {
+    await page.goto("/checkout/intermediario");
 
     await expect(page.getByText("Plano Intermediário")).toBeVisible();
-    await expect(page.getByText("R$ 4.970/ano")).toBeVisible();
-    await expect(page.getByText("Selecionado", { exact: true })).toBeVisible();
+    await expect(page.getByText("R$ 4.970")).toBeVisible();
   });
 
-  test("4. Register page shows selected plan (Avançado)", async ({ page }) => {
-    await page.goto("/register?plan=avancado");
+  test("4. Checkout page shows selected plan (Avançado)", async ({ page }) => {
+    await page.goto("/checkout/avancado");
 
     await expect(page.getByText("Plano Avançado")).toBeVisible();
-    await expect(page.getByText("R$ 5.970/ano")).toBeVisible();
-    await expect(page.getByText("Selecionado", { exact: true })).toBeVisible();
+    await expect(page.getByText("R$ 5.970")).toBeVisible();
   });
 
-  test("5. Register without plan shows generic message", async ({ page }) => {
-    await page.goto("/register");
+  test("5. Invalid plan shows error message", async ({ page }) => {
+    await page.goto("/checkout/invalid-plan");
 
-    // Should NOT show plan selection
-    await expect(page.getByText("Selecionado")).not.toBeVisible();
-
-    // Should show generic message
-    await expect(page.getByText("Crie sua conta para começar")).toBeVisible();
+    // Should show error for invalid plan
+    await expect(page.getByText(/Plano inválido/i)).toBeVisible();
+    await expect(page.getByText(/Ver planos disponíveis/i)).toBeVisible();
   });
 
   test("6. Billing page shows pricing cards for logged in admin", async ({ page }) => {
