@@ -523,8 +523,23 @@ describe('Report Validation Logic', () => {
     error?: string;
   }
 
+  interface AssessmentDataInput {
+    assessmentId: string;
+    assessmentTitle: string;
+    organizationId: string;
+    organizationName: string;
+    questionnaireType: 'nr1' | 'clima';
+    startDate: string;
+    endDate: string;
+    totalParticipants: number;
+    totalResponses: number;
+    responseRate: number;
+    isClosed: boolean;
+    closureReason: 'expired' | 'manual' | 'completed';
+  }
+
   function validateReportGeneration(
-    assessmentData: typeof mockAssessmentData,
+    assessmentData: AssessmentDataInput,
     reportType: 'riscos_psicossociais' | 'correlacao' | 'clima_mensal' | 'executivo_lideranca' | 'plano_acao'
   ): ValidationResult {
     // Check for no data
