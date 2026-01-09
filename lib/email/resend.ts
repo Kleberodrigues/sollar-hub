@@ -9,7 +9,8 @@ const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
   : null;
 
-const FROM_EMAIL = "PsicoMapa <noreply@psicomapa.cloud>";
+// TODO: Verificar domínio psicomapa.cloud no Resend para usar noreply@psicomapa.cloud
+const FROM_EMAIL = "PsicoMapa <onboarding@resend.dev>";
 const REPLY_TO = "suporte@psicomapa.cloud";
 
 interface SendEmailParams {
