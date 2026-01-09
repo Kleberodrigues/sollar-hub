@@ -14,6 +14,7 @@ export {
   saveReport,
   getReportHistory,
   getReportById,
+  getReportForDownload,
   getResponsesForAnalysis,
   getOpenResponses,
   calculateCategoryRiskScores,

@@ -32,6 +32,7 @@ import {
   generateExecutivoLiderancaReport,
   generateCorrelacaoReport,
   getReportHistory,
+  getReportForDownload,
   type AssessmentClosureCheck,
   type GeneratedReport,
   type ReportType,
@@ -120,6 +121,7 @@ export function ReportGenerationPage({
 }: ReportGenerationPageProps) {
   const [closureStatus, setClosureStatus] = useState<AssessmentClosureCheck | null>(null);
   const [generating, setGenerating] = useState<string | null>(null);
+  const [downloading, setDownloading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [history, setHistory] = useState<GeneratedReport[]>([]);
@@ -192,6 +194,48 @@ export function ReportGenerationPage({
       setError(err instanceof Error ? err.message : 'Erro desconhecido');
     } finally {
       setGenerating(null);
+    }
+  };
+
+  // Download relatório
+  const handleDownloadReport = async (reportId: string, reportTitle: string) => {
+    setDownloading(reportId);
+    setError(null);
+
+    try {
+      const result = await getReportForDownload(reportId);
+
+      if (!result.success || !result.data) {
+        setError(result.error || 'Erro ao baixar relatório');
+        return;
+      }
+
+      // Format report content for download
+      const reportContent = {
+        titulo: result.data.title,
+        tipo: result.data.reportType,
+        geradoEm: new Date(result.data.createdAt).toLocaleString('pt-BR'),
+        conteudo: result.data.content,
+      };
+
+      // Create downloadable JSON file
+      const blob = new Blob([JSON.stringify(reportContent, null, 2)], {
+        type: 'application/json',
+      });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${reportTitle.replace(/[^a-zA-Z0-9]/g, '_')}_${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      setSuccess('Relatório baixado com sucesso!');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao baixar relatório');
+    } finally {
+      setDownloading(null);
     }
   };
 
@@ -368,8 +412,17 @@ export function ReportGenerationPage({
                       {report.status === 'completed' ? 'Concluído' : report.status}
                     </Badge>
                     {report.status === 'completed' && (
-                      <Button variant="outline" size="sm">
-                        <Download className="w-4 h-4" />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleDownloadReport(report.id, report.title)}
+                        disabled={downloading === report.id}
+                      >
+                        {downloading === report.id ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Download className="w-4 h-4" />
+                        )}
                       </Button>
                     )}
                   </div>

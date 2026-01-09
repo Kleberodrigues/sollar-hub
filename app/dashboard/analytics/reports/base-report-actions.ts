@@ -559,6 +559,73 @@ export async function calculateCategoryRiskScores(
 // Verificar Permissões
 // ==========================================
 
+// ==========================================
+// Download Report Content
+// ==========================================
+
+export async function getReportForDownload(
+  reportId: string
+): Promise<{
+  success: boolean;
+  error?: string;
+  data?: {
+    title: string;
+    content: ReportContent;
+    reportType: ReportType;
+    createdAt: string;
+  };
+}> {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { success: false, error: 'Usuário não autenticado' };
+  }
+
+  // Get report with organization check
+  const { data: report, error } = await (supabase
+    .from('generated_reports')
+    .select('id, title, content, report_type, created_at, organization_id')
+    .eq('id', reportId)
+    .single() as any);
+
+  if (error || !report) {
+    return { success: false, error: 'Relatório não encontrado' };
+  }
+
+  // Verify user has access to this organization
+  const { data: profile } = await (supabase
+    .from('user_profiles')
+    .select('organization_id, is_super_admin')
+    .eq('id', user.id)
+    .single() as any);
+
+  if (!profile) {
+    return { success: false, error: 'Perfil não encontrado' };
+  }
+
+  if (!profile.is_super_admin && profile.organization_id !== report.organization_id) {
+    return { success: false, error: 'Sem acesso a este relatório' };
+  }
+
+  return {
+    success: true,
+    data: {
+      title: report.title,
+      content: report.content as ReportContent,
+      reportType: report.report_type as ReportType,
+      createdAt: report.created_at,
+    },
+  };
+}
+
+// ==========================================
+// Verificar Permissões
+// ==========================================
+
 export async function checkReportPermissions(
   assessmentId: string
 ): Promise<{ allowed: boolean; reason?: string }> {
