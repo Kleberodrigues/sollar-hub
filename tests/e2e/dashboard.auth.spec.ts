@@ -90,7 +90,8 @@ test.describe('Dashboard - Authenticated User', () => {
 
   test('should navigate to analytics page', async ({ page }) => {
     // Clicar no link de analytics (disponível para admin, manager, viewer - não member)
-    const analyticsLink = page.getByRole('link', { name: /analytics|análise|relatório|riscos/i });
+    // Use .first() to avoid strict mode violation when multiple matches exist
+    const analyticsLink = page.getByRole('link', { name: /analytics|análise|relatório|riscos/i }).first();
     const isVisible = await analyticsLink.isVisible().catch(() => false);
 
     console.log(`Analytics link visible: ${isVisible}`);
