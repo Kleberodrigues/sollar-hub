@@ -181,8 +181,45 @@ export async function changePassword(data: {
 
   if (updateError) {
     console.error("[changePassword] Error:", updateError);
-    return { success: false, error: updateError.message };
+    // Traduzir mensagens de erro do Supabase para português
+    const translatedError = translatePasswordError(updateError.message);
+    return { success: false, error: translatedError };
   }
 
   return { success: true };
+}
+
+/**
+ * Traduz mensagens de erro de senha do Supabase para português
+ */
+function translatePasswordError(message: string): string {
+  // Mensagem de complexidade de senha
+  if (message.includes("Password should contain")) {
+    return "A senha deve conter pelo menos: uma letra minúscula, uma letra maiúscula, um número e um caractere especial (!@#$%^&*).";
+  }
+
+  // Senha muito curta
+  if (message.includes("at least") && message.includes("characters")) {
+    const match = message.match(/at least (\d+) characters/);
+    const minLength = match ? match[1] : "8";
+    return `A senha deve ter pelo menos ${minLength} caracteres.`;
+  }
+
+  // Senha muito fraca
+  if (message.toLowerCase().includes("weak") || message.toLowerCase().includes("strength")) {
+    return "A senha é muito fraca. Use uma combinação de letras, números e caracteres especiais.";
+  }
+
+  // Senha igual à anterior
+  if (message.toLowerCase().includes("same") || message.toLowerCase().includes("previous")) {
+    return "A nova senha não pode ser igual à senha anterior.";
+  }
+
+  // Outras mensagens comuns
+  if (message.toLowerCase().includes("invalid")) {
+    return "Senha inválida. Verifique os requisitos de segurança.";
+  }
+
+  // Se não reconhecer, retornar uma mensagem genérica
+  return "Erro ao alterar senha. Verifique se a nova senha atende aos requisitos de segurança.";
 }
