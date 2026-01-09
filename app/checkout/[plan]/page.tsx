@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter, useParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,7 +14,7 @@ import {
   CardDescription,
   CardContent,
 } from "@/components/ui/card";
-import { Building, Building2, Factory, Check, Loader2, CreditCard, Shield, ArrowLeft } from "lucide-react";
+import { Building, Building2, Factory, Loader2, CreditCard, Shield, ArrowLeft } from "lucide-react";
 import { PLAN_INFO, isValidPlan, preCheckoutSchema } from "@/lib/validations/checkout";
 
 // Plan icons mapping
@@ -31,11 +31,16 @@ const planColors = {
 };
 
 export default function PreCheckoutPage() {
-  const router = useRouter();
   const params = useParams();
   const planId = params.plan as string;
 
-  // Validate plan
+  // Hooks must be called before any conditional returns
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
+
+  // Validate plan - render invalid state if needed
   if (!isValidPlan(planId)) {
     return (
       <div className="min-h-screen bg-bg-sage flex items-center justify-center px-6 py-12">
@@ -55,11 +60,6 @@ export default function PreCheckoutPage() {
   const plan = PLAN_INFO[planId];
   const Icon = planIcons[planId];
   const colorClasses = planColors[planId];
-
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [termsAccepted, setTermsAccepted] = useState(false);
-  const [privacyAccepted, setPrivacyAccepted] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
