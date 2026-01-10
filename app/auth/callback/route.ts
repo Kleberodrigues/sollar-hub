@@ -18,9 +18,13 @@ export async function GET(request: NextRequest) {
   const type = searchParams.get("type");
 
   // Determine redirect destination based on type
-  // For password recovery, always go to reset-password page
-  let next = searchParams.get("next") ?? "/dashboard";
-  if (type === "recovery") {
+  // Respect the 'next' parameter if provided (e.g., from webhook redirectTo)
+  // Only default to /reset-password if no specific redirect was requested
+  const explicitNext = searchParams.get("next");
+  let next = explicitNext ?? "/dashboard";
+
+  if (type === "recovery" && !explicitNext) {
+    // Default for recovery without explicit redirect (e.g., forgot password flow)
     next = "/reset-password";
   }
 

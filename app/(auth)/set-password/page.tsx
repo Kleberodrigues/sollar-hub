@@ -224,6 +224,12 @@ function SetPasswordForm() {
             {error && (
               <div className="p-3 bg-risk-high-bg border border-risk-high-border rounded-md">
                 <p className="text-sm text-risk-high">{error}</p>
+                {error.includes("inválido") || error.includes("expirado") ? (
+                  <p className="mt-2 text-sm text-text-secondary">
+                    Se você acabou de se cadastrar, verifique seu email para um novo link.
+                    Ou <Link href="/forgot-password" className="text-pm-green-dark hover:underline font-medium">solicite um novo link aqui</Link>.
+                  </p>
+                ) : null}
               </div>
             )}
 

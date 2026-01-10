@@ -235,6 +235,14 @@ function ResetPasswordForm() {
             {error && (
               <div className="p-3 bg-risk-high-bg border border-risk-high-border rounded-md">
                 <p className="text-sm text-risk-high">{error}</p>
+                {error.includes("inválido") || error.includes("expirado") ? (
+                  <Link
+                    href="/forgot-password"
+                    className="block mt-2 text-sm text-pm-green-dark hover:underline font-medium"
+                  >
+                    → Solicitar novo link de recuperação
+                  </Link>
+                ) : null}
               </div>
             )}
 
