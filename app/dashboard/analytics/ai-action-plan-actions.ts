@@ -349,6 +349,14 @@ function mapCategoryToKey(category: string): string {
     'Violência, Assédio e Medo de Repressão': 'violence_harassment',
     'Violência e Assédio': 'violence_harassment',
     'violence_harassment': 'violence_harassment',
+
+    'Âncoras (Satisfação, Saúde, Permanência)': 'anchors',
+    'Âncoras': 'anchors',
+    'Satisfação e Engajamento': 'anchors',
+    'anchors': 'anchors',
+
+    'Sugestões': 'suggestions',
+    'suggestions': 'suggestions',
   };
 
   return mapping[category] || category;
@@ -441,6 +449,28 @@ function generateTemplateActionPlan(highRiskCategories: HighRiskCategory[]): AIA
         timeline: '1-2 semanas',
         responsible: 'Compliance + RH',
         expectedImpact: '100% de cobertura em casos reportados',
+      },
+    ],
+    anchors: [
+      {
+        id: 't8',
+        priority: 'medium',
+        category: 'Satisfação e Engajamento',
+        title: 'Programa de reconhecimento',
+        description: 'Implementar programa de reconhecimento para valorizar contribuições dos colaboradores.',
+        timeline: '4-6 semanas',
+        responsible: 'RH + Liderança',
+        expectedImpact: 'Aumento de 20% na satisfação geral',
+      },
+      {
+        id: 't9',
+        priority: 'medium',
+        category: 'Satisfação e Engajamento',
+        title: 'Pesquisa de clima aprofundada',
+        description: 'Realizar entrevistas ou grupos focais para entender fatores de insatisfação.',
+        timeline: '2-3 semanas',
+        responsible: 'RH',
+        expectedImpact: 'Identificação de 80% das causas de insatisfação',
       },
     ],
   };

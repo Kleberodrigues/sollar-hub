@@ -398,10 +398,12 @@ export function AnalyticsDashboardContent({
       });
   }, [questionDistributions]);
 
+  // Include both high AND medium risk categories for action planning
+  // High risk requires immediate action, medium risk warrants attention
   const highRiskCategories = useMemo(() => {
     return analytics.responsesByCategory
-      .filter(c => c.riskLevel === "high")
-      .map(c => ({ category: c.category, score: c.averageScore }));
+      .filter(c => c.riskLevel === "high" || c.riskLevel === "medium")
+      .map(c => ({ category: c.category, score: c.averageScore, riskLevel: c.riskLevel }));
   }, [analytics.responsesByCategory]);
 
   const categories = ALL_CATEGORIES;
