@@ -28,10 +28,10 @@ export default async function UsersPage() {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const profileData = profile as any;
-  // Permitir acesso para responsavel_empresa, membro e super_admin
+  // Permitir acesso para admin, responsavel_empresa, membro e super_admin
+  const allowedRoles = ["admin", "responsavel_empresa", "membro"];
   const canAccessUsersPage = profileData && (
-    profileData.role === "responsavel_empresa" ||
-    profileData.role === "membro" ||
+    allowedRoles.includes(profileData.role) ||
     profileData.is_super_admin
   );
   if (!canAccessUsersPage) {
