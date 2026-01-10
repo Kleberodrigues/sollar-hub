@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { SunIcon } from "@/components/Logo";
-import { Mail, Phone } from "lucide-react";
+import { Phone } from "lucide-react";
 
 const legalLinks = [
   { label: "Privacidade", href: "/privacidade" },
@@ -36,13 +36,6 @@ export function Footer() {
           <div className="text-center">
             <h4 className="font-semibold mb-4">Contato</h4>
             <div className="space-y-3">
-              <a
-                href="mailto:contato@psicomapa.cloud"
-                className="flex items-center justify-center gap-2 text-white/70 hover:text-white transition-colors text-sm"
-              >
-                <Mail className="w-4 h-4" />
-                contato@psicomapa.cloud
-              </a>
               <a
                 href="https://wa.me/5519933006478?text=Ol%C3%A1!%20Gostaria%20de%20falar%20com%20um%20especialista." target="_blank" rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 text-white/70 hover:text-white transition-colors text-sm"

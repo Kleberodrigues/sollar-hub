@@ -61,16 +61,6 @@ export default function ContatoPage() {
           {/* Info Cards */}
           <div className="space-y-4">
             <div className="bg-white rounded-xl p-6 shadow-sm">
-              <Mail className="w-8 h-8 text-pm-terracotta mb-3" />
-              <h3 className="font-display text-lg font-semibold text-pm-green-dark mb-2">
-                Email
-              </h3>
-              <a href="mailto:contato@psicomapa.cloud" className="text-pm-terracotta hover:underline">
-                contato@psicomapa.cloud
-              </a>
-            </div>
-
-            <div className="bg-white rounded-xl p-6 shadow-sm">
               <MessageCircle className="w-8 h-8 text-pm-terracotta mb-3" />
               <h3 className="font-display text-lg font-semibold text-pm-green-dark mb-2">
                 Suporte

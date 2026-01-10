@@ -311,7 +311,8 @@ export default function PreCheckoutPage() {
                       <p className="font-medium mb-1">Pagamento Seguro</p>
                       <p>
                         Você será redirecionado para o Stripe, nossa plataforma de pagamento segura.
-                        A cobrança é anual e pode ser cancelada a qualquer momento.
+                        A cobrança é anual. Você pode cancelar a qualquer momento e o cancelamento
+                        fica registrado para que não haja renovação no próximo ciclo anual.
                       </p>
                     </div>
                   </div>

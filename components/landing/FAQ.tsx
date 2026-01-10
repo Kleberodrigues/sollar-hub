@@ -24,7 +24,7 @@ const faqs = [
   },
   {
     question: "Posso cancelar quando quiser?",
-    answer: "Sim. Você pode cancelar sua assinatura a qualquer momento, sem burocracia. Seus dados permanecem acessíveis até o fim do período contratado.",
+    answer: "A cobrança é anual. Você pode cancelar a qualquer momento e o cancelamento fica registrado para que não haja renovação no próximo ciclo anual. O acesso permanece ativo até o fim do período já contratado.",
   },
   {
     question: "Tem limite de colaboradores?",

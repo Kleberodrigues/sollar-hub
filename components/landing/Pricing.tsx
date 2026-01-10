@@ -53,7 +53,7 @@ const plans = [
     features: [
       'Tudo do plano Intermediário',
       'Apresentação de 2 relatórios pela equipe PsicoMapa',
-      'Condição exclusiva para Plano de Ação pela Consultoria Sollar',
+      'Condição exclusiva para Plano de Ação pela Consultoria',
     ],
     highlighted: false,
   },
