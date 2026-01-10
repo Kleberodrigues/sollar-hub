@@ -320,9 +320,46 @@ Gere entre 3-8 ações, priorizando as de alto impacto.`;
 }
 
 /**
+ * Mapeia nomes de categorias em português para chaves internas em inglês
+ */
+function mapCategoryToKey(category: string): string {
+  const mapping: Record<string, string> = {
+    // Português -> English keys
+    'Demandas e Ritmo de Trabalho': 'demands_and_pace',
+    'Demandas e Ritmo': 'demands_and_pace',
+    'Gestão do Tempo e Sobrecarga': 'demands_and_pace',
+    'demands_and_pace': 'demands_and_pace',
+
+    'Autonomia, Clareza e Mudanças': 'autonomy_clarity_change',
+    'Autonomia e Clareza': 'autonomy_clarity_change',
+    'autonomy_clarity_change': 'autonomy_clarity_change',
+
+    'Liderança e Reconhecimento': 'leadership_recognition',
+    'leadership_recognition': 'leadership_recognition',
+
+    'Relações, Clima e Comunicação': 'relationships_communication',
+    'Relações e Comunicação': 'relationships_communication',
+    'relationships_communication': 'relationships_communication',
+
+    'Equilíbrio Trabalho–Vida e Saúde': 'work_life_health',
+    'Equilíbrio Trabalho-Vida e Saúde': 'work_life_health',
+    'Equilíbrio Vida-Trabalho': 'work_life_health',
+    'work_life_health': 'work_life_health',
+
+    'Violência, Assédio e Medo de Repressão': 'violence_harassment',
+    'Violência e Assédio': 'violence_harassment',
+    'violence_harassment': 'violence_harassment',
+  };
+
+  return mapping[category] || category;
+}
+
+/**
  * Gera plano de ação usando templates (fallback)
  */
 function generateTemplateActionPlan(highRiskCategories: HighRiskCategory[]): AIActionPlanResult {
+  console.log('[Template] High risk categories received:', highRiskCategories);
+
   const actionTemplates: Record<string, ActionItem[]> = {
     demands_and_pace: [
       {
@@ -412,7 +449,13 @@ function generateTemplateActionPlan(highRiskCategories: HighRiskCategory[]): AIA
   let idCounter = 1;
 
   highRiskCategories.forEach(({ category }) => {
-    const categoryActions = actionTemplates[category] || [];
+    // Mapear nome da categoria para chave do template
+    const categoryKey = mapCategoryToKey(category);
+    console.log(`[Template] Category "${category}" mapped to key "${categoryKey}"`);
+
+    const categoryActions = actionTemplates[categoryKey] || [];
+    console.log(`[Template] Found ${categoryActions.length} template actions for "${categoryKey}"`);
+
     categoryActions.forEach(action => {
       actions.push({
         ...action,
@@ -420,6 +463,8 @@ function generateTemplateActionPlan(highRiskCategories: HighRiskCategory[]): AIA
       });
     });
   });
+
+  console.log(`[Template] Total actions generated: ${actions.length}`);
 
   if (actions.length === 0) {
     actions.push({
