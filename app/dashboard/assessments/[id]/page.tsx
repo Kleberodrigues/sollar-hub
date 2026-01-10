@@ -249,7 +249,7 @@ export default async function AssessmentPage({
 
       {/* Participantes Importados */}
       {participantCount > 0 && (
-        <ParticipantsList participants={participants} />
+        <ParticipantsList participants={participants} assessmentId={assessment.id} />
       )}
 
       {/* Ações rápidas */}

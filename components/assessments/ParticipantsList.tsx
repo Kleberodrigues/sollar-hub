@@ -3,14 +3,15 @@
 /**
  * Participants List Component
  *
- * Lista de participantes importados com opção de ver todos
+ * Lista de participantes importados com opção de ver todos e enviar emails
  */
 
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Users, ChevronDown, ChevronUp } from 'lucide-react';
+import { Users, ChevronDown, ChevronUp, Mail, Loader2, CheckCircle } from 'lucide-react';
+import { sendParticipantEmails } from '@/app/dashboard/assessments/participant-import-actions';
 
 interface Participant {
   id: string;
@@ -26,6 +27,7 @@ interface Participant {
 
 interface ParticipantsListProps {
   participants: Participant[];
+  assessmentId: string;
 }
 
 const STATUS_CONFIG = {
@@ -36,11 +38,28 @@ const STATUS_CONFIG = {
   opted_out: { label: 'Opt-out', color: 'text-gray-600' },
 };
 
-export function ParticipantsList({ participants }: ParticipantsListProps) {
+export function ParticipantsList({ participants, assessmentId }: ParticipantsListProps) {
   const [showAll, setShowAll] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const [result, setResult] = useState<{ success: boolean; message: string } | null>(null);
+
   const count = participants.length;
+  const pendingCount = participants.filter(p => p.status === 'pending').length;
   const displayedParticipants = showAll ? participants : participants.slice(0, 10);
   const hasMore = count > 10;
+
+  const handleSendEmails = () => {
+    setResult(null);
+    startTransition(async () => {
+      const response = await sendParticipantEmails(assessmentId);
+      setResult({
+        success: response.success,
+        message: response.success
+          ? response.message || 'Emails enviados com sucesso!'
+          : response.error || 'Erro ao enviar emails',
+      });
+    });
+  };
 
   if (count === 0) return null;
 
@@ -48,14 +67,49 @@ export function ParticipantsList({ participants }: ParticipantsListProps) {
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <Users className="w-5 h-5" />
-            Participantes Importados
-          </CardTitle>
-          <span className="text-sm text-muted-foreground">
-            {count} participante(s)
-          </span>
+          <div className="flex items-center gap-4">
+            <CardTitle className="flex items-center gap-2">
+              <Users className="w-5 h-5" />
+              Participantes Importados
+            </CardTitle>
+            <span className="text-sm text-muted-foreground">
+              {count} participante(s)
+            </span>
+          </div>
+
+          {/* Botão Enviar E-mail */}
+          {pendingCount > 0 && (
+            <Button
+              onClick={handleSendEmails}
+              disabled={isPending}
+              className="gap-2 bg-pm-green-dark hover:bg-pm-green-dark-hover"
+            >
+              {isPending ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Enviando...
+                </>
+              ) : (
+                <>
+                  <Mail className="w-4 h-4" />
+                  Enviar E-mail ({pendingCount})
+                </>
+              )}
+            </Button>
+          )}
         </div>
+
+        {/* Feedback de resultado */}
+        {result && (
+          <div className={`mt-3 p-3 rounded-md flex items-center gap-2 ${
+            result.success
+              ? 'bg-green-50 text-green-700 border border-green-200'
+              : 'bg-red-50 text-red-700 border border-red-200'
+          }`}>
+            {result.success && <CheckCircle className="w-4 h-4" />}
+            <span className="text-sm">{result.message}</span>
+          </div>
+        )}
       </CardHeader>
       <CardContent>
         <ScrollArea className={showAll && count > 15 ? 'h-[400px]' : undefined}>

@@ -344,6 +344,150 @@ export async function deleteParticipant(participantId: string): Promise<{
 }
 
 /**
+ * Trigger email dispatch for pending participants
+ * This will dispatch an event to n8n webhook to send invitation emails
+ */
+export async function sendParticipantEmails(
+  assessmentId: string,
+  participantIds?: string[] // optional: specific participants, otherwise all pending
+): Promise<{
+  success: boolean;
+  message?: string;
+  error?: string;
+  sentCount?: number;
+}> {
+  const supabase = await createClient();
+
+  // Verificar autenticação
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect('/login');
+  }
+
+  // Buscar perfil e verificar permissão
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: profile } = await (supabase
+    .from('user_profiles')
+    .select('organization_id, role, full_name')
+    .eq('id', user.id)
+    .single() as any);
+
+  if (!profile || !['admin', 'responsavel_empresa'].includes(profile.role)) {
+    return {
+      success: false,
+      error: 'Você não tem permissão para enviar emails',
+    };
+  }
+
+  // Verificar se assessment existe e pertence à organização
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: assessment, error: assessmentError } = await (supabase
+    .from('assessments')
+    .select('id, title, organization_id')
+    .eq('id', assessmentId)
+    .eq('organization_id', profile.organization_id)
+    .single() as any);
+
+  if (assessmentError || !assessment) {
+    return {
+      success: false,
+      error: 'Assessment não encontrado',
+    };
+  }
+
+  try {
+    // Buscar participantes pendentes
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let query = (supabase as any)
+      .from('assessment_participants')
+      .select('*')
+      .eq('assessment_id', assessmentId)
+      .eq('status', 'pending');
+
+    if (participantIds && participantIds.length > 0) {
+      query = query.in('id', participantIds);
+    }
+
+    const { data: participants, error: participantsError } = await query;
+
+    if (participantsError) {
+      return {
+        success: false,
+        error: `Erro ao buscar participantes: ${participantsError.message}`,
+      };
+    }
+
+    if (!participants || participants.length === 0) {
+      return {
+        success: false,
+        error: 'Nenhum participante pendente encontrado',
+      };
+    }
+
+    // Get organization name for email template
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: organization } = await (supabase
+      .from('organizations')
+      .select('name')
+      .eq('id', profile.organization_id)
+      .single() as any);
+
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://app.sollarsaude.com.br';
+    const publicUrl = `${baseUrl}/assess/${assessmentId}`;
+
+    // Dispatch event for n8n to send emails
+    await dispatchEvent({
+      organizationId: profile.organization_id,
+      eventType: 'participants.email_requested',
+      data: {
+        assessment_id: assessmentId,
+        assessment_title: assessment.title,
+        organization_id: profile.organization_id,
+        organization_name: organization?.name || 'sua empresa',
+        participants: participants.map((p: { id: string; email: string; name: string; department?: string; role?: string }) => ({
+          id: p.id,
+          email: p.email,
+          name: p.name,
+          department: p.department,
+          role: p.role,
+        })),
+        total_count: participants.length,
+        public_url: publicUrl,
+        requested_by: {
+          id: user.id,
+          name: profile.full_name || user.email || 'Admin',
+          email: user.email || '',
+        },
+      },
+      metadata: {
+        triggered_by: user.id,
+        source: 'manual_email_dispatch',
+      },
+    });
+
+    console.log(`[ParticipantEmails] Event dispatched for ${participants.length} participants`);
+
+    // Revalidar página
+    revalidatePath(`/dashboard/assessments/${assessmentId}`);
+
+    return {
+      success: true,
+      message: `Disparo de ${participants.length} email(s) solicitado com sucesso!`,
+      sentCount: participants.length,
+    };
+  } catch (error) {
+    console.error('[ParticipantEmails] Error:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Erro desconhecido ao enviar emails',
+    };
+  }
+}
+
+/**
  * Update participant status
  */
 export async function updateParticipantStatus(
